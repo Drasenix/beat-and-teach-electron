@@ -1,0 +1,32 @@
+[
+  {
+    "id": "drum-and-bass",
+    "name": "drum and bass",
+    "sentence": "P Ts Kck P Ts Kch P ."
+  },
+  {
+    "id": "dubstep",
+    "name": "dubstep",
+    "sentence": "P Ts P Ts P Kch Ts P Ts P Kch Ts"
+  },
+  {
+    "id": "funk",
+    "name": "funk",
+    "sentence": "P Ts P Ts Kch Ts Ts Kch Ts Kch P Kch Kch P Ts Kch"
+  },
+  {
+    "id": "reggae",
+    "name": "reggae",
+    "sentence": "P Ts K K Ts K K"
+  },
+  {
+    "id": "jazz",
+    "name": "jazz",
+    "sentence": "P P Ts Ts P Ts Ts P Kch P Ts Ts P Ts Ts P Kch"
+  },
+  {
+    "id": "boom-bap",
+    "name": "boom bap",
+    "sentence": "P Kch P P P Kch"
+  }
+]
