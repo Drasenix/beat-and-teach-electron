@@ -28,6 +28,8 @@ export default function Choix() {
     }
   };
 
+  const playPattern = (): void => {};
+
   return (
     <div>
       <div>Choix</div>
@@ -43,10 +45,15 @@ export default function Choix() {
         })}
       </ul>
       {pattern && (
-        <textarea
-          value={pattern.getSentence()}
-          onChange={changePatternSentence}
-        />
+        <div>
+          <textarea
+            value={pattern.getSentence()}
+            onChange={changePatternSentence}
+          />
+          <button type="button" onClick={playPattern}>
+            Ecouter
+          </button>
+        </div>
       )}
     </div>
   );
