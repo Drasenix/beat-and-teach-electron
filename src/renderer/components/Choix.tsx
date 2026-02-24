@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Pattern from '../../services/features/pattern/pattern-model';
 import getAllPaterns from '../../services/features/pattern/pattern-service';
+import playSentence from '../../services/features/audio/audio-service';
 
 export default function Choix() {
   const [pattern, setPattern] = useState<Pattern>();
@@ -34,7 +35,7 @@ export default function Choix() {
 
   const playPattern = (): void => {
     if (pattern) {
-      console.log(pattern.getSentence());
+      playSentence(pattern.getSentence());
     }
   };
 
