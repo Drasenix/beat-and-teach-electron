@@ -3,7 +3,7 @@ import Pattern from '../../services/features/pattern/pattern-model';
 import getAllPaterns from '../../services/features/pattern/pattern-service';
 
 export default function Choix() {
-  const [pattern, setPattern] = useState<string>('inital');
+  const [pattern, setPattern] = useState<Pattern>();
   const [patterns, setPatterns] = useState<Pattern[]>([]);
 
   useEffect(() => {
@@ -19,6 +19,15 @@ export default function Choix() {
     setPattern(event.target.value);
   };
 
+  const selectPattern = (id: string): void => {
+    const selectedPattern: Pattern | undefined = patterns.find(
+      (p) => p.getId() === id,
+    );
+    if (selectedPattern) {
+      setPattern(selectedPattern);
+    }
+  };
+
   return (
     <div>
       <div>Choix</div>
@@ -26,13 +35,19 @@ export default function Choix() {
         {patterns.map((pat) => {
           return (
             <li key={pat.getId()}>
-              {pat.getName()}: {pat.getSentence()}
+              <button type="button" onClick={() => selectPattern(pat.getId())}>
+                {pat.getName()}
+              </button>
             </li>
           );
         })}
       </ul>
-      <div>{pattern}</div>
-      <textarea value={pattern} onChange={changePatternSentence} />
+      {pattern && (
+        <textarea
+          value={pattern.getSentence()}
+          onChange={changePatternSentence}
+        />
+      )}
     </div>
   );
 }
