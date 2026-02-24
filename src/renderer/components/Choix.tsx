@@ -16,7 +16,11 @@ export default function Choix() {
   }, []);
 
   const changePatternSentence = (event: any) => {
-    setPattern(event.target.value);
+    if (pattern) {
+      setPattern(
+        new Pattern(pattern.getId(), pattern.getName(), event.target.value),
+      );
+    }
   };
 
   const selectPattern = (id: string): void => {
@@ -28,7 +32,11 @@ export default function Choix() {
     }
   };
 
-  const playPattern = (): void => {};
+  const playPattern = (): void => {
+    if (pattern) {
+      console.log(pattern.getSentence());
+    }
+  };
 
   return (
     <div>
