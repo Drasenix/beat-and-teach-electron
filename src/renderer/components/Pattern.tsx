@@ -4,7 +4,7 @@ export default function Pattern() {
 
   return (
     <div>
-      <h1>{legende}</h1>
+      <h2>{legende}</h2>
       <textarea />
     </div>
   );

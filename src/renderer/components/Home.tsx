@@ -7,10 +7,10 @@ export default function Home() {
     <div>
       <ul>
         <h1>
-          <Link to="/choix">{intituleChoix2}</Link>
+          <Link to="/pattern">{intituleChoix1}</Link>
         </h1>
         <h1>
-          <Link to="/pattern">{intituleChoix1}</Link>
+          <Link to="/choix">{intituleChoix2}</Link>
         </h1>
       </ul>
     </div>
