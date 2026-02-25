@@ -1,4 +1,4 @@
-import { IPattern } from '../../../../main/services/db/models/pattern-interface';
+import { IPattern } from '../../../main/services/db/models/pattern-interface';
 import adaptPatterns from './pattern-adapter';
 import Pattern from './pattern-model';
 
