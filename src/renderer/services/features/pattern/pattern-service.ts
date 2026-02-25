@@ -1,5 +1,5 @@
-import { IPattern } from '../../api/models/pattern-interface';
-import fetchAllPatterns from '../../api/services/patterns';
+import { IPattern } from '../../../../main/services/db/models/pattern-interface';
+import fetchAllPatterns from '../../../../main/services/db/services/patterns';
 import adaptPatterns from './pattern-adapter';
 import Pattern from './pattern-model';
 

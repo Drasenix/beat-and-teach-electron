@@ -21,6 +21,11 @@ const electronHandler = {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+    getAudioBufferAPI: async (
+      filename: string,
+    ): Promise<ArrayBuffer | SharedArrayBuffer> => {
+      return ipcRenderer.invoke('get-audio-buffer', filename);
+    },
   },
 };
 
