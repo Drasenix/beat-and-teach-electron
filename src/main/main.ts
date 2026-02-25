@@ -15,6 +15,8 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import getAudioBufferFromFile from './services/system/file-service';
+import { IPattern } from './services/db/models/pattern-interface';
+import fetchAllPatterns from './services/db/services/patterns';
 
 class AppUpdater {
   constructor() {
@@ -38,6 +40,10 @@ ipcMain.handle(
     return getAudioBufferFromFile(filename);
   },
 );
+
+ipcMain.handle('get-all-patterns', async (): Promise<IPattern[]> => {
+  return fetchAllPatterns();
+});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
