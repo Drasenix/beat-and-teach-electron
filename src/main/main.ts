@@ -9,14 +9,12 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import getAudioBufferFromFile from './services/system/audio-file-service';
-import { PatternDB } from './services/db/models/pattern-db';
-import fetchAllPatterns from './services/db/services/fetch-patterns';
+import createIcpEvents from './icpEvents';
 
 class AppUpdater {
   constructor() {
@@ -28,27 +26,12 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
-
-ipcMain.handle(
-  'get-audio-buffer',
-  async (event, filename: string): Promise<ArrayBuffer | SharedArrayBuffer> => {
-    return getAudioBufferFromFile(filename);
-  },
-);
-
-ipcMain.handle('get-all-patterns', async (): Promise<PatternDB[]> => {
-  return fetchAllPatterns();
-});
-
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
+
+createIcpEvents();
 
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';

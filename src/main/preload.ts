@@ -1,34 +1,13 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { PatternDB } from './services/db/models/pattern-db';
+import { contextBridge, ipcRenderer } from 'electron';
 
-export type Channels = 'ipc-example';
+export type Channels = 'get-audio-buffer' | 'get-all-patterns';
 
 const electronHandler = {
   ipcRenderer: {
-    sendMessage(channel: Channels, ...args: unknown[]) {
-      ipcRenderer.send(channel, ...args);
-    },
-    on(channel: Channels, func: (...args: unknown[]) => void) {
-      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
-        func(...args);
-      ipcRenderer.on(channel, subscription);
-
-      return () => {
-        ipcRenderer.removeListener(channel, subscription);
-      };
-    },
-    once(channel: Channels, func: (...args: unknown[]) => void) {
-      ipcRenderer.once(channel, (_event, ...args) => func(...args));
-    },
-    getAudioBufferAPI: async (
-      filename: string,
-    ): Promise<ArrayBuffer | SharedArrayBuffer> => {
-      return ipcRenderer.invoke('get-audio-buffer', filename);
-    },
-    getAllPatterns: async (): Promise<PatternDB[]> => {
-      return ipcRenderer.invoke('get-all-patterns');
+    invokeMessage(channel: Channels, ...args: unknown[]) {
+      return ipcRenderer.invoke(channel, ...args);
     },
   },
 };

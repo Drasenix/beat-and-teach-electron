@@ -3,7 +3,10 @@ export default async function playSentence(sentence: string): Promise<void> {
   const Tone = await import('tone');
 
   const arrayBuffer: ArrayBuffer | SharedArrayBuffer =
-    await window.electron.ipcRenderer.getAudioBufferAPI('hihat.mp3');
+    await window.electron.ipcRenderer.invokeMessage(
+      'get-audio-buffer',
+      'hihat.mp3',
+    );
 
   const context = new Tone.Context();
   const audioBuffer = await context.decodeAudioData(arrayBuffer as ArrayBuffer);
