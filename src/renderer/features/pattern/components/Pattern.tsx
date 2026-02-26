@@ -1,13 +1,13 @@
-import playSentence from '../audio/audio-service';
-import Pattern from './pattern-model';
+import playSentence from '../../audio/services/audio-service';
+import { Pattern } from '../models/pattern-model';
 
 interface PatternComponentProps {
   pattern: Pattern;
-  selectPattern: (event: any) => void;
+  changePatternSentence: (event: any) => void;
 }
 
 export default function PatternComponent(props: PatternComponentProps) {
-  const { pattern, selectPattern } = props;
+  const { pattern, changePatternSentence } = props;
   const playPattern = (): void => {
     if (pattern) {
       playSentence(pattern.sentence);
@@ -15,7 +15,7 @@ export default function PatternComponent(props: PatternComponentProps) {
   };
   return (
     <div>
-      <textarea value={pattern.sentence} onChange={selectPattern} />
+      <textarea value={pattern.sentence} onChange={changePatternSentence} />
       <button type="button" onClick={playPattern}>
         Ecouter
       </button>

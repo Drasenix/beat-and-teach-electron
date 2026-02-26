@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import Pattern from '../features/pattern/pattern-model';
-import getAllPaterns from '../features/pattern/pattern-service';
-import PatternComponent from '../features/pattern/Pattern';
+import { getDefaultPattern, Pattern } from '../models/pattern-model';
+import PatternComponent from './Pattern';
+import getAllPaterns from '../services/pattern-service';
 
 export default function Choix() {
-  const [pattern, setPattern] = useState<Pattern>();
+  const [pattern, setPattern] = useState<Pattern>(getDefaultPattern());
   const [patterns, setPatterns] = useState<Pattern[]>([]);
 
   useEffect(() => {
@@ -49,12 +49,10 @@ export default function Choix() {
           );
         })}
       </ul>
-      {pattern && (
-        <PatternComponent
-          pattern={pattern}
-          selectPattern={changePatternSentence}
-        />
-      )}
+      <PatternComponent
+        pattern={pattern}
+        changePatternSentence={changePatternSentence}
+      />
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Home from './components/Home';
-import Choix from './components/Choice';
+import Choix from './features/pattern/components/Choice';
 import Header from './components/Header';
-import Redact from './components/Redact';
+import Redact from './features/pattern/components/Redact';
 
 export default function App() {
   return (
