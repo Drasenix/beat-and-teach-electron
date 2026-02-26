@@ -1,17 +1,15 @@
 import { ipcMain } from 'electron';
-import { getAudioBuffersFromFiles } from './services/system/audio-file-service';
-import { PatternDB } from './services/db/models/pattern-db';
-import fetchAllPatterns from './services/db/services/fetch-patterns';
-import { InstrumentDB } from './services/db/models/instrument-db';
-import fetchAllInstruments from './services/db/services/fetch-instruments';
+import { getAudioBuffersFromFiles } from './audio/services/audio-service';
+import { PatternDB } from './db/models/pattern-db';
+import fetchAllPatterns from './db/services/fetch-patterns';
+import { InstrumentDB } from './db/models/instrument-db';
+import fetchAllInstruments from './db/services/fetch-instruments';
+import AudioFileBuffer from './audio/models/audio-file-buffer';
 
 export default function createIcpEvents() {
   ipcMain.handle(
     'get-audio-buffers',
-    async (
-      event,
-      filenames: string[],
-    ): Promise<(ArrayBuffer | SharedArrayBuffer)[]> => {
+    async (event, filenames: string[]): Promise<AudioFileBuffer> => {
       return getAudioBuffersFromFiles(filenames);
     },
   );

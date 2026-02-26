@@ -1,4 +1,4 @@
-import { PatternDB } from '../../../../main/services/db/models/pattern-db';
+import { PatternDB } from '../../../../main/db/models/pattern-db';
 import { Pattern } from './pattern-model';
 
 export default function adaptPatterns(patterns: PatternDB[]): Pattern[] {

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import AudioFileBuffer from '../models/audio-file-buffer';
 
 export function getAudioBufferFromFile(
   filename: string,
@@ -12,10 +13,11 @@ export function getAudioBufferFromFile(
   );
 }
 
-export function getAudioBuffersFromFiles(
-  filenames: string[],
-): (ArrayBuffer | SharedArrayBuffer)[] {
-  return filenames.map((filename) => {
-    return getAudioBufferFromFile(filename);
-  });
+export function getAudioBuffersFromFiles(filenames: string[]): AudioFileBuffer {
+  return filenames.reduce((result, filename) => {
+    const audioBuffer: AudioFileBuffer = {
+      [filename.split('.')[0]]: getAudioBufferFromFile(filename),
+    };
+    return { ...result, ...audioBuffer };
+  }, {});
 }
