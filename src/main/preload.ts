@@ -1,7 +1,7 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { IPattern } from './services/db/models/pattern-interface';
+import { PatternDB } from './services/db/models/pattern-db';
 
 export type Channels = 'ipc-example';
 
@@ -27,7 +27,7 @@ const electronHandler = {
     ): Promise<ArrayBuffer | SharedArrayBuffer> => {
       return ipcRenderer.invoke('get-audio-buffer', filename);
     },
-    getAllPatterns: async (): Promise<IPattern[]> => {
+    getAllPatterns: async (): Promise<PatternDB[]> => {
       return ipcRenderer.invoke('get-all-patterns');
     },
   },

@@ -6,8 +6,8 @@ export interface Pattern {
 
 export function getDefaultPattern(): Pattern {
   return {
-    id: '0',
-    name: '0',
+    id: '',
+    name: '',
     sentence: '',
   };
 }

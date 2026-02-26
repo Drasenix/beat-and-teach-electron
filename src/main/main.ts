@@ -14,9 +14,9 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import getAudioBufferFromFile from './services/system/file-service';
-import { IPattern } from './services/db/models/pattern-interface';
-import fetchAllPatterns from './services/db/services/patterns';
+import getAudioBufferFromFile from './services/system/audio-file-service';
+import { PatternDB } from './services/db/models/pattern-db';
+import fetchAllPatterns from './services/db/services/fetch-patterns';
 
 class AppUpdater {
   constructor() {
@@ -41,7 +41,7 @@ ipcMain.handle(
   },
 );
 
-ipcMain.handle('get-all-patterns', async (): Promise<IPattern[]> => {
+ipcMain.handle('get-all-patterns', async (): Promise<PatternDB[]> => {
   return fetchAllPatterns();
 });
 
