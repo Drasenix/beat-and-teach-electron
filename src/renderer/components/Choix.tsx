@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import Pattern from '../features/pattern/pattern-model';
 import getAllPaterns from '../features/pattern/pattern-service';
-// import playSentence from '../features/audio/audio-service';
 import PatternComponent from '../features/pattern/PatternComponent';
 
 export default function Choix() {
@@ -35,12 +34,6 @@ export default function Choix() {
       setPattern(selectedPattern);
     }
   };
-
-  // const playPattern = (): void => {
-  //   if (pattern) {
-  //     playSentence(pattern.sentence);
-  //   }
-  // };
 
   return (
     <div>
