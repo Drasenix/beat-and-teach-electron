@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import Pattern from '../features/pattern/pattern-model';
 import getAllPaterns from '../features/pattern/pattern-service';
-import playSentence from '../features/audio/audio-service';
+// import playSentence from '../features/audio/audio-service';
+import PatternComponent from '../features/pattern/PatternComponent';
 
 export default function Choix() {
   const [pattern, setPattern] = useState<Pattern>();
@@ -18,26 +19,28 @@ export default function Choix() {
 
   const changePatternSentence = (event: any) => {
     if (pattern) {
-      setPattern(
-        new Pattern(pattern.getId(), pattern.getName(), event.target.value),
-      );
+      setPattern({
+        id: pattern.id,
+        name: pattern.name,
+        sentence: event.target.value,
+      });
     }
   };
 
   const selectPattern = (id: string): void => {
     const selectedPattern: Pattern | undefined = patterns.find(
-      (p) => p.getId() === id,
+      (p) => p.id === id,
     );
     if (selectedPattern) {
       setPattern(selectedPattern);
     }
   };
 
-  const playPattern = (): void => {
-    if (pattern) {
-      playSentence(pattern.getSentence());
-    }
-  };
+  // const playPattern = (): void => {
+  //   if (pattern) {
+  //     playSentence(pattern.sentence);
+  //   }
+  // };
 
   return (
     <div>
@@ -45,24 +48,19 @@ export default function Choix() {
       <ul>
         {patterns.map((pat) => {
           return (
-            <li key={pat.getId()}>
-              <button type="button" onClick={() => selectPattern(pat.getId())}>
-                {pat.getName()}
+            <li key={pat.id}>
+              <button type="button" onClick={() => selectPattern(pat.id)}>
+                {pat.name}
               </button>
             </li>
           );
         })}
       </ul>
       {pattern && (
-        <div>
-          <textarea
-            value={pattern.getSentence()}
-            onChange={changePatternSentence}
-          />
-          <button type="button" onClick={playPattern}>
-            Ecouter
-          </button>
-        </div>
+        <PatternComponent
+          pattern={pattern}
+          selectPattern={changePatternSentence}
+        />
       )}
     </div>
   );
