@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { getDefaultPattern, Pattern } from '../models/pattern-model';
+import { Pattern } from '../models/pattern-model';
 import PatternComponent from './Pattern';
 import getAllPaterns from '../services/pattern-service';
+import usePattern from '../hooks/usePattern';
 
 export default function Choix() {
-  const [pattern, setPattern] = useState<Pattern>(getDefaultPattern());
+  const { pattern, setPattern, changePatternSentence } = usePattern();
   const [patterns, setPatterns] = useState<Pattern[]>([]);
 
   useEffect(() => {
@@ -16,19 +17,9 @@ export default function Choix() {
     fetchPattern();
   }, []);
 
-  const changePatternSentence = (event: any) => {
-    if (pattern) {
-      setPattern({
-        id: pattern.id,
-        name: pattern.name,
-        sentence: event.target.value,
-      });
-    }
-  };
-
   const selectPattern = (id: string): void => {
     const selectedPattern: Pattern | undefined = patterns.find(
-      (p) => p.id === id,
+      (pat) => pat.id === id,
     );
     if (selectedPattern) {
       setPattern(selectedPattern);
