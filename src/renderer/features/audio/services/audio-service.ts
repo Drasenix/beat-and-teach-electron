@@ -1,13 +1,6 @@
-import { InstrumentDB } from '../../../../main/services/db/models/instrument-db';
 import removeDuplicates from '../../../util';
-import adaptInstruments from '../models/instrument-adapter';
-import { Instrument } from '../models/instrument-model';
-
-async function getAllInstruments(): Promise<Instrument[]> {
-  const instruments: InstrumentDB[] =
-    await window.electron.ipcRenderer.invokeMessage('get-all-instruments');
-  return adaptInstruments(instruments);
-}
+import { Instrument } from '../../instruments/models/instrument-model';
+import getAllInstruments from '../../instruments/services/instrument-service';
 
 //  P Ts Kch Ts -> 'kick.mp3' 'hihat.mp3' 'rimshot.mp3'
 async function loadRequiredAudioFiles(
