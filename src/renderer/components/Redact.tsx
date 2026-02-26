@@ -1,4 +1,4 @@
-export default function Pattern() {
+export default function Redact() {
   const legende: string =
     'Rédigez votre pattern en marquant les silences par des points .';
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Pattern from '../features/pattern/pattern-model';
 import getAllPaterns from '../features/pattern/pattern-service';
-import PatternComponent from '../features/pattern/PatternComponent';
+import PatternComponent from '../features/pattern/Pattern';
 
 export default function Choix() {
   const [pattern, setPattern] = useState<Pattern>();
