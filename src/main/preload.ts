@@ -2,7 +2,10 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer } from 'electron';
 
-export type Channels = 'get-audio-buffer' | 'get-all-patterns';
+export type Channels =
+  | 'get-audio-buffers'
+  | 'get-all-patterns'
+  | 'get-all-instruments';
 
 const electronHandler = {
   ipcRenderer: {

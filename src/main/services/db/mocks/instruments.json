@@ -1,0 +1,22 @@
+[
+  {
+    "id": "Kickdrum",
+    "symbol": "P",
+    "filename": "kickdrum.mp3"
+  },
+  {
+    "id": "Hi Hat",
+    "symbol": "Ts",
+    "filename": "hihat.mp3"
+  },
+  {
+    "id": "Snare",
+    "symbol": "Pf",
+    "filename": "snare.mp3"
+  },
+  {
+    "id": "Rimshot",
+    "symbol": "K",
+    "filename": "rimshot.mp3"
+  }
+]

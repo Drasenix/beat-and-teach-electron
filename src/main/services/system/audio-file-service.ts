@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export default function getAudioBufferFromFile(
+export function getAudioBufferFromFile(
   filename: string,
 ): ArrayBuffer | SharedArrayBuffer {
   const uri: string = path.resolve(__dirname, `../../assets/audio/${filename}`);
@@ -10,4 +10,12 @@ export default function getAudioBufferFromFile(
     fileData.byteOffset,
     fileData.byteOffset + fileData.byteLength,
   );
+}
+
+export function getAudioBuffersFromFiles(
+  filenames: string[],
+): (ArrayBuffer | SharedArrayBuffer)[] {
+  return filenames.map((filename) => {
+    return getAudioBufferFromFile(filename);
+  });
 }
