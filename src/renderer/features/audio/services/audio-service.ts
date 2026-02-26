@@ -1,17 +1,24 @@
 import { InstrumentDB } from '../../../../main/services/db/models/instrument-db';
 import removeDuplicates from '../../../util';
+import adaptInstruments from '../models/instrument-adapter';
+import { Instrument } from '../models/instrument-model';
+
+async function getAllInstruments(): Promise<Instrument[]> {
+  const instruments: InstrumentDB[] =
+    await window.electron.ipcRenderer.invokeMessage('get-all-instruments');
+  return adaptInstruments(instruments);
+}
 
 //  P Ts Kch Ts -> 'kick.mp3' 'hihat.mp3' 'rimshot.mp3'
 async function loadRequiredAudioFiles(
   sentence: string,
 ): Promise<(ArrayBuffer | SharedArrayBuffer)[]> {
   const symbols: string[] = removeDuplicates(sentence.split(' '));
-  const instrumentsAvailable: InstrumentDB[] =
-    await window.electron.ipcRenderer.invokeMessage('get-all-instruments');
+  const instruments: Instrument[] = await getAllInstruments();
 
-  const fileNames: (string | null)[] = symbols.flatMap((instrument) => {
-    const instru: InstrumentDB | undefined = instrumentsAvailable.find(
-      (instrumentDB) => instrumentDB.symbol === instrument,
+  const fileNames: (string | null)[] = symbols.flatMap((symbol) => {
+    const instru: Instrument | undefined = instruments.find(
+      (instrument: Instrument) => instrument.symbol === symbol,
     );
     if (instru) {
       return instru.filename;
