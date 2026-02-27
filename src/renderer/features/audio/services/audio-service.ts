@@ -43,5 +43,7 @@ export default async function playSentence(sentence: string): Promise<void> {
 
   players.toDestination();
   await Tone.loaded();
-  players.player('kickdrum').start();
+  for (const buffer in buffers) {
+    players.player(buffer).start();
+  }
 }
