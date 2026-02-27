@@ -30,8 +30,18 @@ export default async function playSentence(sentence: string): Promise<void> {
   const buffers: AudioFileBuffer = await loadRequiredAudioFiles(sentence);
   const Tone = await import('tone');
 
-  const players = new Tone.Players(buffers);
+  const context = new Tone.Context();
+
+  const players = new Tone.Players();
+
+  for (const buffer in buffers) {
+    const audioBuffer = await context.decodeAudioData(
+      buffers[buffer] as ArrayBuffer,
+    );
+    players.add(buffer, audioBuffer);
+  }
+
   players.toDestination();
   await Tone.loaded();
-  Tone.start();
+  players.player('kickdrum').start();
 }
