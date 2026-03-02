@@ -2,21 +2,25 @@
   {
     "id": "Kickdrum",
     "symbol": "P",
-    "filename": "kickdrum.mp3"
+    "filename": "kickdrum.mp3",
+    "name": "kickdrum"
   },
   {
     "id": "Hi Hat",
     "symbol": "Ts",
-    "filename": "hihat.mp3"
+    "filename": "hihat.mp3",
+    "name": "hihat"
   },
   {
     "id": "Snare",
     "symbol": "Pf",
-    "filename": "snare.mp3"
+    "filename": "snare.mp3",
+    "name": "snare"
   },
   {
     "id": "Rimshot",
     "symbol": "K",
-    "filename": "rimshot.mp3"
+    "filename": "rimshot.mp3",
+    "name": "rimshot"
   }
 ]

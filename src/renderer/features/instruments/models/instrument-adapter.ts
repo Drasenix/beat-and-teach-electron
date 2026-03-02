@@ -9,6 +9,7 @@ export default function adaptInstruments(
       id: instrument.id,
       symbol: instrument.symbol,
       filename: instrument.filename,
+      name: instrument.name,
     };
   });
 }
