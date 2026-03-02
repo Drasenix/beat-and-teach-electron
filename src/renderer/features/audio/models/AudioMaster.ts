@@ -62,11 +62,9 @@ export class AudioMaster {
     const seq = new this.Tone.Sequence((time: any, instrument: Instrument) => {
       players.player(instrument).start();
     }, pattern).start(0);
-
-    this.Tone.getTransport().start();
   }
 
-  public async playSentence(): Promise<void> {
+  public async playPattern(): Promise<void> {
     try {
       const buffers: AudioFileBuffer = await this.loadRequiredAudioFiles();
       const players = await this.createPlayersFromBuffers(buffers);
@@ -76,8 +74,14 @@ export class AudioMaster {
       );
 
       this.createSequenceFromPattern(players, pattern);
+      this.Tone.getTransport().start();
     } catch (error: any) {
       alert(`Erreur : ${error}`);
     }
+  }
+
+  public stopPattern(): void {
+    this.Tone.getTransport().stop();
+    this.Tone.getTransport().cancel(0);
   }
 }
