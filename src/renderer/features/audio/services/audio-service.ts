@@ -15,8 +15,7 @@ async function loadRequiredAudioFiles(
     if (instru) {
       return instru.filename;
     }
-    console.log('TODO : gérer exception');
-    return [];
+    throw new Error(`Le symbole ${symbol} n'existe pas.`);
   });
 
   return window.electron.ipcRenderer.invokeMessage(
@@ -37,29 +36,31 @@ function createPatternFromSentence(
     if (instru) {
       return instru.name;
     }
-    console.log('TODO : gérer exception');
-    return [];
+    throw new Error(`Le symbole ${symbol} n'existe pas.`);
   });
 
-  console.log(patterns);
   return patterns;
 }
 
 export default async function playSentence(sentence: string): Promise<void> {
   const Tone = await import('tone');
   const instruments: Instrument[] = await getAllInstruments();
-  const buffers: AudioFileBuffer = await loadRequiredAudioFiles(
-    sentence,
-    instruments,
-  );
-  const players = await createPlayersFromBuffers(buffers);
-  const instrus: string[] = createPatternFromSentence(sentence, instruments);
+  try {
+    const buffers: AudioFileBuffer = await loadRequiredAudioFiles(
+      sentence,
+      instruments,
+    );
+    const players = await createPlayersFromBuffers(buffers);
+    const instrus: string[] = createPatternFromSentence(sentence, instruments);
 
-  const seq = new Tone.Sequence((time, instrument) => {
-    players.player(instrument).start();
-  }, instrus).start(0);
+    const seq = new Tone.Sequence((time, instrument) => {
+      players.player(instrument).start();
+    }, instrus).start(0);
 
-  Tone.getTransport().start();
+    Tone.getTransport().start();
+  } catch (error: any) {
+    alert(`Erreur : ${error}`);
+  }
 }
 
 async function createPlayersFromBuffers(buffers: AudioFileBuffer) {
