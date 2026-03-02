@@ -25,13 +25,9 @@ export default async function playSentence(sentence: string): Promise<void> {
       instruments,
     );
     const players = await createPlayersFromBuffers(buffers);
-    const instrus: string[] = getPatternFromSentence(sentence, instruments);
+    const pattern: string[] = getPatternFromSentence(sentence, instruments);
 
-    const seq = new Tone.Sequence((time, instrument) => {
-      players.player(instrument).start();
-    }, instrus).start(0);
-
-    Tone.getTransport().start();
+    createSequenceFromPattern(players, pattern);
   } catch (error: any) {
     alert(`Erreur : ${error}`);
   }
@@ -52,4 +48,13 @@ async function createPlayersFromBuffers(buffers: AudioFileBuffer) {
   players.toDestination();
 
   return players;
+}
+
+async function createSequenceFromPattern(players: any, pattern: string[]) {
+  const Tone = await import('tone');
+  const seq = new Tone.Sequence((time, instrument) => {
+    players.player(instrument).start();
+  }, pattern).start(0);
+
+  Tone.getTransport().start();
 }
