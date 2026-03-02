@@ -1,45 +1,19 @@
 import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
-import removeDuplicates from '../../../util';
 import { Instrument } from '../../instruments/models/instrument-model';
-import getAllInstruments from '../../instruments/services/instrument-service';
-//  P Ts Kch Ts -> 'kick.mp3' 'hihat.mp3' 'rimshot.mp3'
+import {
+  getAllInstruments,
+  getFilesToLoadFromSentence,
+  getPatternFromSentence,
+} from '../../instruments/services/instrument-service';
+
 async function loadRequiredAudioFiles(
   sentence: string,
   instruments: Instrument[],
 ): Promise<AudioFileBuffer> {
-  const symbols: string[] = removeDuplicates(sentence.split(' '));
-  const fileNames: string[] = symbols.flatMap((symbol) => {
-    const instru: Instrument | undefined = instruments.find(
-      (instrument: Instrument) => instrument.symbol === symbol,
-    );
-    if (instru) {
-      return instru.filename;
-    }
-    throw new Error(`Le symbole ${symbol} n'existe pas.`);
-  });
-
   return window.electron.ipcRenderer.invokeMessage(
     'get-audio-buffers',
-    fileNames,
+    getFilesToLoadFromSentence(sentence, instruments),
   );
-}
-
-function createPatternFromSentence(
-  sentence: string,
-  instruments: Instrument[],
-): string[] {
-  const symbols: string[] = sentence.split(' ');
-  const patterns: string[] = symbols.flatMap((symbol) => {
-    const instru: Instrument | undefined = instruments.find(
-      (instrument: Instrument) => instrument.symbol === symbol,
-    );
-    if (instru) {
-      return instru.name;
-    }
-    throw new Error(`Le symbole ${symbol} n'existe pas.`);
-  });
-
-  return patterns;
 }
 
 export default async function playSentence(sentence: string): Promise<void> {
@@ -51,7 +25,7 @@ export default async function playSentence(sentence: string): Promise<void> {
       instruments,
     );
     const players = await createPlayersFromBuffers(buffers);
-    const instrus: string[] = createPatternFromSentence(sentence, instruments);
+    const instrus: string[] = getPatternFromSentence(sentence, instruments);
 
     const seq = new Tone.Sequence((time, instrument) => {
       players.player(instrument).start();
