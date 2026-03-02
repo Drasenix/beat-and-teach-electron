@@ -9,6 +9,8 @@ import {
 export class AudioMaster {
   static #instance: AudioMaster;
   private instruments: Instrument[] = [];
+  private sentence: string = '';
+  private Tone: any;
 
   private constructor() {}
 
@@ -16,27 +18,33 @@ export class AudioMaster {
     if (!AudioMaster.#instance) {
       AudioMaster.#instance = new AudioMaster();
       await AudioMaster.#instance.loadInstruments();
+      await AudioMaster.#instance.importTone();
     }
     return AudioMaster.#instance;
   }
 
-  public async loadInstruments() {
+  public setSentence(sentence: string): void {
+    this.sentence = sentence;
+  }
+
+  protected async loadInstruments() {
     this.instruments = await getAllInstruments();
   }
 
-  private async loadRequiredAudioFiles(
-    sentence: string,
-  ): Promise<AudioFileBuffer> {
+  protected async importTone() {
+    this.Tone = await import('tone');
+  }
+
+  private async loadRequiredAudioFiles(): Promise<AudioFileBuffer> {
     return window.electron.ipcRenderer.invokeMessage(
       'get-audio-buffers',
-      getFilesToLoadFromSentence(sentence, this.instruments),
+      getFilesToLoadFromSentence(this.sentence, this.instruments),
     );
   }
 
   private async createPlayersFromBuffers(buffers: AudioFileBuffer) {
-    const Tone = await import('tone');
-    const context = new Tone.Context();
-    const players = new Tone.Players();
+    const context = new this.Tone.Context();
+    const players = new this.Tone.Players();
 
     for (const buffer in buffers) {
       const audioBuffer = await context.decodeAudioData(
@@ -51,21 +59,19 @@ export class AudioMaster {
   }
 
   private async createSequenceFromPattern(players: any, pattern: string[]) {
-    const Tone = await import('tone');
-    const seq = new Tone.Sequence((time, instrument) => {
+    const seq = new this.Tone.Sequence((time: any, instrument: Instrument) => {
       players.player(instrument).start();
     }, pattern).start(0);
 
-    Tone.getTransport().start();
+    this.Tone.getTransport().start();
   }
 
-  public async playSentence(sentence: string): Promise<void> {
+  public async playSentence(): Promise<void> {
     try {
-      const buffers: AudioFileBuffer =
-        await this.loadRequiredAudioFiles(sentence);
+      const buffers: AudioFileBuffer = await this.loadRequiredAudioFiles();
       const players = await this.createPlayersFromBuffers(buffers);
       const pattern: string[] = getPatternFromSentence(
-        sentence,
+        this.sentence,
         this.instruments,
       );
 
