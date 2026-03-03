@@ -10,6 +10,8 @@ export class AudioMaster {
   static #instance: AudioMaster;
   private instruments: Instrument[] = [];
   private sentence: string = '';
+  private buffers?: AudioFileBuffer;
+  private players?: any;
   private Tone: any;
 
   private constructor() {}
@@ -35,45 +37,47 @@ export class AudioMaster {
     this.Tone = await import('tone');
   }
 
-  private async loadRequiredAudioFiles(): Promise<AudioFileBuffer> {
-    return window.electron.ipcRenderer.invokeMessage(
+  private async createAudioBuffers(): Promise<void> {
+    this.buffers = await window.electron.ipcRenderer.invokeMessage(
       'get-audio-buffers',
       getFilesToLoadFromSentence(this.sentence, this.instruments),
     );
   }
 
-  private async createPlayersFromBuffers(buffers: AudioFileBuffer) {
+  private async createPlayers() {
     const context = new this.Tone.Context();
-    const players = new this.Tone.Players();
+    this.players = new this.Tone.Players();
 
-    for (const buffer in buffers) {
+    for (const buffer in this.buffers) {
       const audioBuffer = await context.decodeAudioData(
-        buffers[buffer] as ArrayBuffer,
+        this.buffers[buffer] as ArrayBuffer,
       );
-      players.add(buffer, audioBuffer);
+      this.players.add(buffer, audioBuffer);
     }
 
-    players.toDestination();
-
-    return players;
+    this.players.toDestination();
   }
 
-  private async createSequenceFromPattern(players: any, pattern: string[]) {
+  private async createSequence(pattern: string[]) {
     const seq = new this.Tone.Sequence((time: any, instrument: Instrument) => {
-      players.player(instrument).start();
+      this.players.player(instrument).start();
     }, pattern).start(0);
   }
 
   public async playPattern(): Promise<void> {
+    if (this.sentence === '') {
+      alert(`Erreur: Aucun pattern n'a été fourni.`);
+      return;
+    }
     try {
-      const buffers: AudioFileBuffer = await this.loadRequiredAudioFiles();
-      const players = await this.createPlayersFromBuffers(buffers);
+      await this.createAudioBuffers();
+      await this.createPlayers();
       const pattern: string[] = getPatternFromSentence(
         this.sentence,
         this.instruments,
       );
 
-      this.createSequenceFromPattern(players, pattern);
+      await this.createSequence(pattern);
       this.Tone.getTransport().start();
     } catch (error: any) {
       alert(`Erreur : ${error}`);
