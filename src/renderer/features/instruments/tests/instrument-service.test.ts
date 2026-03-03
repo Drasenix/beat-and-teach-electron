@@ -1,5 +1,6 @@
 import { Instrument } from '../models/instrument-model';
 import * as instrumentService from '../services/instrument-service';
+import { NoteItem } from '../services/instrument-service';
 
 const instrumentOne: Instrument = {
   id: 'Kickdrum',
@@ -60,5 +61,38 @@ describe('#getPatternFromSentence', () => {
     expect(() =>
       instrumentService.getPatternFromSentence(sentence_KO, instruments),
     ).toThrow(`Le symbole K n'existe pas.`);
+  });
+});
+
+describe('#getPatternFromSentenceV2', () => {
+  it('should return a list of symbols based on a sentence and a list of instruments', () => {
+    // Given
+    const sentence_OK: string = 'P (Ts P) Ts';
+    // When
+    const result: NoteItem[] = instrumentService.getPatternFromSentenceV2(
+      sentence_OK,
+      instruments,
+    );
+    // Then
+    const expected: NoteItem[] = ['P', ['Ts', 'P'], 'Ts'];
+    expect(result).toEqual(expected);
+  });
+
+  it('should throw an error because on of the symbols in the sentence does not match any instrument', () => {
+    // Given
+    const sentence_KO: string = 'P (Ts K) Ts';
+    // When - Then
+    expect(() =>
+      instrumentService.getPatternFromSentenceV2(sentence_KO, instruments),
+    ).toThrow(`Le symbole K n'existe pas.`);
+  });
+});
+
+describe('#assertSymbolMatchingInstrument', () => {
+  it('should throw an error because the symbol does not match any instrument', () => {
+    // Given
+    const symbol: string = 'K';
+    // When - Then
+    expect(() => instrumentService.assertSymbolMatchingInstrument(symbol, instruments)).toThrow(`Le symbole K n'existe pas.`)
   });
 });
