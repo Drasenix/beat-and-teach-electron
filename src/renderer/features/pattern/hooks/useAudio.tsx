@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { playPattern, stopPattern } from '../../audio/services/audio-service';
+import {
+  changeTempo,
+  playPattern,
+  stopPattern,
+} from '../../audio/services/audio-service';
 
 const useAudio = () => {
   const [playing, setPlaying] = useState<boolean>(false);
-  const playTrack = (sentence: string): void => {
-    playPattern(sentence);
+  const playTrack = (sentence: string, bpm: number): void => {
+    playPattern(sentence, bpm);
     setPlaying(true);
   };
 
@@ -13,7 +17,11 @@ const useAudio = () => {
     setPlaying(false);
   };
 
-  return { playing, playTrack, stopTrack };
+  const changeBpm = (bpm: number): void => {
+    changeTempo(bpm);
+  };
+
+  return { playing, playTrack, stopTrack, changeBpm };
 };
 
 export default useAudio;

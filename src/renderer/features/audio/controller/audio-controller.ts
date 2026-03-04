@@ -27,6 +27,10 @@ export class AudioController {
     this.sentence = sentence;
   }
 
+  public setTempo(bpm: number) {
+    this.Tone.Transport.bpm.value = bpm;
+  }
+
   protected async importTone() {
     this.Tone = await import('tone');
   }
