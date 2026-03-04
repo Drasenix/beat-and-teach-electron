@@ -1,12 +1,14 @@
 import { Pattern } from '../models/pattern-model';
 import useAudio from '../hooks/useAudio';
 
-interface PatternComponentProps {
+interface PatternInputComponentProps {
   pattern: Pattern;
   changePatternSentence: (event: any) => void;
 }
 
-export default function PatternComponent(props: PatternComponentProps) {
+export default function PatternInputComponent(
+  props: PatternInputComponentProps,
+) {
   const { pattern, changePatternSentence } = props;
   const { playing, playTrack, stopTrack } = useAudio();
 

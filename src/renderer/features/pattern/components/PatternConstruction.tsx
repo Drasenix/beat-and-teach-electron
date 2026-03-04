@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Pattern } from '../models/pattern-model';
-import PatternComponent from './Pattern';
+import PatternInputComponent from './PatternInput';
 import getAllPaterns from '../services/pattern-service';
 import usePattern from '../hooks/usePattern';
+import PatternChoices from './PatternChoices';
 
-export default function Choix() {
+export default function PatternConstruction() {
   const { pattern, setPattern, changePatternSentence } = usePattern();
   const [patterns, setPatterns] = useState<Pattern[]>([]);
 
@@ -28,21 +29,8 @@ export default function Choix() {
 
   return (
     <div>
-      <h2>Tes Exemples</h2>
-      <div>
-        <ul>
-          {patterns.map((pat) => {
-            return (
-              <li key={pat.id}>
-                <button type="button" onClick={() => selectPattern(pat.id)}>
-                  {pat.name}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <PatternComponent
+      <PatternChoices patterns={patterns} selectPattern={selectPattern} />
+      <PatternInputComponent
         pattern={pattern}
         changePatternSentence={changePatternSentence}
       />
