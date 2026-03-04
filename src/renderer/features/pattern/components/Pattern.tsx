@@ -12,17 +12,20 @@ export default function PatternComponent(props: PatternComponentProps) {
 
   return (
     <div>
+      <h2>Ton pattern</h2>
       <textarea value={pattern.sentence} onChange={changePatternSentence} />
-      <button
-        type="button"
-        disabled={playing}
-        onClick={() => playTrack(pattern.sentence)}
-      >
-        Play
-      </button>
-      <button type="button" disabled={!playing} onClick={stopTrack}>
-        Stop
-      </button>
+      <div>
+        <button
+          type="button"
+          disabled={playing}
+          onClick={() => playTrack(pattern.sentence)}
+        >
+          Play
+        </button>
+        <button type="button" disabled={!playing} onClick={stopTrack}>
+          Stop
+        </button>
+      </div>
     </div>
   );
 }

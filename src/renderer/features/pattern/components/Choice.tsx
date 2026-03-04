@@ -28,18 +28,20 @@ export default function Choix() {
 
   return (
     <div>
-      <div>Choix</div>
-      <ul>
-        {patterns.map((pat) => {
-          return (
-            <li key={pat.id}>
-              <button type="button" onClick={() => selectPattern(pat.id)}>
-                {pat.name}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      <h2>Tes Exemples</h2>
+      <div>
+        <ul>
+          {patterns.map((pat) => {
+            return (
+              <li key={pat.id}>
+                <button type="button" onClick={() => selectPattern(pat.id)}>
+                  {pat.name}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       <PatternComponent
         pattern={pattern}
         changePatternSentence={changePatternSentence}
