@@ -7,8 +7,8 @@ import {
   NoteItem,
 } from '../../instruments/services/instrument-service';
 
-export class AudioMaster {
-  static #instance: AudioMaster;
+export class AudioController {
+  static #instance: AudioController;
   private instruments: Instrument[] = [];
   private sentence: string = '';
   private buffers?: AudioFileBuffer;
@@ -17,13 +17,13 @@ export class AudioMaster {
 
   private constructor() {}
 
-  public static async getInstance(): Promise<AudioMaster> {
-    if (!AudioMaster.#instance) {
-      AudioMaster.#instance = new AudioMaster();
-      await AudioMaster.#instance.loadInstruments();
-      await AudioMaster.#instance.importTone();
+  public static async getInstance(): Promise<AudioController> {
+    if (!AudioController.#instance) {
+      AudioController.#instance = new AudioController();
+      await AudioController.#instance.loadInstruments();
+      await AudioController.#instance.importTone();
     }
-    return AudioMaster.#instance;
+    return AudioController.#instance;
   }
 
   public setSentence(sentence: string): void {
@@ -60,12 +60,9 @@ export class AudioMaster {
   }
 
   private async createSequence(pattern: NoteItem[]) {
-    const seq = new this.Tone.Sequence(
-      (time: any, instrument: Instrument) => {
-        this.players.player(instrument).start(time);
-      },
-      pattern,
-    ).start(0);
+    const seq = new this.Tone.Sequence((time: any, instrument: Instrument) => {
+      this.players.player(instrument).start(time);
+    }, pattern).start(0);
   }
 
   public async playPattern(): Promise<void> {

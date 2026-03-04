@@ -1,12 +1,12 @@
-import { AudioMaster } from '../models/AudioMaster';
+import { AudioController } from '../models/AudioController';
 
 export async function playPattern(sentence: string): Promise<void> {
-  const audioMaster: AudioMaster = await AudioMaster.getInstance();
-  audioMaster.setSentence(sentence);
-  await audioMaster.playPattern();
+  const audioController: AudioController = await AudioController.getInstance();
+  audioController.setSentence(sentence);
+  await audioController.playPattern();
 }
 
 export async function stopPattern(): Promise<void> {
-  const audioMaster: AudioMaster = await AudioMaster.getInstance();
+  const audioMaster: AudioController = await AudioController.getInstance();
   audioMaster.stopPattern();
 }

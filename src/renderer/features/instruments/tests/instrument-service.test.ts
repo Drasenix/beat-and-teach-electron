@@ -64,7 +64,7 @@ describe('#getPatternFromSentence', () => {
   });
 });
 
-describe('#assertSymbolMatchingInstrument', () => {
+describe('#getInstrumentNameFromSymbol', () => {
   it('should throw an error because the symbol does not match any instrument', () => {
     // Given
     const symbol: string = 'K';
