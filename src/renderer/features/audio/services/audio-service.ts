@@ -1,4 +1,4 @@
-import { AudioController } from '../models/AudioController';
+import { AudioController } from '../controller/audio-controller';
 
 export async function playPattern(sentence: string): Promise<void> {
   const audioController: AudioController = await AudioController.getInstance();

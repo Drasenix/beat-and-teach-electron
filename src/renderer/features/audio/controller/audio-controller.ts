@@ -1,15 +1,13 @@
 import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
 import { Instrument } from '../../instruments/models/instrument-model';
 import {
-  getAllInstruments,
-  getFilesToLoadFromSentence,
-  getPatternFromSentence,
-  NoteItem,
+  prepareFiles,
+  preparePattern,
 } from '../../instruments/services/instrument-service';
+import { NoteItem } from '../../instruments/types/note-item';
 
 export class AudioController {
   static #instance: AudioController;
-  private instruments: Instrument[] = [];
   private sentence: string = '';
   private buffers?: AudioFileBuffer;
   private players?: any;
@@ -20,7 +18,6 @@ export class AudioController {
   public static async getInstance(): Promise<AudioController> {
     if (!AudioController.#instance) {
       AudioController.#instance = new AudioController();
-      await AudioController.#instance.loadInstruments();
       await AudioController.#instance.importTone();
     }
     return AudioController.#instance;
@@ -30,10 +27,6 @@ export class AudioController {
     this.sentence = sentence;
   }
 
-  protected async loadInstruments() {
-    this.instruments = await getAllInstruments();
-  }
-
   protected async importTone() {
     this.Tone = await import('tone');
   }
@@ -41,7 +34,7 @@ export class AudioController {
   private async createAudioBuffers(): Promise<void> {
     this.buffers = await window.electron.ipcRenderer.invokeMessage(
       'get-audio-buffers',
-      getFilesToLoadFromSentence(this.sentence, this.instruments),
+      await prepareFiles(this.sentence),
     );
   }
 
@@ -59,7 +52,8 @@ export class AudioController {
     this.players.toDestination();
   }
 
-  private async createSequence(pattern: NoteItem[]) {
+  private async createSequence() {
+    const pattern: NoteItem[] = await preparePattern(this.sentence);
     const seq = new this.Tone.Sequence((time: any, instrument: Instrument) => {
       this.players.player(instrument).start(time);
     }, pattern).start(0);
@@ -73,12 +67,7 @@ export class AudioController {
     try {
       await this.createAudioBuffers();
       await this.createPlayers();
-      const pattern: NoteItem[] = getPatternFromSentence(
-        this.sentence,
-        this.instruments,
-      );
-
-      await this.createSequence(pattern);
+      await this.createSequence();
       this.Tone.getTransport().start();
     } catch (error: any) {
       alert(`Erreur : ${error}`);
