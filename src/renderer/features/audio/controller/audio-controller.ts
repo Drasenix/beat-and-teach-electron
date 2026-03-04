@@ -1,10 +1,8 @@
 import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
 import { Instrument } from '../../instruments/models/instrument-model';
-import {
-  prepareFiles,
-  preparePattern,
-} from '../../instruments/services/instrument-service';
+import { preparePattern } from '../../instruments/services/instrument-service';
 import { NoteItem } from '../../instruments/types/note-item';
+import { createAudioBuffers } from '../services/audio-service';
 
 export class AudioController {
   static #instance: AudioController;
@@ -36,10 +34,7 @@ export class AudioController {
   }
 
   private async createAudioBuffers(): Promise<void> {
-    this.buffers = await window.electron.ipcRenderer.invokeMessage(
-      'get-audio-buffers',
-      await prepareFiles(this.sentence),
-    );
+    this.buffers = await createAudioBuffers(this.sentence);
   }
 
   private async createPlayers() {
