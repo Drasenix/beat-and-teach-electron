@@ -4,6 +4,7 @@ import {
   getAllInstruments,
   getFilesToLoadFromSentence,
   getPatternFromSentence,
+  NoteItem,
 } from '../../instruments/services/instrument-service';
 
 export class AudioMaster {
@@ -58,10 +59,13 @@ export class AudioMaster {
     this.players.toDestination();
   }
 
-  private async createSequence(pattern: string[]) {
-    const seq = new this.Tone.Sequence((time: any, instrument: Instrument) => {
-      this.players.player(instrument).start();
-    }, pattern).start(0);
+  private async createSequence(pattern: NoteItem[]) {
+    const seq = new this.Tone.Sequence(
+      (time: any, instrument: Instrument) => {
+        this.players.player(instrument).start(time);
+      },
+      pattern,
+    ).start(0);
   }
 
   public async playPattern(): Promise<void> {
@@ -72,7 +76,7 @@ export class AudioMaster {
     try {
       await this.createAudioBuffers();
       await this.createPlayers();
-      const pattern: string[] = getPatternFromSentence(
+      const pattern: NoteItem[] = getPatternFromSentence(
         this.sentence,
         this.instruments,
       );

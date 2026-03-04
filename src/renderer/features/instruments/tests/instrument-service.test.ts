@@ -19,7 +19,7 @@ const instruments: Instrument[] = [instrumentOne, instrumentTwo];
 describe('#getFilesToLoadFromSentence', () => {
   it('should return a list of filenames based on a sentence and a list of instruments', () => {
     // Given
-    const sentence_OK: string = 'P Ts P Ts';
+    const sentence_OK: string = 'P (Ts P) Ts';
     // When
     const result: string[] = instrumentService.getFilesToLoadFromSentence(
       sentence_OK,
@@ -32,7 +32,7 @@ describe('#getFilesToLoadFromSentence', () => {
 
   it('should throw an error because one of the symbols in the sentence does not match any instrument', () => {
     // Given
-    const sentence_KO: string = 'P Ts K Ts';
+    const sentence_KO: string = 'P (Ts K) Ts';
     // When - Then
     expect(() =>
       instrumentService.getFilesToLoadFromSentence(sentence_KO, instruments),
@@ -43,38 +43,14 @@ describe('#getFilesToLoadFromSentence', () => {
 describe('#getPatternFromSentence', () => {
   it('should return a list of symbols based on a sentence and a list of instruments', () => {
     // Given
-    const sentence_OK: string = 'P Ts P Ts';
-    // When
-    const result: string[] = instrumentService.getPatternFromSentence(
-      sentence_OK,
-      instruments,
-    );
-    // Then
-    const expectedResult: string[] = ['kickdrum', 'hihat', 'kickdrum', 'hihat'];
-    expect(result).toEqual(expectedResult);
-  });
-
-  it('should throw an error because on of the symbols in the sentence does not match any instrument', () => {
-    // Given
-    const sentence_KO: string = 'P Ts K Ts';
-    // When - Then
-    expect(() =>
-      instrumentService.getPatternFromSentence(sentence_KO, instruments),
-    ).toThrow(`Le symbole K n'existe pas.`);
-  });
-});
-
-describe('#getPatternFromSentenceV2', () => {
-  it('should return a list of symbols based on a sentence and a list of instruments', () => {
-    // Given
     const sentence_OK: string = 'P (Ts P) Ts';
     // When
-    const result: NoteItem[] = instrumentService.getPatternFromSentenceV2(
+    const result: NoteItem[] = instrumentService.getPatternFromSentence(
       sentence_OK,
       instruments,
     );
     // Then
-    const expected: NoteItem[] = ['P', ['Ts', 'P'], 'Ts'];
+    const expected: NoteItem[] = ['kickdrum', ['hihat', 'kickdrum'], 'hihat'];
     expect(result).toEqual(expected);
   });
 
@@ -83,7 +59,7 @@ describe('#getPatternFromSentenceV2', () => {
     const sentence_KO: string = 'P (Ts K) Ts';
     // When - Then
     expect(() =>
-      instrumentService.getPatternFromSentenceV2(sentence_KO, instruments),
+      instrumentService.getPatternFromSentence(sentence_KO, instruments),
     ).toThrow(`Le symbole K n'existe pas.`);
   });
 });
@@ -93,6 +69,8 @@ describe('#assertSymbolMatchingInstrument', () => {
     // Given
     const symbol: string = 'K';
     // When - Then
-    expect(() => instrumentService.assertSymbolMatchingInstrument(symbol, instruments)).toThrow(`Le symbole K n'existe pas.`)
+    expect(() =>
+      instrumentService.getInstrumentNameFromSymbol(symbol, instruments),
+    ).toThrow(`Le symbole K n'existe pas.`);
   });
 });

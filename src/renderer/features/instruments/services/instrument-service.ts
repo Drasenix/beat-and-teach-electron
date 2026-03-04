@@ -1,5 +1,5 @@
 import { InstrumentDB } from '../../../../main/db/models/instrument-db';
-import removeDuplicates from '../../../util';
+import { removeDuplicates, removeParenthesis } from '../../../utils/util';
 import adaptInstruments from '../models/instrument-adapter';
 import { Instrument } from '../models/instrument-model';
 
@@ -15,7 +15,10 @@ export function getFilesToLoadFromSentence(
   sentence: string,
   instruments: Instrument[],
 ): string[] {
-  const symbols: string[] = removeDuplicates(sentence.split(' '));
+  const sentenceWithoutParenthesis: string = removeParenthesis(sentence);
+  const symbols: string[] = removeDuplicates(
+    sentenceWithoutParenthesis.split(' '),
+  );
   const fileNames: string[] = symbols.flatMap((symbol) => {
     const instru: Instrument | undefined = instruments.find(
       (instrument: Instrument) => instrument.symbol === symbol,
@@ -28,37 +31,20 @@ export function getFilesToLoadFromSentence(
   return fileNames;
 }
 
-export function getPatternFromSentence(
-  sentence: string,
-  instruments: Instrument[],
-): string[] {
-  const symbols: string[] = sentence.split(' ');
-  const patterns: string[] = symbols.flatMap((symbol) => {
-    const instru: Instrument | undefined = instruments.find(
-      (instrument: Instrument) => instrument.symbol === symbol,
-    );
-    if (instru) {
-      return instru.name;
-    }
-    throw new Error(`Le symbole ${symbol} n'existe pas.`);
-  });
-
-  return patterns;
-}
-
-export function assertSymbolMatchingInstrument(
+export function getInstrumentNameFromSymbol(
   symbol: string,
   instruments: Instrument[],
-): void {
+): string {
   const instru: Instrument | undefined = instruments.find(
     (instrument: Instrument) => instrument.symbol === symbol,
   );
-  if (!instru) {
-    throw new Error(`Le symbole ${symbol} n'existe pas.`);
+  if (instru) {
+    return instru.name;
   }
+  throw new Error(`Le symbole ${symbol} n'existe pas.`);
 }
 
-export function getPatternFromSentenceV2(
+export function getPatternFromSentence(
   sentence: string,
   instruments: Instrument[],
 ): NoteItem[] {
@@ -69,16 +55,19 @@ export function getPatternFromSentenceV2(
   while ((match = regex.exec(sentence)) !== null) {
     if (match[1] !== undefined) {
       // Groupe 1 : contenu entre parenthèses
-      const notes: NoteItem = match[1].trim().split(/\s+/);
-      for (const index in notes) {
-        assertSymbolMatchingInstrument(notes[index], instruments);
+      const symbols: NoteItem = match[1].trim().split(/\s+/);
+      for (const index in symbols) {
+        symbols[index] = getInstrumentNameFromSymbol(
+          symbols[index],
+          instruments,
+        );
       }
-      result.push(notes);
+      result.push(symbols);
     } else {
       // Groupe 2 : token simple
-      const note: NoteItem = match[2];
-      assertSymbolMatchingInstrument(note, instruments);
-      result.push(match[2]);
+      let symbols: NoteItem = match[2];
+      symbols = getInstrumentNameFromSymbol(symbols, instruments);
+      result.push(symbols);
     }
   }
 
