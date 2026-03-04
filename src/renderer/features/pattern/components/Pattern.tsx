@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { playPattern, stopPattern } from '../../audio/services/audio-service';
 import { Pattern } from '../models/pattern-model';
+import useAudio from '../hooks/useAudio';
 
 interface PatternComponentProps {
   pattern: Pattern;
@@ -9,23 +8,16 @@ interface PatternComponentProps {
 
 export default function PatternComponent(props: PatternComponentProps) {
   const { pattern, changePatternSentence } = props;
-  const [playing, setPlaying] = useState<boolean>(false);
-  const playTrack = (): void => {
-    if (pattern) {
-      playPattern(pattern.sentence);
-      setPlaying(true);
-    }
-  };
-
-  const stopTrack = (): void => {
-    stopPattern();
-    setPlaying(false);
-  };
+  const { playing, playTrack, stopTrack } = useAudio();
 
   return (
     <div>
       <textarea value={pattern.sentence} onChange={changePatternSentence} />
-      <button type="button" disabled={playing} onClick={playTrack}>
+      <button
+        type="button"
+        disabled={playing}
+        onClick={() => playTrack(pattern.sentence)}
+      >
         Play
       </button>
       <button type="button" disabled={!playing} onClick={stopTrack}>
