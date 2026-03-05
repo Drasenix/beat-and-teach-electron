@@ -1,7 +1,7 @@
 import { InstrumentController } from '../controller/instrument-controller';
 import { Instrument } from '../models/instrument-model';
 import * as instrumentService from '../services/instrument-service';
-import { NoteItem } from '../types/note-item';
+import { SequenceNotes } from '../types/sequence-note';
 const instrumentOne: Instrument = {
   id: 'Kickdrum',
   symbol: 'P',
@@ -14,7 +14,17 @@ const instrumentTwo: Instrument = {
   filename: 'hihat.mp3',
   name: 'hihat',
 };
-const instruments: Instrument[] = [instrumentOne, instrumentTwo];
+const instrumentThree: Instrument = {
+  id: 'Silence',
+  symbol: '.',
+  filename: null,
+  name: null,
+};
+const instruments: Instrument[] = [
+  instrumentOne,
+  instrumentTwo,
+  instrumentThree,
+];
 let instrumentController: InstrumentController;
 
 describe('#getFilesToLoadFromSentence', () => {
@@ -27,7 +37,7 @@ describe('#getFilesToLoadFromSentence', () => {
 
   it('should return a list of filenames based on a sentence and a list of instruments', async () => {
     // Given
-    const sentence_OK: string = 'P (Ts P) Ts';
+    const sentence_OK: string = 'P (Ts P) Ts .';
     // When
     const result: string[] =
       instrumentController.getFilesToLoadFromSentence(sentence_OK);
@@ -38,7 +48,7 @@ describe('#getFilesToLoadFromSentence', () => {
 
   it('should throw an error because one of the symbols in the sentence does not match any instrument', async () => {
     // Given
-    const sentence_KO: string = 'P (Ts K) Ts';
+    const sentence_KO: string = 'P (Ts K) Ts .';
     // When - Then
     expect(() =>
       instrumentController.getFilesToLoadFromSentence(sentence_KO),
@@ -56,18 +66,23 @@ describe('#getPatternFromSentence', () => {
 
   it('should return a list of symbols based on a sentence and a list of instruments', async () => {
     // Given
-    const sentence_OK: string = 'P (Ts P) Ts';
+    const sentence_OK: string = 'P (Ts P) Ts .';
     // When
-    const result: NoteItem[] =
+    const result: SequenceNotes[] =
       instrumentController.getPatternFromSentence(sentence_OK);
     // Then
-    const expected: NoteItem[] = ['kickdrum', ['hihat', 'kickdrum'], 'hihat'];
+    const expected: SequenceNotes[] = [
+      'kickdrum',
+      ['hihat', 'kickdrum'],
+      'hihat',
+      null,
+    ];
     expect(result).toEqual(expected);
   });
 
   it('should throw an error because on of the symbols in the sentence does not match any instrument', async () => {
     // Given
-    const sentence_KO: string = 'P (Ts K) Ts';
+    const sentence_KO: string = 'P (Ts K) Ts .';
     // When - Then
     expect(() =>
       instrumentController.getPatternFromSentence(sentence_KO),

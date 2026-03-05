@@ -1,5 +1,11 @@
 [
   {
+    "id": "Silence",
+    "symbol": ".",
+    "filename": null,
+    "name": null
+  },
+  {
     "id": "Kickdrum",
     "symbol": "P",
     "filename": "kickdrum.mp3",

@@ -1,7 +1,7 @@
 import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
 import { Instrument } from '../../instruments/models/instrument-model';
 import { preparePattern } from '../../instruments/services/instrument-service';
-import { NoteItem } from '../../instruments/types/note-item';
+import { SequenceNotes } from '../../instruments/types/sequence-note';
 import { createAudioBuffers } from '../services/audio-service';
 
 export class AudioController {
@@ -52,10 +52,10 @@ export class AudioController {
   }
 
   private async createSequence() {
-    const pattern: NoteItem[] = await preparePattern(this.sentence);
+    const notes: SequenceNotes[] = await preparePattern(this.sentence);
     const seq = new this.Tone.Sequence((time: any, instrument: Instrument) => {
       this.players.player(instrument).start(time);
-    }, pattern).start(0);
+    }, notes).start(0);
   }
 
   public async playPattern(): Promise<void> {

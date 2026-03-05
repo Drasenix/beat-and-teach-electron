@@ -2,7 +2,7 @@ import { InstrumentDB } from '../../../../main/db/models/instrument-db';
 import adaptInstruments from '../models/instrument-adapter';
 import { Instrument } from '../models/instrument-model';
 import { InstrumentController } from '../controller/instrument-controller';
-import { NoteItem } from '../types/note-item';
+import { SequenceNotes } from '../types/sequence-note';
 
 export async function getAllInstruments(): Promise<Instrument[]> {
   const instruments: InstrumentDB[] =
@@ -16,7 +16,9 @@ export async function prepareFiles(sentence: string): Promise<string[]> {
   return instrumentController.getFilesToLoadFromSentence(sentence);
 }
 
-export async function preparePattern(sentence: string): Promise<NoteItem[]> {
+export async function preparePattern(
+  sentence: string,
+): Promise<SequenceNotes[]> {
   const instrumentController: InstrumentController =
     await InstrumentController.getInstance();
   return instrumentController.getPatternFromSentence(sentence);
