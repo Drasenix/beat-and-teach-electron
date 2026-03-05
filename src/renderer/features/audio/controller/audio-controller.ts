@@ -1,7 +1,7 @@
 import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
 import { Instrument } from '../../instruments/models/instrument-model';
-import { preparePattern } from '../../instruments/services/instrument-service';
-import { SequenceNotes } from '../../instruments/types/sequence-note';
+import { preparePattern } from '../../sequence/services/sequence-service';
+import { SequenceNotes } from '../../sequence/types/sequence-note';
 import { createAudioBuffers } from '../services/audio-service';
 
 export class AudioController {

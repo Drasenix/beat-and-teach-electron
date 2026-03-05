@@ -1,13 +1,14 @@
 import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
-import { prepareFiles } from '../../instruments/services/instrument-service';
+import { prepareFileNames } from '../../sequence/services/sequence-service';
 import { AudioController } from '../controller/audio-controller';
 
 export async function createAudioBuffers(
   sentence: string,
 ): Promise<AudioFileBuffer> {
+  const fileNames: string[] = await prepareFileNames(sentence);
   return await window.electron.ipcRenderer.invokeMessage(
     'get-audio-buffers',
-    await prepareFiles(sentence),
+    fileNames,
   );
 }
 export async function playPattern(
