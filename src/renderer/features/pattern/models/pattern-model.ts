@@ -4,10 +4,8 @@ export interface Pattern {
   sentence: string;
 }
 
-export function getDefaultPattern(): Pattern {
-  return {
-    id: '',
-    name: '',
-    sentence: '',
-  };
-}
+export const DEFAULT_PATTERN: Pattern = {
+  id: '',
+  name: '',
+  sentence: '',
+};

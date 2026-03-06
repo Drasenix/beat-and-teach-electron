@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { getDefaultPattern, Pattern } from '../models/pattern-model';
+import { DEFAULT_PATTERN, Pattern } from '../models/pattern-model';
 
 const usePattern = () => {
-  const [pattern, setPattern] = useState<Pattern>(getDefaultPattern());
+  const [pattern, setPattern] = useState<Pattern>(DEFAULT_PATTERN);
 
   const changePatternSentence = (event: any) => {
     setPattern({
