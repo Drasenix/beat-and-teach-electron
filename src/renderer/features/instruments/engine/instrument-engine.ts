@@ -1,10 +1,14 @@
 import { Instrument } from '../models/instrument-model';
-import { getAllInstruments } from '../services/instrument-service';
 import { InstrumentFile } from '../types/instrument-file';
 
 export class InstrumentEngine {
   static #instance: InstrumentEngine;
   private _instruments: Instrument[] = [];
+  private _initialized = false;
+
+  public get isInitialized(): boolean {
+    return this._initialized;
+  }
 
   public set instruments(value: Instrument[]) {
     this._instruments = value;
@@ -14,19 +18,19 @@ export class InstrumentEngine {
     return this._instruments;
   }
 
-  public static async getInstance(): Promise<InstrumentEngine> {
+  public static getInstance(): InstrumentEngine {
     if (!InstrumentEngine.#instance) {
       InstrumentEngine.#instance = new InstrumentEngine();
-      await InstrumentEngine.#instance.loadInstruments();
     }
     return InstrumentEngine.#instance;
   }
 
-  protected async loadInstruments() {
-    this.instruments = await getAllInstruments();
+  public loadInstruments(instruments: Instrument[]): void {
+    this.instruments = instruments;
+    this._initialized = true;
   }
 
-  public getInstrumentFileNameFromSymbol(symbol: string): string | never[] {
+  public getInstrumentFileNameFromSymbol(symbol: string): string | string[] {
     const instru: Instrument | undefined = this.instruments.find(
       (instrument: Instrument) => instrument.symbol === symbol,
     );

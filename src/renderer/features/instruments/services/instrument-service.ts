@@ -1,7 +1,8 @@
 import { InstrumentDB } from '../../../../main/db/models/instrument-db';
 import adaptInstruments from '../models/instrument-adapter';
+import { Instrument } from '../models/instrument-model';
 
-export async function getAllInstruments() {
+export async function getAllInstruments(): Promise<Instrument[]> {
   const instruments: InstrumentDB[] =
     await window.electron.ipcRenderer.invokeMessage('get-all-instruments');
 

@@ -3,13 +3,17 @@ import {
   changeTempo,
   playPattern,
   stopPattern,
-} from '../../audio/controller/audio-controller';
+} from '../../audio/facade/audio-facade';
 
 const useAudio = () => {
   const [playing, setPlaying] = useState<boolean>(false);
-  const playTrack = (sentence: string, bpm: number): void => {
-    playPattern(sentence, bpm);
-    setPlaying(true);
+  const playTrack = async (sentence: string, bpm: number): Promise<void> => {
+    try {
+      await playPattern(sentence, bpm);
+      setPlaying(true);
+    } catch (error) {
+      alert(error);
+    }
   };
 
   const stopTrack = (): void => {

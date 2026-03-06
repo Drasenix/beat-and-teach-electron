@@ -1,4 +1,4 @@
-import * as sequenceService from '../services/sequence-service';
+import * as sequenceFacade from '../service/sequence-service';
 import * as instrumentService from '../../instruments/services/instrument-service';
 import { SequenceNotes } from '../types/sequence-note';
 import { InstrumentDB } from '../../../../main/db/models/instrument-db';
@@ -41,8 +41,7 @@ describe('#prepareFileNames', () => {
     // Given
     const sentence_OK: string = 'P (Ts P) Ts .';
     // When
-    const result: string[] =
-      await sequenceService.prepareFileNames(sentence_OK);
+    const result: string[] = await sequenceFacade.prepareFileNames(sentence_OK);
     // Then
     const expectedResult: string[] = ['kickdrum.mp3', 'hihat.mp3'];
     expect(result).toEqual(expectedResult);
@@ -52,7 +51,7 @@ describe('#prepareFileNames', () => {
     // Given
     const sentence_KO: string = 'P (Ts K) Ts .';
     // When - Then
-    expect(sequenceService.prepareFileNames(sentence_KO)).rejects.toThrow(
+    expect(sequenceFacade.prepareFileNames(sentence_KO)).rejects.toThrow(
       `Le symbole K n'existe pas.`,
     );
   });
@@ -71,7 +70,7 @@ describe('#preparePattern', () => {
     const sentence_OK: string = 'P (Ts P) Ts .';
     // When
     const result: SequenceNotes[] =
-      await sequenceService.preparePattern(sentence_OK);
+      await sequenceFacade.preparePattern(sentence_OK);
     // Then
     const expected: SequenceNotes[] = [
       'kickdrum',
@@ -86,7 +85,7 @@ describe('#preparePattern', () => {
     // Given
     const sentence_KO: string = 'P (Ts K) Ts .';
     // When - Then
-    expect(sequenceService.preparePattern(sentence_KO)).rejects.toThrow(
+    expect(sequenceFacade.preparePattern(sentence_KO)).rejects.toThrow(
       `Le symbole K n'existe pas.`,
     );
   });
