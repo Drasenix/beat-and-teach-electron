@@ -18,8 +18,7 @@ async function prepareAudioEngine(
   const audioEngine: AudioEngine = AudioEngine.getInstance();
   try {
     audioEngine.setTempo(bpm);
-    audioEngine.buffers = await createAudioBuffers(sentence);
-    await audioEngine.createPlayers();
+    await audioEngine.createPlayers(await createAudioBuffers(sentence));
     await audioEngine.createSequence(await preparePattern(sentence));
   } catch (error: any) {
     throw new Error(`Erreur : ${error}`);

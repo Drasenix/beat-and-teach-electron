@@ -8,17 +8,9 @@ import * as Tone from 'tone';
 
 export class AudioEngine {
   static #instance: AudioEngine;
-  private _buffers?: AudioFileBuffer;
   private players?: Tone.Players;
 
   private constructor() {}
-
-  public get buffers(): AudioFileBuffer | undefined {
-    return this._buffers;
-  }
-  public set buffers(value: AudioFileBuffer | undefined) {
-    this._buffers = value;
-  }
 
   public static getInstance(): AudioEngine {
     if (!AudioEngine.#instance) {
@@ -31,13 +23,13 @@ export class AudioEngine {
     Tone.getTransport().bpm.value = bpm;
   }
 
-  public async createPlayers() {
+  public async createPlayers(buffers: AudioFileBuffer) {
     const context: Tone.Context = new Tone.Context();
     this.players = new Tone.Players();
 
-    for (const buffer in this.buffers) {
+    for (const buffer in buffers) {
       const audioBuffer = await context.decodeAudioData(
-        this.buffers[buffer] as ArrayBuffer,
+        buffers[buffer] as ArrayBuffer,
       );
       this.players.add(buffer, audioBuffer);
     }
