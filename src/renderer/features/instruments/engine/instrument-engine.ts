@@ -1,9 +1,9 @@
-import { getAllInstruments } from '../services/instrument-service';
 import { Instrument } from '../models/instrument-model';
+import { getAllInstruments } from '../services/instrument-service';
 import { InstrumentFile } from '../types/instrument-file';
 
-export class InstrumentController {
-  static #instance: InstrumentController;
+export class InstrumentEngine {
+  static #instance: InstrumentEngine;
   private _instruments: Instrument[] = [];
 
   public set instruments(value: Instrument[]) {
@@ -14,21 +14,19 @@ export class InstrumentController {
     return this._instruments;
   }
 
-  public static async getInstance(): Promise<InstrumentController> {
-    if (!InstrumentController.#instance) {
-      InstrumentController.#instance = new InstrumentController();
-      await InstrumentController.#instance.loadInstruments();
+  public static async getInstance(): Promise<InstrumentEngine> {
+    if (!InstrumentEngine.#instance) {
+      InstrumentEngine.#instance = new InstrumentEngine();
+      await InstrumentEngine.#instance.loadInstruments();
     }
-    return InstrumentController.#instance;
+    return InstrumentEngine.#instance;
   }
 
   protected async loadInstruments() {
     this.instruments = await getAllInstruments();
   }
 
-  public getInstrumentFileNameFromSymbol(
-    symbol: string,
-  ): string | never[] {
+  public getInstrumentFileNameFromSymbol(symbol: string): string | never[] {
     const instru: Instrument | undefined = this.instruments.find(
       (instrument: Instrument) => instrument.symbol === symbol,
     );

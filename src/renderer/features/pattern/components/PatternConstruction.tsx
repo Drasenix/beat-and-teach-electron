@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Pattern } from '../models/pattern-model';
 import PatternInputComponent from './PatternInput';
-import getAllPaterns from '../services/pattern-service';
 import usePattern from '../hooks/usePattern';
 import PatternChoices from './PatternChoices';
+import getPatterns from '../controller/pattern-controller';
 
 export default function PatternConstruction() {
   const { pattern, setPattern, changePatternSentence } = usePattern();
@@ -11,7 +11,7 @@ export default function PatternConstruction() {
 
   useEffect(() => {
     const fetchPattern = async () => {
-      const allPatterns: Pattern[] = await getAllPaterns();
+      const allPatterns: Pattern[] = await getPatterns();
       setPatterns(allPatterns);
     };
 

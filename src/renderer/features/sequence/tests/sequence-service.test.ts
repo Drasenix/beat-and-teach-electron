@@ -1,37 +1,40 @@
 import * as sequenceService from '../services/sequence-service';
 import * as instrumentService from '../../instruments/services/instrument-service';
-import { Instrument } from '../../instruments/models/instrument-model';
 import { SequenceNotes } from '../types/sequence-note';
+import { InstrumentDB } from '../../../../main/db/models/instrument-db';
+import { InstrumentEngine } from '../../instruments/engine/instrument-engine';
 
-const instrumentOne: Instrument = {
+const instrumentDBOne: InstrumentDB = {
   id: 'Kickdrum',
   symbol: 'P',
   filename: 'kickdrum.mp3',
   name: 'kickdrum',
 };
-const instrumentTwo: Instrument = {
+const instrumentDBTwo: InstrumentDB = {
   id: 'Hi Hat',
   symbol: 'Ts',
   filename: 'hihat.mp3',
   name: 'hihat',
 };
-const instrumentThree: Instrument = {
+const instrumentDBThree: InstrumentDB = {
   id: 'Silence',
   symbol: '.',
   filename: null,
   name: null,
 };
-const instruments: Instrument[] = [
-  instrumentOne,
-  instrumentTwo,
-  instrumentThree,
+const instrumentsDB: InstrumentDB[] = [
+  instrumentDBOne,
+  instrumentDBTwo,
+  instrumentDBThree,
 ];
+let instrumentEngine: InstrumentEngine;
 
 describe('#prepareFileNames', () => {
   beforeAll(async () => {
     jest
       .spyOn(instrumentService, 'getAllInstruments')
-      .mockResolvedValue(instruments);
+      .mockResolvedValue(instrumentsDB);
+    instrumentEngine = await InstrumentEngine.getInstance();
   });
 
   it('should return a list of filenames based on a sentence and a list of instruments', async () => {
@@ -59,7 +62,8 @@ describe('#preparePattern', () => {
   beforeAll(async () => {
     jest
       .spyOn(instrumentService, 'getAllInstruments')
-      .mockResolvedValue(instruments);
+      .mockResolvedValue(instrumentsDB);
+    instrumentEngine = await InstrumentEngine.getInstance();
   });
 
   it('should return a list of symbols based on a sentence and a list of instruments', async () => {

@@ -3,7 +3,7 @@ import {
   changeTempo,
   playPattern,
   stopPattern,
-} from '../../audio/services/audio-service';
+} from '../../audio/controller/audio-controller';
 
 const useAudio = () => {
   const [playing, setPlaying] = useState<boolean>(false);

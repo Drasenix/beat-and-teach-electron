@@ -1,10 +1,10 @@
 import { removeParenthesis, removeDuplicates } from '../../../utils/util';
-import { InstrumentController } from '../../instruments/controller/instrument-controller';
+import { InstrumentEngine } from '../../instruments/engine/instrument-engine';
 import { SequenceNotes, SequenceNote } from '../types/sequence-note';
 
 export async function prepareFileNames(sentence: string): Promise<string[]> {
-  const instrumentController: InstrumentController =
-    await InstrumentController.getInstance();
+  const instrumentController: InstrumentEngine =
+    await InstrumentEngine.getInstance();
 
   const sentenceWithOnlyInstruments: string = removeParenthesis(sentence);
   const symbols: string[] = removeDuplicates(
@@ -19,8 +19,8 @@ export async function prepareFileNames(sentence: string): Promise<string[]> {
 export async function preparePattern(
   sentence: string,
 ): Promise<SequenceNotes[]> {
-  const instrumentController: InstrumentController =
-    await InstrumentController.getInstance();
+  const instrumentController: InstrumentEngine =
+    await InstrumentEngine.getInstance();
   const result: SequenceNotes[] = [];
   const regex = /\(([^)]*)\)|(\S+)/g; // "hello (world foo) bar" --> ["hello", "(world foo)", "bar"]
   let match: RegExpExecArray | null;

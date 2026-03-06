@@ -1,45 +1,47 @@
-import { InstrumentController } from '../controller/instrument-controller';
-import { Instrument } from '../models/instrument-model';
-import * as instrumentService from '../../instruments/services/instrument-service';
-const instrumentOne: Instrument = {
+import { InstrumentEngine } from '../engine/instrument-engine';
+import { InstrumentDB } from '../../../../main/db/models/instrument-db';
+import * as instrumentService from '../services/instrument-service';
+
+const instrumentDBOne: InstrumentDB = {
   id: 'Kickdrum',
   symbol: 'P',
   filename: 'kickdrum.mp3',
   name: 'kickdrum',
 };
-const instrumentTwo: Instrument = {
+const instrumentDBTwo: InstrumentDB = {
   id: 'Hi Hat',
   symbol: 'Ts',
   filename: 'hihat.mp3',
   name: 'hihat',
 };
-const instrumentThree: Instrument = {
+const instrumentDBThree: InstrumentDB = {
   id: 'Silence',
   symbol: '.',
   filename: null,
   name: null,
 };
-const instruments: Instrument[] = [
-  instrumentOne,
-  instrumentTwo,
-  instrumentThree,
+const instrumentsDB: InstrumentDB[] = [
+  instrumentDBOne,
+  instrumentDBTwo,
+  instrumentDBThree,
 ];
-let instrumentController: InstrumentController;
+
+let instrumentEngine: InstrumentEngine;
 
 describe('#getInstrumentNameFromSymbol', () => {
   beforeAll(async () => {
     jest
       .spyOn(instrumentService, 'getAllInstruments')
-      .mockResolvedValue(instruments);
-    instrumentController = await InstrumentController.getInstance();
+      .mockResolvedValue(instrumentsDB);
+    instrumentEngine = await InstrumentEngine.getInstance();
   });
   it('should throw an error because the symbol does not match any instrument', async () => {
     // Given
     const symbol: string = 'K';
     // When - Then
-    expect(() =>
-      instrumentController.getInstrumentNameFromSymbol(symbol),
-    ).toThrow(`Le symbole K n'existe pas.`);
+    expect(() => instrumentEngine.getInstrumentNameFromSymbol(symbol)).toThrow(
+      `Le symbole K n'existe pas.`,
+    );
   });
 });
 
@@ -47,15 +49,15 @@ describe('#getInstrumentFileNameFromSymbol', () => {
   beforeAll(async () => {
     jest
       .spyOn(instrumentService, 'getAllInstruments')
-      .mockResolvedValue(instruments);
-    instrumentController = await InstrumentController.getInstance();
+      .mockResolvedValue(instrumentsDB);
+    instrumentEngine = await InstrumentEngine.getInstance();
   });
   it('should throw an error because the symbol does not match any instrument', async () => {
     // Given
     const symbol: string = 'K';
     // When - Then
     expect(() =>
-      instrumentController.getInstrumentFileNameFromSymbol(symbol),
+      instrumentEngine.getInstrumentFileNameFromSymbol(symbol),
     ).toThrow(`Le symbole K n'existe pas.`);
   });
 });

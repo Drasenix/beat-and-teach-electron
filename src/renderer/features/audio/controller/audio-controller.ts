@@ -1,80 +1,21 @@
-import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
-import { Instrument } from '../../instruments/models/instrument-model';
-import { preparePattern } from '../../sequence/services/sequence-service';
-import { SequenceNotes } from '../../sequence/types/sequence-note';
-import { createAudioBuffers } from '../services/audio-service';
+import { AudioEngine } from '../engine/audio-engine';
 
-export class AudioController {
-  static #instance: AudioController;
-  private sentence: string = '';
-  private buffers?: AudioFileBuffer;
-  private players?: any;
-  private Tone: any;
+export async function playPattern(
+  sentence: string,
+  bpm: number,
+): Promise<void> {
+  const audioController: AudioEngine = await AudioEngine.getInstance();
+  audioController.setSentence(sentence);
+  audioController.setTempo(bpm);
+  await audioController.playPattern();
+}
 
-  private constructor() {}
+export async function stopPattern(): Promise<void> {
+  const audioController: AudioEngine = await AudioEngine.getInstance();
+  audioController.stopPattern();
+}
 
-  public static async getInstance(): Promise<AudioController> {
-    if (!AudioController.#instance) {
-      AudioController.#instance = new AudioController();
-      await AudioController.#instance.importTone();
-    }
-    return AudioController.#instance;
-  }
-
-  public setSentence(sentence: string): void {
-    this.sentence = sentence;
-  }
-
-  public setTempo(bpm: number) {
-    this.Tone.Transport.bpm.value = bpm;
-  }
-
-  protected async importTone() {
-    this.Tone = await import('tone');
-  }
-
-  private async createAudioBuffers(): Promise<void> {
-    this.buffers = await createAudioBuffers(this.sentence);
-  }
-
-  private async createPlayers() {
-    const context = new this.Tone.Context();
-    this.players = new this.Tone.Players();
-
-    for (const buffer in this.buffers) {
-      const audioBuffer = await context.decodeAudioData(
-        this.buffers[buffer] as ArrayBuffer,
-      );
-      this.players.add(buffer, audioBuffer);
-    }
-
-    this.players.toDestination();
-  }
-
-  private async createSequence() {
-    const notes: SequenceNotes[] = await preparePattern(this.sentence);
-    const seq = new this.Tone.Sequence((time: any, instrument: Instrument) => {
-      this.players.player(instrument).start(time);
-    }, notes).start(0);
-  }
-
-  public async playPattern(): Promise<void> {
-    if (this.sentence === '') {
-      alert(`Erreur: Aucun pattern n'a été fourni.`);
-      return;
-    }
-    try {
-      await this.createAudioBuffers();
-      await this.createPlayers();
-      await this.createSequence();
-      this.Tone.getTransport().start();
-    } catch (error: any) {
-      alert(`Erreur : ${error}`);
-    }
-  }
-
-  public stopPattern(): void {
-    this.Tone.getTransport().stop();
-    this.Tone.getTransport().cancel(0);
-  }
+export async function changeTempo(bpm: number): Promise<void> {
+  const audioController: AudioEngine = await AudioEngine.getInstance();
+  audioController.setTempo(bpm);
 }
