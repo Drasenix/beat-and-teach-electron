@@ -3,7 +3,7 @@ import { Pattern } from '../models/pattern-model';
 import PatternInputComponent from './PatternInput';
 import usePattern from '../hooks/usePattern';
 import PatternChoices from './PatternChoices';
-import getPatterns from '../controller/pattern-controller';
+import getPatterns from '../facade/pattern-facade';
 
 export default function PatternConstruction() {
   const { pattern, setPattern, changePatternSentence } = usePattern();
