@@ -12,26 +12,6 @@ const configuration: webpack.Configuration = {
 
   stats: 'errors-only',
 
-  module: {
-    rules: [
-      {
-        test: /\.[jt]sx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            // Remove this line to enable type checking in webpack builds
-            transpileOnly: true,
-            compilerOptions: {
-              module: 'nodenext',
-              moduleResolution: 'nodenext',
-            },
-          },
-        },
-      },
-    ],
-  },
-
   output: {
     path: webpackPaths.srcPath,
     // https://github.com/webpack/webpack/issues/1114

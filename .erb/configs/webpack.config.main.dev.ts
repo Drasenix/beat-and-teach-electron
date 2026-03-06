@@ -21,6 +21,25 @@ const configuration: webpack.Configuration = {
 
   mode: 'development',
 
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true,
+            compilerOptions: {
+              module: 'nodenext',
+              moduleResolution: 'nodenext',
+            },
+          },
+        },
+      },
+    ],
+  },
+
   target: 'electron-main',
 
   entry: {

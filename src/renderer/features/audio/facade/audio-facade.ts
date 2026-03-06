@@ -15,9 +15,8 @@ async function prepareAudioEngine(
   sentence: string,
   bpm: number,
 ): Promise<AudioEngine> {
-  const audioEngine: AudioEngine = await AudioEngine.getInstance();
+  const audioEngine: AudioEngine = AudioEngine.getInstance();
   try {
-    audioEngine.setSentence(sentence);
     audioEngine.setTempo(bpm);
     audioEngine.buffers = await createAudioBuffers(sentence);
     await audioEngine.createPlayers();
@@ -32,16 +31,17 @@ export async function playPattern(
   sentence: string,
   bpm: number,
 ): Promise<void> {
+  if (!sentence) throw new Error('Aucun pattern fourni');
   const audioEngine: AudioEngine = await prepareAudioEngine(sentence, bpm);
   await audioEngine.playPattern();
 }
 
 export async function stopPattern(): Promise<void> {
-  const audioEngine: AudioEngine = await AudioEngine.getInstance();
+  const audioEngine: AudioEngine = AudioEngine.getInstance();
   audioEngine.stopPattern();
 }
 
 export async function changeTempo(bpm: number): Promise<void> {
-  const audioEngine: AudioEngine = await AudioEngine.getInstance();
+  const audioEngine: AudioEngine = AudioEngine.getInstance();
   audioEngine.setTempo(bpm);
 }

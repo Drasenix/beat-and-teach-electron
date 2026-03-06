@@ -29,6 +29,25 @@ const configuration: webpack.Configuration = {
     },
   },
 
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true,
+            compilerOptions: {
+              module: 'commonjs',
+              moduleResolution: 'node',
+            },
+          },
+        },
+      },
+    ],
+  },
+
   plugins: [
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.ANALYZE === 'true' ? 'server' : 'disabled',

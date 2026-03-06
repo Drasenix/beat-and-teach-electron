@@ -112,6 +112,21 @@ const configuration: webpack.Configuration = {
           'file-loader',
         ],
       },
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true,
+            compilerOptions: {
+              module: 'esnext',
+              moduleResolution: 'bundler',
+              jsx: 'react-jsx',
+            },
+          },
+        },
+      },
     ],
   },
   plugins: [

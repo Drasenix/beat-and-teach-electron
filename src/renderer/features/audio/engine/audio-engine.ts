@@ -1,13 +1,15 @@
 import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
 import { Instrument } from '../../instruments/models/instrument-model';
-import { SequenceNotes } from '../../sequence/types/sequence-note';
+import {
+  SequenceNote,
+  SequenceNotes,
+} from '../../sequence/types/sequence-note';
+import * as Tone from 'tone';
 
 export class AudioEngine {
   static #instance: AudioEngine;
-  private sentence: string = '';
-  private _buffers?: AudioFileBuffer | undefined;
-  private players?: any;
-  private Tone: any;
+  private _buffers?: AudioFileBuffer;
+  private players?: Tone.Players;
 
   private constructor() {}
 
@@ -18,29 +20,20 @@ export class AudioEngine {
     this._buffers = value;
   }
 
-  public static async getInstance(): Promise<AudioEngine> {
+  public static getInstance(): AudioEngine {
     if (!AudioEngine.#instance) {
       AudioEngine.#instance = new AudioEngine();
-      await AudioEngine.#instance.importTone();
     }
     return AudioEngine.#instance;
   }
 
-  public setSentence(sentence: string): void {
-    this.sentence = sentence;
-  }
-
   public setTempo(bpm: number) {
-    this.Tone.Transport.bpm.value = bpm;
-  }
-
-  protected async importTone() {
-    this.Tone = await import('tone');
+    Tone.getTransport().bpm.value = bpm;
   }
 
   public async createPlayers() {
-    const context = new this.Tone.Context();
-    this.players = new this.Tone.Players();
+    const context: Tone.Context = new Tone.Context();
+    this.players = new Tone.Players();
 
     for (const buffer in this.buffers) {
       const audioBuffer = await context.decodeAudioData(
@@ -53,20 +46,19 @@ export class AudioEngine {
   }
 
   public async createSequence(notes: SequenceNotes[]) {
-    new this.Tone.Sequence((time: any, instrument: Instrument) => {
-      this.players.player(instrument).start(time);
+    new Tone.Sequence((time: any, note: SequenceNote) => {
+      if (this.players && note) {
+        this.players.player(note).start(time);
+      }
     }, notes).start(0);
   }
 
   public async playPattern(): Promise<void> {
-    if (this.sentence === '') {
-      throw new Error(`Erreur: Aucun pattern n'a été fourni.`);
-    }
-    this.Tone.getTransport().start();
+    Tone.getTransport().start();
   }
 
   public stopPattern(): void {
-    this.Tone.getTransport().stop();
-    this.Tone.getTransport().cancel(0);
+    Tone.getTransport().stop();
+    Tone.getTransport().cancel(0);
   }
 }
