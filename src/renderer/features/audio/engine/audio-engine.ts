@@ -37,7 +37,7 @@ export class AudioEngine {
     this.players.toDestination();
   }
 
-  public async createSequence(notes: SequenceNotes[]) {
+  public createSequence(notes: SequenceNotes[]) {
     new Tone.Sequence((time: any, note: SequenceNote) => {
       if (this.players && note) {
         this.players.player(note).start(time);
@@ -45,11 +45,11 @@ export class AudioEngine {
     }, notes).start(0);
   }
 
-  public async playPattern(): Promise<void> {
+  public async play(): Promise<void> {
     Tone.getTransport().start();
   }
 
-  public stopPattern(): void {
+  public stop(): void {
     Tone.getTransport().stop();
     Tone.getTransport().cancel(0);
   }
