@@ -1,4 +1,4 @@
-import { InstrumentDB } from '../../../../main/db/models/instrument-db';
+import { InstrumentDB } from '../../../../shared/models/instrument-db';
 import adaptInstruments from '../adapters/instrument-adapter';
 import { Instrument } from '../models/instrument-model';
 

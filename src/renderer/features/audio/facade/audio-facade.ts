@@ -1,4 +1,4 @@
-import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
+import AudioFileBuffer from '../../../../shared/types/audio-file-buffer';
 import {
   prepareFileNames,
   preparePattern,

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import AudioFileBuffer from '../models/audio-file-buffer';
+import AudioFileBuffer from '../../../shared/types/audio-file-buffer';
 
 export function getAudioBufferFromFile(
   filename: string,

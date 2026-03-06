@@ -1,4 +1,4 @@
-import { InstrumentDB } from '../../../../main/db/models/instrument-db';
+import { InstrumentDB } from '../../../../shared/models/instrument-db';
 import { Instrument } from '../models/instrument-model';
 
 export default function adaptInstruments(

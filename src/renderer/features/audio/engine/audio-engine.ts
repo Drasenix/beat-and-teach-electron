@@ -1,5 +1,3 @@
-import AudioFileBuffer from '../../../../main/audio/models/audio-file-buffer';
-import { Instrument } from '../../instruments/models/instrument-model';
 import {
   SequenceNote,
   SequenceNotes,

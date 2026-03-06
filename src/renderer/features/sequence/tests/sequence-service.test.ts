@@ -1,7 +1,7 @@
 import * as sequenceFacade from '../service/sequence-service';
 import * as instrumentService from '../../instruments/services/instrument-service';
 import { SequenceNotes } from '../types/sequence-note';
-import { InstrumentDB } from '../../../../main/db/models/instrument-db';
+import { InstrumentDB } from '../../../../shared/models/instrument-db';
 import { InstrumentEngine } from '../../instruments/engine/instrument-engine';
 
 const instrumentDBOne: InstrumentDB = {

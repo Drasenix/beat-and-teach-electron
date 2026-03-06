@@ -1,5 +1,5 @@
 import { InstrumentEngine } from '../engine/instrument-engine';
-import { InstrumentDB } from '../../../../main/db/models/instrument-db';
+import { InstrumentDB } from '../../../../shared/models/instrument-db';
 import * as instrumentService from '../services/instrument-service';
 
 const instrumentDBOne: InstrumentDB = {

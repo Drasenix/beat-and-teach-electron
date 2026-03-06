@@ -1,10 +1,10 @@
 import { ipcMain } from 'electron';
 import { getAudioBuffersFromFiles } from './audio/services/audio-service';
-import { PatternDB } from './db/models/pattern-db';
+import { PatternDB } from '../shared/models/pattern-db';
 import fetchAllPatterns from './db/services/fetch-patterns';
-import { InstrumentDB } from './db/models/instrument-db';
+import { InstrumentDB } from '../shared/models/instrument-db';
 import fetchAllInstruments from './db/services/fetch-instruments';
-import AudioFileBuffer from './audio/models/audio-file-buffer';
+import AudioFileBuffer from '../shared/types/audio-file-buffer';
 
 export default function createIcpEvents() {
   ipcMain.handle(

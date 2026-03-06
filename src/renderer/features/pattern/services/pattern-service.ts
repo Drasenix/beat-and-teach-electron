@@ -1,4 +1,4 @@
-import { PatternDB } from '../../../../main/db/models/pattern-db';
+import { PatternDB } from '../../../../shared/models/pattern-db';
 import adaptPatterns from '../adapters/pattern-adapter';
 import { Pattern } from '../models/pattern-model';
 

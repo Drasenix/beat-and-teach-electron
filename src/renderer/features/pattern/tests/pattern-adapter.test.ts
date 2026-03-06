@@ -1,5 +1,5 @@
-import { PatternDB } from '../../../../main/db/models/pattern-db';
-import adaptPatterns from '../models/pattern-adapter';
+import { PatternDB } from '../../../../shared/models/pattern-db';
+import adaptPatterns from '../adapters/pattern-adapter';
 import { Pattern } from '../models/pattern-model';
 describe('adaptPatterns', () => {
   it('should adapt patterns correctly', () => {
