@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pattern } from '../models/pattern-model';
-import useAudio from '../hooks/useAudio';
+import useAudio from '../../audio/hooks/useAudio';
 
 interface PatternInputComponentProps {
   pattern: Pattern;
