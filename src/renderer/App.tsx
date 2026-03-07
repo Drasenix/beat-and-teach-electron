@@ -3,6 +3,7 @@ import './App.css';
 import Home from './components/Home';
 import PatternConstruction from './features/pattern/components/PatternConstruction';
 import Header from './components/Header';
+import InstrumentConfiguration from './features/instruments/components/InstrumentsConfiguration';
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/construction" element={<PatternConstruction />} />
+        <Route path="/configuration" element={<InstrumentConfiguration />} />
       </Routes>
     </Router>
   );

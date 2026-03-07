@@ -1,4 +1,5 @@
 import { InstrumentEngine } from '../engine/instrument-engine';
+import { Instrument } from '../models/instrument-model';
 import { getAllInstruments } from '../services/instrument-service';
 import { InstrumentFile } from '../types/instrument-file';
 
@@ -10,6 +11,11 @@ async function prepareInstrumentEngine(): Promise<InstrumentEngine> {
   }
   return instrumentEngine;
 }
+
+export async function getInstruments(): Promise<Instrument[]> {
+  return await getAllInstruments();
+}
+
 export async function getInstrumentNameFromSymbol(
   symbol: string,
 ): Promise<InstrumentFile> {
