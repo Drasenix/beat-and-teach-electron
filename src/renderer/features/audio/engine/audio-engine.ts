@@ -1,3 +1,4 @@
+import AudioFileBuffer from '../../../../shared/types/audio-file-buffer';
 import {
   SequenceNote,
   SequenceNotes,
