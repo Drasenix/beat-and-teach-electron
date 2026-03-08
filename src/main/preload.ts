@@ -5,7 +5,13 @@ import { contextBridge, ipcRenderer } from 'electron';
 export type Channels =
   | 'get-audio-buffers'
   | 'get-all-patterns'
-  | 'get-all-instruments';
+  | 'get-all-instruments'
+  | 'create-pattern'
+  | 'update-pattern'
+  | 'delete-pattern'
+  | 'create-instrument'
+  | 'update-instrument'
+  | 'delete-instrument';
 
 const electronHandler = {
   ipcRenderer: {

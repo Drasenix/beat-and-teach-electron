@@ -1,14 +1,15 @@
 import AudioFileBuffer from '../../../../shared/types/audio-file-buffer';
+import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
 import {
-  prepareFileNames,
+  prepareFilePaths,
   preparePattern,
 } from '../../sequence/facade/sequence-facade';
 import { AudioEngine } from '../engine/audio-engine';
 import { getAudioBuffers } from '../services/audio-service';
 
 async function createAudioBuffers(sentence: string): Promise<AudioFileBuffer> {
-  const fileNames: string[] = await prepareFileNames(sentence);
-  return await getAudioBuffers(fileNames);
+  const filePaths: InstrumentFilePath[] = await prepareFilePaths(sentence);
+  return await getAudioBuffers(filePaths);
 }
 
 async function prepareAudioEngine(

@@ -1,10 +1,11 @@
 import AudioFileBuffer from '../../../../shared/types/audio-file-buffer';
+import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
 
 export async function getAudioBuffers(
-  fileNames: string[],
+  filePaths: InstrumentFilePath[],
 ): Promise<AudioFileBuffer> {
   return await window.electron.ipcRenderer.invokeMessage(
     'get-audio-buffers',
-    fileNames,
+    filePaths,
   );
 }

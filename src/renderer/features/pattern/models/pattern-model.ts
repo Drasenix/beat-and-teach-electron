@@ -1,11 +1,12 @@
 export interface Pattern {
-  id: string;
+  id: number;
+  slug: string;
   name: string;
   sentence: string;
 }
-
 export const DEFAULT_PATTERN: Pattern = {
-  id: '',
+  id: 0,
+  slug: '',
   name: '',
   sentence: '',
 };

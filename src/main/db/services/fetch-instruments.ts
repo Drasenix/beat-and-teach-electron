@@ -1,6 +1,6 @@
 import { InstrumentDB } from '../../../shared/models/instrument-db';
-import instruments from '../mocks/instruments.json';
+import { getAllInstruments } from '../repositories/instrument-repository';
 
 export default function fetchAllInstruments(): InstrumentDB[] {
-  return instruments;
+  return getAllInstruments();
 }

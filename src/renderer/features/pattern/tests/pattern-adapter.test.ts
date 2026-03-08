@@ -5,12 +5,14 @@ describe('adaptPatterns', () => {
   it('should adapt patterns correctly', () => {
     // Given
     const pattern1: PatternDB = {
-      id: 'drum-and-bass',
+      id: 1,
+      slug: 'drum-and-bass',
       name: 'drum and bass',
       sentence: 'P Ts K P Ts K P',
     };
     const pattern2: PatternDB = {
-      id: 'dubstep',
+      id: 2,
+      slug: 'dubstep',
       name: 'dubstep',
       sentence: 'P (Ts P) Ts P K (Ts P) Ts P K Ts',
     };
@@ -19,12 +21,14 @@ describe('adaptPatterns', () => {
     const result: Pattern[] = adaptPatterns(tested);
     // Then
     const pattern1Expected: Pattern = {
-      id: 'drum-and-bass',
+      id: 1,
+      slug: 'drum-and-bass',
       name: 'drum and bass',
       sentence: 'P Ts K P Ts K P',
     };
     const pattern2Expected: Pattern = {
-      id: 'dubstep',
+      id: 2,
+      slug: 'dubstep',
       name: 'dubstep',
       sentence: 'P (Ts P) Ts P K (Ts P) Ts P K Ts',
     };

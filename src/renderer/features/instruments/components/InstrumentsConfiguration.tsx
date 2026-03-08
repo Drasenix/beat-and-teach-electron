@@ -8,7 +8,10 @@ export default function InstrumentConfiguration() {
       <ul>
         {instruments.map((instrument) => (
           <li key={instrument.id}>
-            {instrument.symbol} - {instrument.id} - {instrument.filename}
+            <h3>
+              {instrument.symbol} - {instrument.name} - {instrument.slug} -{' '}
+              {instrument.filepath}
+            </h3>
           </li>
         ))}
       </ul>

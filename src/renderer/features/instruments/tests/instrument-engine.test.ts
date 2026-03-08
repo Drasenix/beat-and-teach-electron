@@ -3,21 +3,24 @@ import { InstrumentDB } from '../../../../shared/models/instrument-db';
 import * as instrumentService from '../services/instrument-service';
 
 const instrumentDBOne: InstrumentDB = {
-  id: 'Kickdrum',
+  id: 1,
+  slug: 'Kickdrum',
   symbol: 'P',
-  filename: 'kickdrum.mp3',
+  filepath: './assets/audio/kickdrum.mp3',
   name: 'kickdrum',
 };
 const instrumentDBTwo: InstrumentDB = {
-  id: 'Hi Hat',
+  id: 2,
+  slug: 'Hi Hat',
   symbol: 'Ts',
-  filename: 'hihat.mp3',
+  filepath: './assets/audio/hihat.mp3',
   name: 'hihat',
 };
 const instrumentDBThree: InstrumentDB = {
-  id: 'Silence',
+  id: 3,
+  slug: 'Silence',
   symbol: '.',
-  filename: null,
+  filepath: null,
   name: null,
 };
 const instrumentsDB: InstrumentDB[] = [
@@ -45,7 +48,7 @@ describe('#getInstrumentNameFromSymbol', () => {
   });
 });
 
-describe('#getInstrumentFileNameFromSymbol', () => {
+describe('#getInstrumentFilePathsFromSymbol', () => {
   beforeAll(async () => {
     jest
       .spyOn(instrumentService, 'getAllInstruments')
@@ -57,7 +60,7 @@ describe('#getInstrumentFileNameFromSymbol', () => {
     const symbol: string = 'K';
     // When - Then
     expect(() =>
-      instrumentEngine.getInstrumentFileNameFromSymbol(symbol),
+      instrumentEngine.getInstrumentFilePathsFromSymbol(symbol),
     ).toThrow(`Le symbole K n'existe pas.`);
   });
 });

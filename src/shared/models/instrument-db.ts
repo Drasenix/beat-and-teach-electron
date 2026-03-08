@@ -1,6 +1,7 @@
 export interface InstrumentDB {
-  id: string;
+  id: number;
+  slug: string;
   symbol: string;
-  filename: string | null;
   name: string | null;
+  filepath: string | null;
 }

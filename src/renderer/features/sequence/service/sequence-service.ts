@@ -1,20 +1,22 @@
 import { removeParenthesis, removeDuplicates } from '../../../utils/util';
 import {
-  getInstrumentFileNameFromSymbol,
+  getInstrumentFilePathsFromSymbol,
   getInstrumentNameFromSymbol,
 } from '../../instruments/facade/instrument-facade';
+import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
 import { SequenceNotes, SequenceNote } from '../types/sequence-note';
 
-export async function prepareFileNames(sentence: string): Promise<string[]> {
+export async function prepareFilePaths(
+  sentence: string,
+): Promise<InstrumentFilePath[]> {
   const sentenceWithOnlyInstruments: string = removeParenthesis(sentence);
   const symbols: string[] = removeDuplicates(
     sentenceWithOnlyInstruments.split(' '),
   );
-  const resolved: (string | string[])[] = await Promise.all(
-    symbols.map((symbol) => getInstrumentFileNameFromSymbol(symbol)),
+  const resolved: InstrumentFilePath[][] = await Promise.all(
+    symbols.map((symbol) => getInstrumentFilePathsFromSymbol(symbol)),
   );
-  const fileNames: string[] = resolved.flat();
-  return fileNames;
+  return resolved.flat();
 }
 
 export async function preparePattern(

@@ -1,6 +1,6 @@
 import { PatternDB } from '../../../shared/models/pattern-db';
-import patterns from '../mocks/patterns.json';
+import { getAllPatterns } from '../repositories/pattern-repository';
 
 export default function fetchAllPatterns(): PatternDB[] {
-  return patterns;
+  return getAllPatterns();
 }

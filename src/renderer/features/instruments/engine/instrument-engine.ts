@@ -1,5 +1,6 @@
 import { Instrument } from '../models/instrument-model';
 import { InstrumentFile } from '../types/instrument-file';
+import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
 
 export class InstrumentEngine {
   static #instance: InstrumentEngine;
@@ -30,12 +31,12 @@ export class InstrumentEngine {
     this._initialized = true;
   }
 
-  public getInstrumentFileNameFromSymbol(symbol: string): string | string[] {
-    const instru: Instrument | undefined = this.instruments.find(
-      (instrument: Instrument) => instrument.symbol === symbol,
-    );
+  public getInstrumentFilePathsFromSymbol(
+    symbol: string,
+  ): InstrumentFilePath[] {
+    const instru = this.instruments.find((i) => i.symbol === symbol);
     if (instru) {
-      return instru.filename ? instru.filename : [];
+      return [{ name: instru.name, filepath: instru.filepath }];
     }
     throw new Error(`Le symbole ${symbol} n'existe pas.`);
   }

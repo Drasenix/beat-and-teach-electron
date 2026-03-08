@@ -1,5 +1,6 @@
 export interface PatternDB {
-  id: string;
+  id: number;
+  slug: string;
   name: string;
   sentence: string;
 }

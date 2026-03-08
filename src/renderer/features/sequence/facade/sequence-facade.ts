@@ -1,11 +1,14 @@
+import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
 import {
-  prepareFileNames as prepareFileNamesService,
+  prepareFilePaths as prepareFilePathsService,
   preparePattern as preparePatternService,
 } from '../service/sequence-service';
 import { SequenceNotes } from '../types/sequence-note';
 
-export async function prepareFileNames(sentence: string): Promise<string[]> {
-  return await prepareFileNamesService(sentence);
+export async function prepareFilePaths(
+  sentence: string,
+): Promise<InstrumentFilePath[]> {
+  return await prepareFilePathsService(sentence);
 }
 
 export async function preparePattern(

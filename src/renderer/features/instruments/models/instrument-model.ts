@@ -1,8 +1,9 @@
 import { InstrumentFile } from '../types/instrument-file';
 
 export interface Instrument {
-  id: string;
+  id: number;
+  slug: string;
   symbol: string;
-  filename: InstrumentFile;
+  filepath: InstrumentFile;
   name: InstrumentFile;
 }
