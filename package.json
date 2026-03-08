@@ -1,5 +1,6 @@
 {
-  "name": "Beat and Teach It",
+  "name": "beat-and-teach-electron",
+  "productName": "Beat and Teach It",
   "description": "A foundation for scalable desktop apps",
   "keywords": [
     "electron",
