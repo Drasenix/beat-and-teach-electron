@@ -4,6 +4,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 export type Channels =
   | 'get-audio-buffers'
+  | 'open-file-dialog'
   | 'get-all-patterns'
   | 'get-all-instruments'
   | 'create-pattern'

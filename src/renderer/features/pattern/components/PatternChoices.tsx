@@ -1,8 +1,8 @@
 import { Pattern } from '../models/pattern-model';
 
-interface PatternChoicesProps {
+type PatternChoicesProps = {
   patterns: Pattern[];
-  selectPattern: (id: string) => void;
+  selectPattern: (id: number) => void;
 }
 export default function PatternChoices(props: PatternChoicesProps) {
   const { patterns, selectPattern } = props;

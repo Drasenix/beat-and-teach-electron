@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { dialog, ipcMain } from 'electron';
 import { getAudioBuffersFromFiles } from './audio/services/audio-service';
 import { PatternDB } from '../shared/models/pattern-db';
 import fetchAllPatterns from './db/services/fetch-patterns';
@@ -27,6 +27,13 @@ export default function createIcpEvents() {
       return getAudioBuffersFromFiles(filepaths);
     },
   );
+  ipcMain.handle('open-file-dialog', async (): Promise<string | null> => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [{ name: 'Audio', extensions: ['mp3', 'wav', 'ogg'] }],
+    });
+    return result.canceled ? null : result.filePaths[0];
+  });
 
   // Patterns
 
@@ -66,7 +73,7 @@ export default function createIcpEvents() {
     'create-instrument',
     async (
       event,
-      instrument: Omit<InstrumentDB, 'id'>,
+      instrument: Omit<InstrumentDB, 'id' | 'slug'>,
     ): Promise<InstrumentDB> => {
       return createInstrument(instrument);
     },

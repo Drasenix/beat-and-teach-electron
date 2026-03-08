@@ -10,3 +10,8 @@ export default function adaptInstruments(instruments: InstrumentDB[]): Instrumen
     filepath,
   }));
 }
+
+export function adaptInstrument(instrument: InstrumentDB): Instrument {
+  const { id, slug, symbol, name, filepath } = instrument;
+  return { id, slug, symbol, name, filepath };
+}

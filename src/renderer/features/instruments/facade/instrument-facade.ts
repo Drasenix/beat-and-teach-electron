@@ -1,8 +1,13 @@
 import { InstrumentEngine } from '../engine/instrument-engine';
 import { Instrument } from '../models/instrument-model';
-import { getAllInstruments } from '../services/instrument-service';
+import {
+  createInstrumentAPI,
+  getAllInstruments,
+} from '../services/instrument-service';
 import { InstrumentFile } from '../types/instrument-file';
 import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
+import { InstrumentDB } from '../../../../shared/models/instrument-db';
+import { adaptInstrument } from '../adapters/instrument-adapter';
 
 async function prepareInstrumentEngine(): Promise<InstrumentEngine> {
   const instrumentEngine = InstrumentEngine.getInstance();
@@ -29,4 +34,15 @@ export async function getInstrumentFilePathsFromSymbol(
 ): Promise<InstrumentFilePath[]> {
   const instrumentEngine = await prepareInstrumentEngine();
   return instrumentEngine.getInstrumentFilePathsFromSymbol(symbol);
+}
+
+export async function createInstrument(
+  instrument: Omit<Instrument, 'id' | 'slug'>,
+): Promise<Instrument> {
+  const created = await createInstrumentAPI({
+    symbol: instrument.symbol,
+    name: instrument.name,
+    filepath: instrument.filepath,
+  });
+  return adaptInstrument(created);
 }

@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import useInstruments from '../hooks/useInstruments';
+import AddInstrumentForm from './AddInstrumentForm';
 
 export default function InstrumentConfiguration() {
-  const { instruments } = useInstruments();
+  const [addingInstrument, setAddingInstrument] = useState(false);
+  const { instruments, addNewInstrument, openFileDialog } = useInstruments();
   return (
     <div>
       <h2>Config</h2>
@@ -15,6 +18,16 @@ export default function InstrumentConfiguration() {
           </li>
         ))}
       </ul>
+      <button onClick={() => setAddingInstrument(true)}>
+        Ajouter un instrument
+      </button>
+      {addingInstrument && (
+        <AddInstrumentForm
+          onAdd={addNewInstrument}
+          onCancel={() => setAddingInstrument(false)}
+          onOpenFileDialog={openFileDialog}
+        />
+      )}
     </div>
   );
 }

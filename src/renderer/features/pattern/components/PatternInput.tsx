@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Pattern } from '../models/pattern-model';
 import useAudio from '../../audio/hooks/useAudio';
 
-interface PatternInputComponentProps {
+type PatternInputComponentProps = {
   pattern: Pattern;
   changePatternSentence: (event: any) => void;
-}
+};
 
 export default function PatternInputComponent(
   props: PatternInputComponentProps,

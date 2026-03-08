@@ -8,3 +8,12 @@ export async function getAllInstruments(): Promise<Instrument[]> {
 
   return adaptInstruments(instruments);
 }
+
+export async function createInstrumentAPI(
+  instrument: Omit<InstrumentDB, 'id' | 'slug'>,
+): Promise<InstrumentDB> {
+  return window.electron.ipcRenderer.invokeMessage(
+    'create-instrument',
+    instrument,
+  );
+}

@@ -8,7 +8,7 @@ export default function PatternConstruction() {
   const { pattern, setPattern, changePatternSentence } = usePattern();
   const { patterns } = usePatterns();
 
-  const selectPattern = (id: string): void => {
+  const selectPattern = (id: number): void => {
     const selectedPattern: Pattern | undefined = patterns.find(
       (pat) => pat.id === id,
     );

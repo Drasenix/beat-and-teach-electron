@@ -22,3 +22,23 @@ describe('#removeParenthesis', () => {
     expect(result).toEqual(expected);
   });
 });
+
+describe('#toSnakeCase', () => {
+  it('should convert a name to a snake case equivalent', () => {
+    // Given
+    const tested: string = 'Hi Hat';
+    // When
+    const result: string = util.toSnakeCase(tested);
+    // Then
+    expect(result).toEqual('hi-hat');
+  });
+
+  it('should handle multiple spaces', () => {
+    // Given
+    const tested: string = 'boom  bap';
+    // When
+    const result: string = util.toSnakeCase(tested);
+    // Then
+    expect(result).toEqual('boom-bap');
+  });
+});
