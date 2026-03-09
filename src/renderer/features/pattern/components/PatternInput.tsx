@@ -39,7 +39,7 @@ export default function PatternInputComponent(
       <div className="w-full max-w-2xl mt-6 flex items-center gap-4">
         <button
           type="button"
-          disabled={playing}
+          disabled={playing || !pattern.sentence}
           onClick={() => playTrack(pattern.sentence, bpm)}
           className="btn-primary"
         >

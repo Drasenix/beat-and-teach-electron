@@ -7,6 +7,7 @@ const usePattern = () => {
   const changePatternSentence = (event: any) => {
     setPattern({
       id: pattern.id,
+      slug: pattern.slug,
       name: pattern.name,
       sentence: event.target.value,
     });
