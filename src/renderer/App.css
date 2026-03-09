@@ -24,4 +24,14 @@
            text-text-accent font-mono px-4 py-2 rounded-lg
            placeholder-text-secondary transition-colors duration-200;
   }
+
+  .nav-item {
+    @apply w-10 h-10 flex items-center justify-center rounded-lg
+           font-mono text-lg transition-colors duration-200
+           text-text-secondary hover:text-primary hover:bg-background;
+  }
+
+  .nav-item-active {
+    @apply bg-primary text-background hover:text-background;
+  }
 }

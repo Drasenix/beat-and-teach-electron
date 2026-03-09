@@ -10,6 +10,7 @@ export default function App() {
     <div className="bg-background min-h-screen">
       <Router>
         <Header />
+        <div className="pl-16" />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/construction" element={<PatternConstruction />} />

@@ -1,14 +1,41 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Header() {
+  const location = useLocation();
+
+  const navItems = [
+    { to: '/construction', label: '▶', title: 'Pattern' },
+    { to: '/configuration', label: '⚙', title: 'Instruments' },
+  ];
+
   return (
-    <header className="w-full bg-surface border-b border-border px-8 py-4">
+    <aside
+      className="fixed left-0 top-0 h-screen w-16 bg-surface border-r border-border
+                      flex flex-col items-center py-6 gap-6 z-10"
+    >
+      {/* Logo / Home */}
       <Link
         to="/"
-        className="section-title hover:opacity-70 transition-opacity duration-200"
+        className="w-8 h-8 flex items-center justify-center text-primary font-bold
+                   font-mono text-lg hover:opacity-70 transition-opacity duration-200"
+        title="Home"
       >
-        ← Home
+        B
       </Link>
-    </header>
+
+      <div className="w-6 border-t border-border" />
+
+      {/* Navigation */}
+      {navItems.map(({ to, label, title }) => (
+        <Link
+          key={to}
+          to={to}
+          title={title}
+          className={`nav-item ${location.pathname === to ? 'nav-item-active' : ''}`}
+        >
+          {label}
+        </Link>
+      ))}
+    </aside>
   );
 }
