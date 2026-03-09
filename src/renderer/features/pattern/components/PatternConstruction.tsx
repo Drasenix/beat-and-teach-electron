@@ -18,7 +18,7 @@ export default function PatternConstruction() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center p-8">
       <PatternChoices patterns={patterns} selectPattern={selectPattern} />
       <PatternInputComponent
         pattern={pattern}

@@ -38,32 +38,80 @@ export default function AddInstrumentForm({
   };
 
   return (
-    <div>
-      <input
-        placeholder="symbol"
-        value={symbol}
-        onChange={(e) => setSymbol(e.target.value)}
-      />
-      <input
-        placeholder="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <div>
-        <button onClick={handleSelectFile}>
-          Sélectionner un fichier audio
-        </button>
-        {filepath && <span>{filepath}</span>}
+    <div className="bg-surface border border-border rounded-lg p-6 mt-4">
+      <h3 className="text-xs font-mono text-primary uppercase tracking-widest mb-4">
+        Nouvel instrument
+      </h3>
+
+      <div className="flex flex-col gap-3">
+        <input
+          placeholder="Symbole (ex: P)"
+          value={symbol}
+          onChange={(e) => setSymbol(e.target.value)}
+          className="bg-background border border-border focus:border-primary focus:outline-none
+                     text-text-accent font-mono px-4 py-2 rounded-lg placeholder-text-secondary
+                     transition-colors duration-200"
+        />
+        <input
+          placeholder="Nom (ex: Kickdrum)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="bg-background border border-border focus:border-primary focus:outline-none
+                     text-text-accent font-mono px-4 py-2 rounded-lg placeholder-text-secondary
+                     transition-colors duration-200"
+        />
+
+        {/* Sélection fichier */}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleSelectFile}
+            className="px-4 py-2 bg-background border border-border hover:border-primary
+                       text-text-secondary hover:text-primary font-mono text-sm
+                       rounded-lg transition-colors duration-200"
+          >
+            Sélectionner un fichier
+          </button>
+          {filepath && (
+            <span className="text-text-secondary text-xs font-mono truncate">
+              {filepath}
+            </span>
+          )}
+        </div>
+
+        {/* Erreurs */}
+        {errors.length > 0 && (
+          <ul className="flex flex-col gap-1">
+            {errors.map((error) => (
+              <li key={error} className="text-red-400 text-xs font-mono">
+                {error}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Actions */}
+        <div className="flex gap-3 mt-2">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="px-6 py-2 bg-primary hover:opacity-90 text-background
+                       font-bold font-mono rounded-lg uppercase tracking-widest
+                       transition-opacity duration-200"
+          >
+            Ajouter
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-6 py-2 bg-surface border border-border hover:border-primary
+                       text-text-secondary hover:text-primary font-mono
+                       rounded-lg uppercase tracking-widest transition-colors duration-200"
+          >
+            Annuler
+          </button>
+        </div>
       </div>
-      {errors.length > 0 && (
-        <ul>
-          {errors.map((error) => (
-            <li key={error}>{error}</li>
-          ))}
-        </ul>
-      )}
-      <button onClick={handleSubmit}>Ajouter</button>
-      <button onClick={onCancel}>Annuler</button>
     </div>
   );
 }

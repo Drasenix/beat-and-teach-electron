@@ -7,13 +7,15 @@ import InstrumentConfiguration from './features/instruments/components/Instrumen
 
 export default function App() {
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/construction" element={<PatternConstruction />} />
-        <Route path="/configuration" element={<InstrumentConfiguration />} />
-      </Routes>
-    </Router>
+    <div className="bg-background min-h-screen">
+      <Router>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/construction" element={<PatternConstruction />} />
+          <Route path="/configuration" element={<InstrumentConfiguration />} />
+        </Routes>
+      </Router>
+    </div>
   );
 }
