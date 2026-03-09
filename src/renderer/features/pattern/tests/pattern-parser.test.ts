@@ -1,0 +1,73 @@
+import { createToken, createGroup, parseTokens } from '../utils/pattern-parser';
+
+describe('#createToken', () => {
+  it('should create a valid token when symbol exists', () => {
+    const result = createToken('P', ['P', 'Ts', 'K'], 0);
+    expect(result).toEqual({
+      id: 'token-0',
+      symbol: 'P',
+      valid: true,
+      isGroup: false,
+    });
+  });
+
+  it('should create an invalid token when symbol does not exist', () => {
+    const result = createToken('X', ['P', 'Ts', 'K'], 1);
+    expect(result).toEqual({
+      id: 'token-1',
+      symbol: 'X',
+      valid: false,
+      isGroup: false,
+    });
+  });
+});
+
+describe('#createGroup', () => {
+  it('should create a valid group when all symbols exist', () => {
+    const result = createGroup('Ts P', ['P', 'Ts', 'K'], 0);
+    expect(result.isGroup).toBe(true);
+    expect(result.valid).toBe(true);
+    expect(result.tokens).toHaveLength(2);
+    expect(result.tokens?.[0].symbol).toBe('Ts');
+    expect(result.tokens?.[1].symbol).toBe('P');
+  });
+
+  it('should create an invalid group when one symbol does not exist', () => {
+    const result = createGroup('Ts X', ['P', 'Ts', 'K'], 0);
+    expect(result.isGroup).toBe(true);
+    expect(result.valid).toBe(false);
+  });
+});
+
+describe('#parseTokens', () => {
+  it('should parse a simple sentence', () => {
+    const result = parseTokens('P Ts K', ['P', 'Ts', 'K']);
+    expect(result).toHaveLength(3);
+    expect(result[0].symbol).toBe('P');
+    expect(result[1].symbol).toBe('Ts');
+    expect(result[2].symbol).toBe('K');
+  });
+
+  it('should parse a sentence with a group', () => {
+    const result = parseTokens('P (Ts P) K', ['P', 'Ts', 'K']);
+    expect(result).toHaveLength(3);
+    expect(result[1].isGroup).toBe(true);
+    expect(result[1].tokens).toHaveLength(2);
+  });
+
+  it('should mark invalid symbols', () => {
+    const result = parseTokens('P X K', ['P', 'Ts', 'K']);
+    expect(result[1].valid).toBe(false);
+  });
+
+  it('should return empty array for empty sentence', () => {
+    const result = parseTokens('', ['P', 'Ts', 'K']);
+    expect(result).toHaveLength(0);
+  });
+
+  it('should mark group as invalid if it contains an invalid symbol', () => {
+    const result = parseTokens('(P X)', ['P', 'Ts', 'K']);
+    expect(result[0].isGroup).toBe(true);
+    expect(result[0].valid).toBe(false);
+  });
+});
