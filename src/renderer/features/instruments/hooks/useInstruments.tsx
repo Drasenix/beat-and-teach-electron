@@ -1,17 +1,9 @@
-import { useEffect, useState } from 'react';
 import { Instrument } from '../models/instrument-model';
-import { createInstrument, getInstruments } from '../facade/instrument-facade';
+import { createInstrument } from '../facade/instrument-facade';
+import { useInstrumentsContext } from '../contexts/InstrumentsContext';
 
 const useInstruments = () => {
-  const [instruments, setInstruments] = useState<Instrument[]>([]);
-
-  useEffect(() => {
-    const fetchPattern = async () => {
-      setInstruments(await getInstruments());
-    };
-
-    fetchPattern();
-  }, []);
+  const { instruments, setInstruments, error } = useInstrumentsContext();
 
   const addNewInstrument = async (
     instrument: Omit<Instrument, 'id' | 'slug'>,
@@ -24,7 +16,7 @@ const useInstruments = () => {
     return window.electron.ipcRenderer.invokeMessage('open-file-dialog');
   };
 
-  return { instruments, addNewInstrument, openFileDialog };
+  return { instruments, addNewInstrument, openFileDialog, error };
 };
 
 export default useInstruments;

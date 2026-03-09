@@ -4,12 +4,15 @@ import AddInstrumentForm from './AddInstrumentForm';
 
 export default function InstrumentConfiguration() {
   const [addingInstrument, setAddingInstrument] = useState(false);
-  const { instruments, addNewInstrument, openFileDialog } = useInstruments();
+  const { instruments, addNewInstrument, openFileDialog, error } =
+    useInstruments();
 
   return (
     <div className="flex flex-col items-center p-8">
       <div className="w-full max-w-2xl">
         <h2 className="section-title mb-6">Instruments</h2>
+
+        {error && <div className="w-full mb-6 error-message">{error}</div>}
 
         <ul className="flex flex-col gap-2 mb-6">
           {instruments.map((instrument) => (
@@ -24,7 +27,7 @@ export default function InstrumentConfiguration() {
                 {instrument.name}
               </span>
               <span className="text-text-secondary text-xs font-mono truncate max-w-xs">
-                {instrument.filepath ?? '—'}
+                {instrument.filepath ?? ''}
               </span>
             </li>
           ))}

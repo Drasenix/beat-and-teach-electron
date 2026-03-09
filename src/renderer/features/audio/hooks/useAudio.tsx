@@ -1,9 +1,5 @@
 import { useState } from 'react';
-import {
-  changeTempo,
-  playPattern,
-  stopPattern,
-} from '../../audio/facade/audio-facade';
+import { changeTempo, playPattern, stopPattern } from '../facade/audio-facade';
 
 const useAudio = () => {
   const [playing, setPlaying] = useState<boolean>(false);

@@ -11,8 +11,9 @@
 
   .btn-secondary {
     @apply px-4 py-2 bg-surface border border-border hover:border-primary
-           text-text-secondary hover:text-primary font-mono text-sm
-           rounded-lg transition-colors duration-200 uppercase tracking-widest;
+         text-text-secondary hover:text-primary font-mono text-sm
+         rounded-lg transition-colors duration-200 uppercase tracking-widest
+         disabled:opacity-30 disabled:cursor-not-allowed;
   }
 
   .section-title {
@@ -33,5 +34,9 @@
 
   .nav-item-active {
     @apply bg-primary text-background hover:text-background;
+  }
+
+  .error-message {
+    @apply px-4 py-3 bg-surface border border-red-400 rounded-lg text-red-400 text-xs font-mono;
   }
 }

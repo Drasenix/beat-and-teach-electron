@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Pattern } from '../models/pattern-model';
 import useAudio from '../../audio/hooks/useAudio';
+import useInstruments from '../../instruments/hooks/useInstruments';
 
 type PatternInputComponentProps = {
   pattern: Pattern;
@@ -12,6 +13,7 @@ export default function PatternInputComponent(
 ) {
   const { pattern, changePatternSentence } = props;
   const { playing, playTrack, stopTrack, changeBpm } = useAudio();
+  const { instruments, error } = useInstruments();
   const [bpm, setBPM] = useState<number>(100);
 
   const changeBPM = (event: any): void => {
@@ -56,7 +58,6 @@ export default function PatternInputComponent(
           ■ Stop
         </button>
 
-        {/* BPM */}
         <div className="flex-1 flex flex-col gap-1">
           <div className="flex justify-between text-xs font-mono">
             <span className="text-primary uppercase tracking-widest">BPM</span>
@@ -75,23 +76,25 @@ export default function PatternInputComponent(
         </div>
       </div>
 
+      {error && (
+        <div className="w-full max-w-2xl mt-4 error-message">{error}</div>
+      )}
+
       {/* Légende instruments */}
       <div className="w-full max-w-2xl mt-8 p-4 bg-surface rounded-lg border border-border">
         <p className="section-title mb-2">Symboles disponibles</p>
         <div className="flex flex-wrap gap-3">
-          {[
-            { symbol: 'P', name: 'Kickdrum' },
-            { symbol: 'Ts', name: 'Hi-hat' },
-            { symbol: 'Pf', name: 'Snare' },
-            { symbol: 'K', name: 'Rimshot' },
-            { symbol: '.', name: 'Silence' },
-          ].map(({ symbol, name }) => (
+          {instruments.map((instrument) => (
             <div
-              key={symbol}
+              key={instrument.id}
               className="flex items-center gap-2 bg-background px-3 py-1 rounded-full border border-border"
             >
-              <span className="text-primary font-mono font-bold">{symbol}</span>
-              <span className="text-text-secondary text-xs">{name}</span>
+              <span className="text-primary font-mono font-bold">
+                {instrument.symbol}
+              </span>
+              <span className="text-text-secondary text-xs">
+                {instrument.slug ?? 'error: no slug defined'}
+              </span>
             </div>
           ))}
         </div>
