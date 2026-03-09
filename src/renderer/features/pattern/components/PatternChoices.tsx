@@ -17,21 +17,18 @@ export default function PatternChoices(props: PatternChoicesProps) {
 
   return (
     <div className="w-full max-w-2xl mb-8">
-      <h2 className="text-xs font-mono text-primary uppercase tracking-widest mb-3">
-        Exemples
-      </h2>
+      <h2 className="section-title mb-3">Exemples</h2>
       <div className="flex flex-wrap gap-2">
         {patterns.map((pat) => (
           <button
             key={pat.id}
             type="button"
             onClick={() => handleSelect(pat.id)}
-            className={`px-4 py-2 font-mono text-sm rounded-lg transition-colors duration-200 uppercase tracking-widest border
-              ${
-                selectedId === pat.id
-                  ? 'bg-primary border-primary text-background'
-                  : 'bg-surface border-border hover:border-primary text-text-secondary hover:text-primary'
-              }`}
+            className={`btn-secondary ${
+              selectedId === pat.id
+                ? 'bg-primary border-primary text-background hover:text-background'
+                : ''
+            }`}
           >
             {pat.name}
           </button>

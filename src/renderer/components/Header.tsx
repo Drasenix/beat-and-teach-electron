@@ -5,8 +5,7 @@ export default function Header() {
     <header className="w-full bg-surface border-b border-border px-8 py-4">
       <Link
         to="/"
-        className="text-xs font-mono text-text-secondary hover:text-primary
-                   uppercase tracking-widest transition-colors duration-200"
+        className="section-title hover:opacity-70 transition-opacity duration-200"
       >
         ← Home
       </Link>

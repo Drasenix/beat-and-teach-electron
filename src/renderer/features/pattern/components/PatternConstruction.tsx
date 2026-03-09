@@ -12,9 +12,7 @@ export default function PatternConstruction() {
     const selectedPattern: Pattern | undefined = patterns.find(
       (pat) => pat.id === id,
     );
-    if (selectedPattern) {
-      setPattern(selectedPattern);
-    }
+    if (selectedPattern) setPattern(selectedPattern);
   };
 
   return (

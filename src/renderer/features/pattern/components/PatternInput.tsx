@@ -23,45 +23,34 @@ export default function PatternInputComponent(
     <div className="flex flex-col items-center w-full">
       {/* Zone de saisie */}
       <div className="w-full max-w-2xl">
-        <label
-          htmlFor="pattern-input"
-          className="block text-xs font-mono text-primary uppercase tracking-widest mb-2"
-        >
+        <label htmlFor="pattern-input" className="section-title block mb-2">
           Pattern
           <textarea
             id="pattern-input"
             value={pattern.sentence}
             onChange={changePatternSentence}
             placeholder={pattern.sentence || 'P Ts K . P (Ts P) K'}
-            className="w-full bg-surface border border-border focus:border-primary focus:outline-none
-                       text-text-accent font-mono text-xl p-4 rounded-lg resize-none h-24
-                       placeholder-border transition-colors duration-200 mt-2"
+            className="input-field w-full text-xl p-4 resize-none h-24 mt-2"
           />
         </label>
       </div>
 
       {/* Contrôles */}
       <div className="w-full max-w-2xl mt-6 flex items-center gap-4">
-        {/* Play */}
         <button
           type="button"
           disabled={playing}
           onClick={() => playTrack(pattern.sentence, bpm)}
-          className="px-6 py-3 bg-primary hover:opacity-90 disabled:opacity-30
-                     disabled:cursor-not-allowed text-background font-bold rounded-lg
-                     uppercase tracking-widest transition-opacity duration-200"
+          className="btn-primary"
         >
           ▶ Play
         </button>
 
-        {/* Stop */}
         <button
           type="button"
           disabled={!playing}
           onClick={stopTrack}
-          className="px-6 py-3 bg-surface hover:opacity-90 disabled:opacity-30
-                     disabled:cursor-not-allowed text-text-primary font-bold rounded-lg
-                     uppercase tracking-widest transition-opacity duration-200 border border-border"
+          className="btn-secondary"
         >
           ■ Stop
         </button>
@@ -87,9 +76,7 @@ export default function PatternInputComponent(
 
       {/* Légende instruments */}
       <div className="w-full max-w-2xl mt-8 p-4 bg-surface rounded-lg border border-border">
-        <p className="text-xs font-mono text-text-secondary uppercase tracking-widest mb-2">
-          Symboles disponibles
-        </p>
+        <p className="section-title mb-2">Symboles disponibles</p>
         <div className="flex flex-wrap gap-3">
           {[
             { symbol: 'P', name: 'Kickdrum' },

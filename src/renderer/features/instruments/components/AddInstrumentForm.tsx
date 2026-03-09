@@ -39,36 +39,27 @@ export default function AddInstrumentForm({
 
   return (
     <div className="bg-surface border border-border rounded-lg p-6 mt-4">
-      <h3 className="text-xs font-mono text-primary uppercase tracking-widest mb-4">
-        Nouvel instrument
-      </h3>
+      <h3 className="section-title mb-4">Nouvel instrument</h3>
 
       <div className="flex flex-col gap-3">
         <input
           placeholder="Symbole (ex: P)"
           value={symbol}
           onChange={(e) => setSymbol(e.target.value)}
-          className="bg-background border border-border focus:border-primary focus:outline-none
-                     text-text-accent font-mono px-4 py-2 rounded-lg placeholder-text-secondary
-                     transition-colors duration-200"
+          className="input-field w-full"
         />
         <input
           placeholder="Nom (ex: Kickdrum)"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="bg-background border border-border focus:border-primary focus:outline-none
-                     text-text-accent font-mono px-4 py-2 rounded-lg placeholder-text-secondary
-                     transition-colors duration-200"
+          className="input-field w-full"
         />
 
-        {/* Sélection fichier */}
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={handleSelectFile}
-            className="px-4 py-2 bg-background border border-border hover:border-primary
-                       text-text-secondary hover:text-primary font-mono text-sm
-                       rounded-lg transition-colors duration-200"
+            className="btn-secondary"
           >
             Sélectionner un fichier
           </button>
@@ -79,7 +70,6 @@ export default function AddInstrumentForm({
           )}
         </div>
 
-        {/* Erreurs */}
         {errors.length > 0 && (
           <ul className="flex flex-col gap-1">
             {errors.map((error) => (
@@ -90,24 +80,11 @@ export default function AddInstrumentForm({
           </ul>
         )}
 
-        {/* Actions */}
         <div className="flex gap-3 mt-2">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="px-6 py-2 bg-primary hover:opacity-90 text-background
-                       font-bold font-mono rounded-lg uppercase tracking-widest
-                       transition-opacity duration-200"
-          >
+          <button type="button" onClick={handleSubmit} className="btn-primary">
             Ajouter
           </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-6 py-2 bg-surface border border-border hover:border-primary
-                       text-text-secondary hover:text-primary font-mono
-                       rounded-lg uppercase tracking-widest transition-colors duration-200"
-          >
+          <button type="button" onClick={onCancel} className="btn-secondary">
             Annuler
           </button>
         </div>
