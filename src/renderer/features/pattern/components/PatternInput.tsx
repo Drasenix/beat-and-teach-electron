@@ -15,8 +15,9 @@ export default function PatternInputComponent(
   const [bpm, setBPM] = useState<number>(100);
 
   const changeBPM = (event: any): void => {
-    setBPM(event.target.value);
-    changeBpm(bpm);
+    const newBpm = Number(event.target.value);
+    setBPM(newBpm);
+    changeBpm(newBpm);
   };
 
   return (
