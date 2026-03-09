@@ -7,8 +7,7 @@ const useInstruments = () => {
 
   useEffect(() => {
     const fetchPattern = async () => {
-      const instruments: Instrument[] = await getInstruments();
-      setInstruments(instruments);
+      setInstruments(await getInstruments());
     };
 
     fetchPattern();
