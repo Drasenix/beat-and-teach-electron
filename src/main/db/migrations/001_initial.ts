@@ -113,6 +113,12 @@ export function runMigrations(db: Database.Database): void {
         name: 'rimshot',
         filepath: path.join(soundsPath, 'rimshot.mp3'),
       },
+      {
+        slug: 'sonic-boom',
+        symbol: 'W',
+        name: 'sonic boom',
+        filepath: path.join(soundsPath, 'sonic-boom.mp3'),
+      },
     ];
 
     const insert = db.prepare(`
