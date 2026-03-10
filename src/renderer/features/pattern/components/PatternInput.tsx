@@ -4,6 +4,8 @@ import useAudio from '../../audio/hooks/useAudio';
 import useInstruments from '../../instruments/hooks/useInstruments';
 import { parseTokens } from '../utils/pattern-parser';
 import PatternTokens from './PatternTokens';
+import PatternControls from './PatternControls';
+import PatternLegend from './PatternLegend';
 
 type PatternInputComponentProps = {
   pattern: Pattern;
@@ -49,67 +51,20 @@ export default function PatternInputComponent(
         </label>
       </div>
 
-      {/* Contrôles */}
-      <div className="w-full max-w-2xl mt-6 flex items-center gap-4">
-        <button
-          type="button"
-          disabled={playing || !pattern.sentence}
-          onClick={() => playTrack(pattern.sentence, bpm)}
-          className="btn-primary"
-        >
-          ▶ Play
-        </button>
-
-        <button
-          type="button"
-          disabled={!playing}
-          onClick={stopTrack}
-          className="btn-secondary"
-        >
-          ■ Stop
-        </button>
-
-        <div className="flex-1 flex flex-col gap-1">
-          <div className="flex justify-between text-xs font-mono">
-            <span className="text-primary uppercase tracking-widest">BPM</span>
-            <span className="text-text-accent font-bold">{bpm}</span>
-          </div>
-          <input
-            type="range"
-            id="tempo"
-            name="tempo"
-            min="1"
-            max="300"
-            value={bpm}
-            onChange={changeBPM}
-            className="w-full accent-primary cursor-pointer"
-          />
-        </div>
-      </div>
+      <PatternControls
+        playing={playing}
+        sentence={pattern.sentence}
+        bpm={bpm}
+        onPlay={() => playTrack(pattern.sentence, bpm)}
+        onStop={stopTrack}
+        onChangeBpm={changeBPM}
+      />
 
       {error && (
         <div className="w-full max-w-2xl mt-4 error-message">{error}</div>
       )}
 
-      {/* Légende instruments */}
-      <div className="w-full max-w-2xl mt-8 p-4 bg-surface rounded-lg border border-border">
-        <p className="section-title mb-2">Symboles disponibles</p>
-        <div className="flex flex-wrap gap-3">
-          {instruments.map((instrument) => (
-            <div
-              key={instrument.id}
-              className="flex items-center gap-2 bg-background px-3 py-1 rounded-full border border-border"
-            >
-              <span className="text-primary font-mono font-bold">
-                {instrument.symbol}
-              </span>
-              <span className="text-text-secondary text-xs">
-                {instrument.slug ?? 'error: no slug defined'}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <PatternLegend instruments={instruments} />
     </div>
   );
 }
