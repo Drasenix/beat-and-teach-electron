@@ -22,7 +22,7 @@ export function createPattern(
   if (!pattern.name?.trim()) throw new Error('Le nom est requis.');
   if (!pattern.sentence?.trim()) throw new Error('La phrase est requise.');
   const db = getDatabase();
-  const slug = toSnakeCase(pattern.name ?? '');
+  const slug = toSnakeCase(pattern.name);
   const result = db
     .prepare(
       `

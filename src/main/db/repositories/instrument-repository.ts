@@ -27,7 +27,7 @@ export function createInstrument(
     throw new Error('Le fichier audio est requis.');
 
   const db = getDatabase();
-  const slug = toSnakeCase(instrument.name ?? '');
+  const slug = toSnakeCase(instrument.name);
   const result = db
     .prepare(
       `
