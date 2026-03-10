@@ -12,7 +12,7 @@ export default function Home() {
         </p>
       </div>
       <div className="flex flex-col gap-4 w-full max-w-sm">
-        <Link to="/construction" className="btn-secondary text-center">
+        <Link to="/workspace" className="btn-secondary text-center">
           ▶ Je construis mon pattern
         </Link>
         <Link to="/configuration" className="btn-secondary text-center">

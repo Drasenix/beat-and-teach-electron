@@ -4,7 +4,7 @@ export default function Header() {
   const location = useLocation();
 
   const navItems = [
-    { to: '/construction', label: '▶', title: 'Pattern' },
+    { to: '/workspace', label: '▶', title: 'Pattern' },
     { to: '/configuration', label: '⚙', title: 'Instruments' },
   ];
 

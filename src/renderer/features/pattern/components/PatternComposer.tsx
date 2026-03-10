@@ -8,7 +8,7 @@ type PatternFormComponentProps = {
   changePatternSentence: (event: any) => void;
 };
 
-export default function PatternFormComponent(props: PatternFormComponentProps) {
+export default function PatternComposer(props: PatternFormComponentProps) {
   const { pattern, changePatternSentence } = props;
 
   return (
