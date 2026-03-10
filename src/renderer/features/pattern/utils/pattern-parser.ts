@@ -1,10 +1,10 @@
-import { PatternToken } from '../types/pattern-token';
+import { PatternStep } from '../types/pattern-step';
 
 export function createToken(
   symbol: string,
   validSymbols: string[],
   id: number,
-): PatternToken {
+): PatternStep {
   return {
     id: `token-${id}`,
     symbol,
@@ -17,7 +17,7 @@ export function createGroup(
   raw: string,
   symbols: string[],
   startId: number,
-): PatternToken {
+): PatternStep {
   const inner = raw
     .trim()
     .split(/\s+/)
@@ -34,9 +34,9 @@ export function createGroup(
 export function parseTokens(
   sentence: string,
   validSymbols: string[],
-): PatternToken[] {
+): PatternStep[] {
   const regex = /\(([^)]*)\)|(\S+)/g;
-  const tokens: PatternToken[] = [];
+  const tokens: PatternStep[] = [];
   let counter = 0;
   let match: RegExpExecArray | null;
 

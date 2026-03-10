@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Pattern } from '../models/pattern-model';
-import PatternTokens from './PatternTokens';
+import PatternSteps from './PatternSteps';
 import { parseTokens } from '../utils/pattern-parser';
 import useInstruments from '../../instruments/hooks/useInstruments';
 
@@ -32,7 +32,7 @@ export default function PatternEditor(props: PatternEditorComponentProps) {
             placeholder={pattern.sentence || 'P Ts K . P (Ts P) K'}
             className="input-field w-full text-xl p-4 resize-none h-24 mt-2"
           />
-          <PatternTokens tokens={tokens} />
+          <PatternSteps tokens={tokens} />
         </label>
       </div>
 

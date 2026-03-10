@@ -1,10 +1,10 @@
-import { PatternToken } from '../types/pattern-token';
+import { PatternStep } from '../types/pattern-step';
 
-type PatternTokensProps = {
-  tokens: PatternToken[];
+type PatternStepsProps = {
+  tokens: PatternStep[];
 };
 
-function TokenBadge({ token }: { token: PatternToken }) {
+function StepBadge({ token }: { token: PatternStep }) {
   const baseClass = 'font-mono font-bold px-2 py-1 rounded text-sm';
   const validClass = 'text-primary bg-background border border-border';
   const invalidClass = 'text-red-400 bg-background border border-red-400';
@@ -16,7 +16,7 @@ function TokenBadge({ token }: { token: PatternToken }) {
   );
 }
 
-export default function PatternTokens({ tokens }: PatternTokensProps) {
+export default function PatternSteps({ tokens }: PatternStepsProps) {
   if (tokens.length === 0) return null;
 
   return (
@@ -31,12 +31,12 @@ export default function PatternTokens({ tokens }: PatternTokensProps) {
                 className="flex items-center gap-1 border border-dashed border-border rounded-lg px-2 py-1"
               >
                 {token.tokens.map((innerToken) => (
-                  <TokenBadge key={innerToken.id} token={innerToken} />
+                  <StepBadge key={innerToken.id} token={innerToken} />
                 ))}
               </div>
             );
           }
-          return <TokenBadge key={token.id} token={token} />;
+          return <StepBadge key={token.id} token={token} />;
         })}
       </div>
     </div>

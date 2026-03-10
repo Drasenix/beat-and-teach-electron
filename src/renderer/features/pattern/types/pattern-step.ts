@@ -1,7 +1,7 @@
-export type PatternToken = {
+export type PatternStep = {
   id: string;
   symbol: string;
   valid: boolean;
   isGroup: boolean;
-  tokens?: PatternToken[];
+  tokens?: PatternStep[];
 };
