@@ -28,7 +28,7 @@ export function runMigrations(db: Database.Database): void {
       {
         slug: 'drum-and-bass',
         name: 'drum and bass',
-        sentence: 'P Ts K P Ts K P',
+        sentence: 'P Ts K P Ts K P .',
       },
       {
         slug: 'dubstep',
@@ -40,11 +40,16 @@ export function runMigrations(db: Database.Database): void {
         name: 'funk',
         sentence: 'P Ts P Ts K Ts Ts K Ts K P K K P Ts K',
       },
-      { slug: 'reggae', name: 'reggae', sentence: 'P Ts K K Ts K K' },
+      {
+        slug: 'reggae',
+        name: 'reggae',
+        sentence: 'P (Ts K) (. K) . (Ts K) (. K)',
+      },
       {
         slug: 'jazz',
         name: 'jazz',
-        sentence: 'P P Ts Ts P Ts Ts P K P Ts Ts P Ts Ts P K Ts',
+        sentence:
+          'P (P Ts) (Ts P) (Ts Ts) (P K) . Ts (P Ts) (Ts P)  K (. Ts) .',
       },
       { slug: 'boom-bap', name: 'boom bap', sentence: 'P K P P P Kch' },
     ];
