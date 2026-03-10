@@ -27,11 +27,11 @@ export function createGroup(
     symbol: `(${raw})`,
     valid: inner.every((t) => t.valid),
     isGroup: true,
-    tokens: inner,
+    steps: inner,
   };
 }
 
-export function parseTokens(
+export function parseSteps(
   sentence: string,
   validSymbols: string[],
 ): PatternStep[] {

@@ -3,5 +3,5 @@ export type PatternStep = {
   symbol: string;
   valid: boolean;
   isGroup: boolean;
-  tokens?: PatternStep[];
+  steps?: PatternStep[];
 };

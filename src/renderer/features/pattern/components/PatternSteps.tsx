@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
+import useInstruments from '../../instruments/hooks/useInstruments';
 import { PatternStep } from '../types/pattern-step';
+import { parseSteps } from '../utils/pattern-parser';
+import { Pattern } from '../models/pattern-model';
 
 type PatternStepsProps = {
-  tokens: PatternStep[];
+  pattern: Pattern;
 };
-
 function StepBadge({ token }: { token: PatternStep }) {
   const baseClass = 'font-mono font-bold px-2 py-1 rounded text-sm';
   const validClass = 'text-primary bg-background border border-border';
@@ -16,27 +19,37 @@ function StepBadge({ token }: { token: PatternStep }) {
   );
 }
 
-export default function PatternSteps({ tokens }: PatternStepsProps) {
-  if (tokens.length === 0) return null;
+export default function PatternSteps(props: PatternStepsProps) {
+  const { pattern } = props;
+  const { instruments } = useInstruments();
+  const steps: PatternStep[] = useMemo(
+    () =>
+      parseSteps(
+        pattern.sentence,
+        instruments.map((i) => i.symbol),
+      ),
+    [pattern.sentence, instruments],
+  );
+  if (steps.length === 0) return null;
 
   return (
     <div className="w-full max-w-2xl mt-4 p-4 bg-surface rounded-lg border border-border">
       <p className="section-title mb-3">Aperçu</p>
       <div className="flex flex-wrap gap-2">
-        {tokens.map((token) => {
-          if (token.isGroup && token.tokens) {
+        {steps.map((step) => {
+          if (step.isGroup && step.steps) {
             return (
               <div
-                key={token.id}
+                key={step.id}
                 className="flex items-center gap-1 border border-dashed border-border rounded-lg px-2 py-1"
               >
-                {token.tokens.map((innerToken) => (
+                {step.steps.map((innerToken) => (
                   <StepBadge key={innerToken.id} token={innerToken} />
                 ))}
               </div>
             );
           }
-          return <StepBadge key={token.id} token={token} />;
+          return <StepBadge key={step.id} token={step} />;
         })}
       </div>
     </div>
