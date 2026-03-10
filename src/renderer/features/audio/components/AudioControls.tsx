@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import useAudio from '../../audio/hooks/useAudio';
+import useAudio from '../hooks/useAudio';
 
-type PatternControlsProps = {
+type AudioControlsProps = {
   sentence: string;
 };
 
-export default function PatternControls({ sentence }: PatternControlsProps) {
+export default function AudioControls({ sentence }: AudioControlsProps) {
   const { playing, playTrack, stopTrack, changeBpm } = useAudio();
   const [bpm, setBPM] = useState<number>(100);
 

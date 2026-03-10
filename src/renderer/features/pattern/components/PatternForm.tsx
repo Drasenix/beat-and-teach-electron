@@ -1,7 +1,7 @@
 import { Pattern } from '../models/pattern-model';
-import PatternControls from './PatternControls';
-import PatternLegend from './PatternLegend';
+import InstrumentsLegend from '../../instruments/components/InstrumentsLegend';
 import PatternEditor from './PatternEditor';
+import AudioControls from '../../audio/components/AudioControls';
 
 type PatternFormComponentProps = {
   pattern: Pattern;
@@ -18,9 +18,9 @@ export default function PatternFormComponent(props: PatternFormComponentProps) {
         changePatternSentence={changePatternSentence}
       />
 
-      <PatternControls sentence={pattern.sentence} />
+      <AudioControls sentence={pattern.sentence} />
 
-      <PatternLegend />
+      <InstrumentsLegend />
     </div>
   );
 }

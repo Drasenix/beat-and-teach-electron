@@ -1,6 +1,6 @@
-import useInstruments from '../../instruments/hooks/useInstruments';
+import useInstruments from '../hooks/useInstruments';
 
-export default function PatternLegend() {
+export default function InstrumentsLegend() {
   const { instruments } = useInstruments();
   return (
     <div className="w-full max-w-2xl mt-8 p-4 bg-surface rounded-lg border border-border">
