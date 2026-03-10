@@ -1,26 +1,25 @@
+import { useState } from 'react';
+import useAudio from '../../audio/hooks/useAudio';
+
 type PatternControlsProps = {
-  playing: boolean;
   sentence: string;
-  bpm: number;
-  onPlay: () => void;
-  onStop: () => void;
-  onChangeBpm: (event: any) => void;
 };
 
-export default function PatternControls({
-  playing,
-  sentence,
-  bpm,
-  onPlay,
-  onStop,
-  onChangeBpm,
-}: PatternControlsProps) {
+export default function PatternControls({ sentence }: PatternControlsProps) {
+  const { playing, playTrack, stopTrack, changeBpm } = useAudio();
+  const [bpm, setBPM] = useState<number>(100);
+
+  const changeBPM = (event: any): void => {
+    const newBpm = Number(event.target.value);
+    setBPM(newBpm);
+    changeBpm(newBpm);
+  };
   return (
     <div className="w-full max-w-2xl mt-6 flex items-center gap-4">
       <button
         type="button"
         disabled={playing || !sentence}
-        onClick={onPlay}
+        onClick={() => playTrack(sentence, bpm)}
         className="btn-primary"
       >
         ▶ Play
@@ -29,7 +28,7 @@ export default function PatternControls({
       <button
         type="button"
         disabled={!playing}
-        onClick={onStop}
+        onClick={stopTrack}
         className="btn-secondary"
       >
         ■ Stop
@@ -47,7 +46,7 @@ export default function PatternControls({
           min="1"
           max="300"
           value={bpm}
-          onChange={onChangeBpm}
+          onChange={changeBPM}
           className="w-full accent-primary cursor-pointer"
         />
       </div>
