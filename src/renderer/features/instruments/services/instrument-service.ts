@@ -17,3 +17,7 @@ export async function createInstrumentAPI(
     instrument,
   );
 }
+
+export async function deleteInstrumentAPI(id: number): Promise<void> {
+  return window.electron.ipcRenderer.invokeMessage('delete-instrument', id);
+}

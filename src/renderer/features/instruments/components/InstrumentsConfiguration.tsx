@@ -4,8 +4,19 @@ import AddInstrumentForm from './AddInstrumentForm';
 
 export default function InstrumentConfiguration() {
   const [addingInstrument, setAddingInstrument] = useState(false);
-  const { instruments, addNewInstrument, openFileDialog, error } =
-    useInstruments();
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const {
+    instruments,
+    addNewInstrument,
+    removeInstrument,
+    openFileDialog,
+    error,
+  } = useInstruments();
+
+  const handleDelete = async (id: number): Promise<void> => {
+    await removeInstrument(id);
+    setConfirmDeleteId(null);
+  };
 
   return (
     <div className="flex flex-col items-center p-8">
@@ -26,14 +37,53 @@ export default function InstrumentConfiguration() {
               <span className="text-text-primary font-mono flex-1">
                 {instrument.name}
               </span>
-              <span className="text-text-secondary text-xs font-mono truncate max-w-xs">
+              <span className="text-text-secondary text-xs font-mono truncate max-w-xs flex-1">
                 {instrument.filepath ?? ''}
               </span>
+
+              {/* Confirmation suppression */}
+              {confirmDeleteId === instrument.id ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-text-secondary text-xs font-mono">
+                    Confirmer ?
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(instrument.id)}
+                    className="px-3 py-1 bg-red-500 hover:opacity-90 text-background
+                               font-mono text-xs rounded-lg transition-opacity duration-200"
+                  >
+                    Oui
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDeleteId(null)}
+                    className="btn-secondary px-3 py-1 text-xs"
+                  >
+                    Non
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmDeleteId(instrument.id)}
+                  className="text-text-secondary hover:text-red-400 font-mono text-xs
+                             transition-colors duration-200"
+                >
+                  ✕
+                </button>
+              )}
             </li>
           ))}
         </ul>
 
-        {!addingInstrument && (
+        {addingInstrument ? (
+          <AddInstrumentForm
+            onAdd={addNewInstrument}
+            onCancel={() => setAddingInstrument(false)}
+            onOpenFileDialog={openFileDialog}
+          />
+        ) : (
           <button
             type="button"
             onClick={() => setAddingInstrument(true)}
@@ -41,14 +91,6 @@ export default function InstrumentConfiguration() {
           >
             + Ajouter un instrument
           </button>
-        )}
-
-        {addingInstrument && (
-          <AddInstrumentForm
-            onAdd={addNewInstrument}
-            onCancel={() => setAddingInstrument(false)}
-            onOpenFileDialog={openFileDialog}
-          />
         )}
       </div>
     </div>

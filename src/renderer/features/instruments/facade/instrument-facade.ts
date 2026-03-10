@@ -2,6 +2,7 @@ import { InstrumentEngine } from '../engine/instrument-engine';
 import { Instrument } from '../models/instrument-model';
 import {
   createInstrumentAPI,
+  deleteInstrumentAPI,
   getAllInstruments,
 } from '../services/instrument-service';
 import { InstrumentFile } from '../types/instrument-file';
@@ -45,4 +46,8 @@ export async function createInstrument(
     filepath: instrument.filepath,
   });
   return adaptInstrument(created);
+}
+
+export async function deleteInstrument(id: number): Promise<void> {
+  await deleteInstrumentAPI(id);
 }
