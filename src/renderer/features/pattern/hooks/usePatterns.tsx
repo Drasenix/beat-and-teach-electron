@@ -1,20 +1,28 @@
-import { useEffect, useState } from 'react';
-import getPatterns from '../facade/pattern-facade';
+import { usePatternsContext } from '../contexts/PatternsContext';
+import { savePattern } from '../facade/pattern-facade';
 import { Pattern } from '../models/pattern-model';
 
 const usePatterns = () => {
-  const [patterns, setPatterns] = useState<Pattern[]>([]);
+  const { patterns, setPatterns, saveError, setSaveError } =
+    usePatternsContext();
 
-  useEffect(() => {
-    const fetchPattern = async () => {
-      const allPatterns: Pattern[] = await getPatterns();
-      setPatterns(allPatterns);
-    };
+  const addPattern = async (
+    pattern: Omit<Pattern, 'id' | 'slug'>,
+  ): Promise<boolean> => {
+    try {
+      const saved = await savePattern(pattern);
+      setPatterns((prev) => [...prev, saved]);
+      setSaveError(null);
+      return true;
+    } catch {
+      setSaveError('Un pattern avec ce nom existe déjà.');
+      return false;
+    }
+  };
 
-    fetchPattern();
-  }, []);
+  const resetSaveError = (): void => setSaveError(null);
 
-  return { patterns };
+  return { patterns, addPattern, saveError, resetSaveError };
 };
 
 export default usePatterns;

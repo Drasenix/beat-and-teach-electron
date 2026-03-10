@@ -1,12 +1,13 @@
 import { Pattern } from '../models/pattern-model';
 import PatternSteps from './PatternSteps';
+import AddPatternForm from './AddPatternForm';
 
-type PatternEditorComponentProps = {
+type PatternEditorProps = {
   pattern: Pattern;
   changePatternSentence: (event: any) => void;
 };
 
-export default function PatternEditor(props: PatternEditorComponentProps) {
+export default function PatternEditor(props: PatternEditorProps) {
   const { pattern, changePatternSentence } = props;
 
   return (
@@ -22,6 +23,10 @@ export default function PatternEditor(props: PatternEditorComponentProps) {
         />
         <PatternSteps pattern={pattern} />
       </label>
+
+      <div className="flex justify-end mt-2">
+        <AddPatternForm pattern={pattern} />
+      </div>
     </div>
   );
 }

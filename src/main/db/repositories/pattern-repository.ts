@@ -1,3 +1,4 @@
+import { toSnakeCase } from '../../../renderer/utils/util';
 import { PatternDB } from '../../../shared/models/pattern-db';
 import { getDatabase } from '../database';
 
@@ -15,8 +16,13 @@ export function getPatternById(id: number): PatternDB | undefined {
     .get(id) as PatternDB | undefined;
 }
 
-export function createPattern(pattern: Omit<PatternDB, 'id'>): PatternDB {
+export function createPattern(
+  pattern: Omit<PatternDB, 'id' | 'slug'>,
+): PatternDB {
+  if (!pattern.name?.trim()) throw new Error('Le nom est requis.');
+  if (!pattern.sentence?.trim()) throw new Error('La phrase est requise.');
   const db = getDatabase();
+  const slug = toSnakeCase(pattern.name ?? '');
   const result = db
     .prepare(
       `
@@ -24,7 +30,7 @@ export function createPattern(pattern: Omit<PatternDB, 'id'>): PatternDB {
   VALUES (@slug, @name, @sentence)
 `,
     )
-    .run(pattern);
+    .run({ ...pattern, slug });
   return getPatternById(result.lastInsertRowid as number)!;
 }
 

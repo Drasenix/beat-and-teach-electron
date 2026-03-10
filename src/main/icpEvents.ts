@@ -43,7 +43,10 @@ export default function createIcpEvents() {
 
   ipcMain.handle(
     'create-pattern',
-    async (event, pattern: Omit<PatternDB, 'id'>): Promise<PatternDB> => {
+    async (
+      event,
+      pattern: Omit<PatternDB, 'id' | 'slug'>,
+    ): Promise<PatternDB> => {
       return createPattern(pattern);
     },
   );

@@ -5,12 +5,7 @@ const usePattern = () => {
   const [pattern, setPattern] = useState<Pattern>(DEFAULT_PATTERN);
 
   const changePatternSentence = (event: any) => {
-    setPattern({
-      id: pattern.id,
-      slug: pattern.slug,
-      name: pattern.name,
-      sentence: event.target.value,
-    });
+    setPattern({ ...pattern, sentence: event.target.value });
   };
 
   return { pattern, setPattern, changePatternSentence };

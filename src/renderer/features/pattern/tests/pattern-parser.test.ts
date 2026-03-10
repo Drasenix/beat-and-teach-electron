@@ -1,20 +1,20 @@
-import { createToken, createGroup, parseSteps } from '../utils/pattern-parser';
+import { createStep, createGroup, parseSteps } from '../utils/pattern-parser';
 
-describe('#createToken', () => {
-  it('should create a valid token when symbol exists', () => {
-    const result = createToken('P', ['P', 'Ts', 'K'], 0);
+describe('#createStep', () => {
+  it('should create a valid step when symbol exists', () => {
+    const result = createStep('P', ['P', 'Ts', 'K'], 0);
     expect(result).toEqual({
-      id: 'token-0',
+      id: 'step-0',
       symbol: 'P',
       valid: true,
       isGroup: false,
     });
   });
 
-  it('should create an invalid token when symbol does not exist', () => {
-    const result = createToken('X', ['P', 'Ts', 'K'], 1);
+  it('should create an invalid step when symbol does not exist', () => {
+    const result = createStep('X', ['P', 'Ts', 'K'], 1);
     expect(result).toEqual({
-      id: 'token-1',
+      id: 'step-1',
       symbol: 'X',
       valid: false,
       isGroup: false,

@@ -1,6 +1,6 @@
 import { PatternStep } from '../types/pattern-step';
 
-export function createToken(
+export function createStep(
   symbol: string,
   validSymbols: string[],
   id: number,
@@ -21,7 +21,7 @@ export function createGroup(
   const inner = raw
     .trim()
     .split(/\s+/)
-    .map((s, i) => createToken(s, symbols, startId + i));
+    .map((s, i) => createStep(s, symbols, startId + i));
   return {
     id: `group-${startId + inner.length}`,
     symbol: `(${raw})`,
@@ -44,7 +44,7 @@ export function parseSteps(
     if (match[1] !== undefined) {
       tokens.push(createGroup(match[1], validSymbols, counter));
     } else {
-      tokens.push(createToken(match[2], validSymbols, counter));
+      tokens.push(createStep(match[2], validSymbols, counter));
     }
     counter++;
   }
