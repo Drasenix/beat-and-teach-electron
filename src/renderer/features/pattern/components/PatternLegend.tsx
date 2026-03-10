@@ -1,10 +1,7 @@
-import { Instrument } from '../../instruments/models/instrument-model';
+import useInstruments from '../../instruments/hooks/useInstruments';
 
-type PatternLegendProps = {
-  instruments: Instrument[];
-};
-
-export default function PatternLegend({ instruments }: PatternLegendProps) {
+export default function PatternLegend() {
+  const { instruments } = useInstruments();
   return (
     <div className="w-full max-w-2xl mt-8 p-4 bg-surface rounded-lg border border-border">
       <p className="section-title mb-2">Symboles disponibles</p>

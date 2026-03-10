@@ -1,5 +1,5 @@
 import { Pattern } from '../models/pattern-model';
-import PatternInputComponent from './PatternInput';
+import PatternFormComponent from './PatternForm';
 import usePattern from '../hooks/usePattern';
 import PatternChoices from './PatternChoices';
 import usePatterns from '../hooks/usePatterns';
@@ -18,7 +18,7 @@ export default function PatternConstruction() {
   return (
     <div className="flex flex-col items-center p-8">
       <PatternChoices patterns={patterns} selectPattern={selectPattern} />
-      <PatternInputComponent
+      <PatternFormComponent
         pattern={pattern}
         changePatternSentence={changePatternSentence}
       />

@@ -1,24 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Pattern } from '../models/pattern-model';
-import useAudio from '../../audio/hooks/useAudio';
-import useInstruments from '../../instruments/hooks/useInstruments';
-import { parseTokens } from '../utils/pattern-parser';
 import PatternTokens from './PatternTokens';
-import PatternControls from './PatternControls';
-import PatternLegend from './PatternLegend';
+import { parseTokens } from '../utils/pattern-parser';
+import useInstruments from '../../instruments/hooks/useInstruments';
 
-type PatternInputComponentProps = {
+type PatternEditorComponentProps = {
   pattern: Pattern;
   changePatternSentence: (event: any) => void;
 };
 
-export default function PatternInputComponent(
-  props: PatternInputComponentProps,
-) {
+export default function PatternEditor(props: PatternEditorComponentProps) {
   const { pattern, changePatternSentence } = props;
-  const { playing, playTrack, stopTrack, changeBpm } = useAudio();
   const { instruments, error } = useInstruments();
-  const [bpm, setBPM] = useState<number>(100);
   const tokens = useMemo(
     () =>
       parseTokens(
@@ -27,16 +20,8 @@ export default function PatternInputComponent(
       ),
     [pattern.sentence, instruments],
   );
-
-  const changeBPM = (event: any): void => {
-    const newBpm = Number(event.target.value);
-    setBPM(newBpm);
-    changeBpm(newBpm);
-  };
-
   return (
-    <div className="flex flex-col items-center w-full">
-      {/* Zone de saisie */}
+    <>
       <div className="w-full max-w-2xl">
         <label htmlFor="pattern-input" className="section-title block mb-2">
           Pattern
@@ -51,20 +36,9 @@ export default function PatternInputComponent(
         </label>
       </div>
 
-      <PatternControls
-        playing={playing}
-        sentence={pattern.sentence}
-        bpm={bpm}
-        onPlay={() => playTrack(pattern.sentence, bpm)}
-        onStop={stopTrack}
-        onChangeBpm={changeBPM}
-      />
-
       {error && (
         <div className="w-full max-w-2xl mt-4 error-message">{error}</div>
       )}
-
-      <PatternLegend instruments={instruments} />
-    </div>
+    </>
   );
 }
