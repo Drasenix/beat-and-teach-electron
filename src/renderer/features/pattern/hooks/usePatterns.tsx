@@ -1,29 +1,33 @@
-import { extractIpcError } from '../../../utils/util';
 import { usePatternsContext } from '../contexts/PatternsContext';
-import { savePattern } from '../facade/pattern-facade';
-import { Pattern } from '../models/pattern-model';
+import {
+  savePattern,
+  updatePattern,
+  deletePattern,
+} from '../facade/pattern-facade';
+import { PatternFormValues } from '../types/pattern-types';
 
 const usePatterns = () => {
-  const { patterns, setPatterns, saveError, setSaveError } =
-    usePatternsContext();
+  const { patterns, setPatterns, error } = usePatternsContext();
 
-  const addPattern = async (
-    pattern: Omit<Pattern, 'id' | 'slug'>,
-  ): Promise<boolean> => {
-    try {
-      const saved = await savePattern(pattern);
-      setPatterns((prev) => [...prev, saved]);
-      setSaveError(null);
-      return true;
-    } catch (error: any) {
-      setSaveError(extractIpcError(error));
-      return false;
-    }
+  const addPattern = async (pattern: PatternFormValues): Promise<void> => {
+    const saved = await savePattern(pattern);
+    setPatterns((prev) => [...prev, saved]);
   };
 
-  const resetSaveError = (): void => setSaveError(null);
+  const editPattern = async (
+    id: number,
+    pattern: Partial<PatternFormValues>,
+  ): Promise<void> => {
+    const updated = await updatePattern(id, pattern);
+    setPatterns((prev) => prev.map((p) => (p.id === id ? updated : p)));
+  };
 
-  return { patterns, addPattern, saveError, resetSaveError };
+  const removePattern = async (id: number): Promise<void> => {
+    await deletePattern(id);
+    setPatterns((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  return { patterns, addPattern, editPattern, removePattern, error };
 };
 
 export default usePatterns;

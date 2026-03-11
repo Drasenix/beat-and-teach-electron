@@ -1,28 +1,33 @@
 import { useState } from 'react';
 import { Pattern } from '../models/pattern-model';
 import usePatterns from '../hooks/usePatterns';
+import { extractIpcError } from '../../../utils/util';
 
-type PatternSaveFormProps = {
+type SavePatternFormProps = {
   pattern: Pattern;
 };
-export default function AddPatternForm(props: PatternSaveFormProps) {
-  const { pattern } = props;
-  const { addPattern, saveError, resetSaveError } = usePatterns();
+
+export default function SavePatternForm({ pattern }: SavePatternFormProps) {
+  const { addPattern } = usePatterns();
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleConfirm = async (): Promise<void> => {
-    const success = await addPattern({ name, sentence: pattern.sentence });
-    if (success) {
+    try {
+      await addPattern({ name, sentence: pattern.sentence });
       setName('');
       setSaving(false);
+      setError(null);
+    } catch (e) {
+      setError(extractIpcError(e, 'Impossible de créer le pattern.'));
     }
   };
 
   const handleCancel = (): void => {
     setName('');
     setSaving(false);
-    resetSaveError();
+    setError(null);
   };
 
   if (!saving) {
@@ -45,7 +50,7 @@ export default function AddPatternForm(props: PatternSaveFormProps) {
         onChange={(e) => setName(e.target.value)}
         className="input-field flex-1"
       />
-      {saveError && <span className="error-message">{saveError}</span>}
+      {error && <span className="error-message">{error}</span>}
       <button
         type="button"
         onClick={handleConfirm}

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import useInstruments from '../../instruments/hooks/useInstruments';
-import { PatternStep } from '../types/pattern-step';
 import { parseSteps } from '../utils/pattern-parser';
 import { Pattern } from '../models/pattern-model';
+import { PatternStep } from '../types/pattern-types';
 
 type PatternStepsProps = {
   pattern: Pattern;

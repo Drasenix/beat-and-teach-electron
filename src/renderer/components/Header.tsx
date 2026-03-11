@@ -5,7 +5,8 @@ export default function Header() {
 
   const navItems = [
     { to: '/workspace', label: '▶', title: 'Pattern' },
-    { to: '/configuration', label: '⚙', title: 'Instruments' },
+    { to: '/configuration/instruments', label: '⚙', title: 'Instruments' },
+    { to: '/configuration/patterns', label: '☰', title: 'Patterns' },
   ];
 
   return (
@@ -13,7 +14,6 @@ export default function Header() {
       className="fixed left-0 top-0 h-screen w-16 bg-surface border-r border-border
                       flex flex-col items-center py-6 gap-6 z-10"
     >
-      {/* Logo / Home */}
       <Link
         to="/"
         className="w-8 h-8 flex items-center justify-center text-primary font-bold
@@ -25,7 +25,6 @@ export default function Header() {
 
       <div className="w-6 border-t border-border" />
 
-      {/* Navigation */}
       {navItems.map(({ to, label, title }) => (
         <Link
           key={to}

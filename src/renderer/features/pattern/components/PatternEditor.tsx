@@ -1,6 +1,6 @@
 import { Pattern } from '../models/pattern-model';
 import PatternSteps from './PatternSteps';
-import AddPatternForm from './AddPatternForm';
+import SavePatternForm from './SavePatternForm';
 
 type PatternEditorProps = {
   pattern: Pattern;
@@ -25,7 +25,7 @@ export default function PatternEditor(props: PatternEditorProps) {
       </label>
 
       <div className="flex justify-end mt-2">
-        <AddPatternForm pattern={pattern} />
+        <SavePatternForm pattern={pattern} />
       </div>
     </div>
   );

@@ -11,20 +11,18 @@ import { Pattern } from '../models/pattern-model';
 type PatternsContextType = {
   patterns: Pattern[];
   setPatterns: React.Dispatch<React.SetStateAction<Pattern[]>>;
-  saveError: string | null;
-  setSaveError: React.Dispatch<React.SetStateAction<string | null>>;
+  error: string | null;
 };
 
 const PatternsContext = createContext<PatternsContextType>({
   patterns: [],
   setPatterns: () => {},
-  saveError: null,
-  setSaveError: () => {},
+  error: null,
 });
 
 export function PatternsProvider({ children }: { children: React.ReactNode }) {
   const [patterns, setPatterns] = useState<Pattern[]>([]);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
@@ -32,15 +30,15 @@ export function PatternsProvider({ children }: { children: React.ReactNode }) {
         const data = await getPatterns();
         setPatterns(data);
       } catch {
-        // silencieux au chargement
+        setError('Impossible de charger les patterns.');
       }
     };
     fetch();
   }, []);
 
   const value = useMemo(
-    () => ({ patterns, setPatterns, saveError, setSaveError }),
-    [patterns, saveError],
+    () => ({ patterns, setPatterns, error }),
+    [patterns, error],
   );
 
   return (

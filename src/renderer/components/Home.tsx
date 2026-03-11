@@ -15,8 +15,17 @@ export default function Home() {
         <Link to="/workspace" className="btn-secondary text-center">
           ▶ Je construis mon pattern
         </Link>
-        <Link to="/configuration" className="btn-secondary text-center">
+        <Link
+          to="/configuration/instruments"
+          className="btn-secondary text-center"
+        >
           ⚙ Je gère les instruments
+        </Link>
+        <Link
+          to="/configuration/patterns"
+          className="btn-secondary text-center"
+        >
+          ☰ Je gère les patterns
         </Link>
       </div>
     </div>

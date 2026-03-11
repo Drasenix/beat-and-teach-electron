@@ -1,4 +1,4 @@
-import { PatternStep } from '../types/pattern-step';
+import { PatternStep } from '../types/pattern-types';
 
 export function createStep(
   symbol: string,
