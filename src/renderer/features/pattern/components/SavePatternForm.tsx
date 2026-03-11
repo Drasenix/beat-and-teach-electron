@@ -1,21 +1,30 @@
 import { useState } from 'react';
 import { Pattern } from '../models/pattern-model';
-import usePatterns from '../hooks/usePatterns';
+import { PatternFormValues } from '../types/pattern-types';
 import { extractIpcError } from '../../../utils/util';
+import { validatePattern } from '../utils/pattern-validator';
 
 type SavePatternFormProps = {
   pattern: Pattern;
+  onAdd: (data: PatternFormValues) => Promise<void>;
 };
 
-export default function SavePatternForm({ pattern }: SavePatternFormProps) {
-  const { addPattern } = usePatterns();
+export default function SavePatternForm({
+  pattern,
+  onAdd,
+}: SavePatternFormProps) {
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const handleConfirm = async (): Promise<void> => {
+    const errors = validatePattern({ name, sentence: pattern.sentence });
+    if (errors.length > 0) {
+      setError(errors[0]);
+      return;
+    }
     try {
-      await addPattern({ name, sentence: pattern.sentence });
+      await onAdd({ name, sentence: pattern.sentence });
       setName('');
       setSaving(false);
       setError(null);

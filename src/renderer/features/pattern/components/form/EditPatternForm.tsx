@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Pattern } from '../../models/pattern-model';
 import { extractIpcError } from '../../../../utils/util';
-import PatternForm, { PatternFormValues } from './PatternForm';
+import { PatternFormValues } from '../../types/pattern-types';
+import PatternForm from './PatternForm';
+import { validatePattern } from '../../utils/pattern-validator';
 
 type EditPatternFormProps = {
   pattern: Pattern;
@@ -14,24 +16,20 @@ export default function EditPatternForm({
   onUpdate,
   onCancel,
 }: EditPatternFormProps) {
-  const [fields, setFields] = useState<PatternFormValues>({
+  const [patternValues, setPatternValues] = useState<PatternFormValues>({
     name: pattern.name,
     sentence: pattern.sentence,
   });
   const [errors, setErrors] = useState<string[]>([]);
 
-  const validate = (): boolean => {
-    const next: string[] = [];
-    if (!fields.name.trim()) next.push('Le nom est requis.');
-    if (!fields.sentence.trim()) next.push('La phrase est requise.');
-    setErrors(next);
-    return next.length === 0;
-  };
-
   const handleSubmit = async () => {
-    if (!validate()) return;
+    const issues: string[] = validatePattern(patternValues);
+    if (issues.length > 0) {
+      setErrors(issues);
+      return;
+    }
     try {
-      await onUpdate(fields);
+      await onUpdate(patternValues);
     } catch (error) {
       setErrors([extractIpcError(error, 'Impossible de modifier le pattern.')]);
     }
@@ -41,11 +39,11 @@ export default function EditPatternForm({
     <div className="bg-surface border border-border rounded-lg p-6 mt-4">
       <h3 className="section-title mb-4">Modifier le pattern</h3>
       <PatternForm
-        pattern={fields}
+        pattern={patternValues}
         errors={errors}
         submitLabel="Enregistrer"
         onPatternChange={(partial) =>
-          setFields((prev) => ({ ...prev, ...partial }))
+          setPatternValues((prev) => ({ ...prev, ...partial }))
         }
         onSubmit={handleSubmit}
         onCancel={onCancel}

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Instrument } from '../../models/instrument-model';
-import InstrumentForm from './InstrumentForm';
 import { extractIpcError } from '../../../../utils/util';
 import { InstrumentFormValues } from '../../types/instrument-types';
+import InstrumentForm from './InstrumentForm';
+import { validateInstrument } from '../../utils/instrument-validator';
 
 type EditInstrumentFormProps = {
   instrument: Instrument;
@@ -25,17 +26,12 @@ export default function EditInstrumentForm({
     });
   const [errors, setErrors] = useState<string[]>([]);
 
-  const validate = (): boolean => {
-    const next: string[] = [];
-    if (!instrumentValues.symbol.trim()) next.push('Le symbole est requis.');
-    if (!instrumentValues.name?.trim()) next.push('Le nom est requis.');
-    if (!instrumentValues.filepath) next.push('Le fichier audio est requis.');
-    setErrors(next);
-    return next.length === 0;
-  };
-
   const handleSubmit = async () => {
-    if (!validate()) return;
+    const issues: string[] = validateInstrument(instrumentValues);
+    if (issues.length > 0) {
+      setErrors(issues);
+      return;
+    }
     try {
       await onUpdate(instrumentValues);
     } catch (error) {

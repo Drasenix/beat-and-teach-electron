@@ -1,3 +1,4 @@
+import usePatterns from '../hooks/usePatterns';
 import { Pattern } from '../models/pattern-model';
 import PatternSteps from './PatternSteps';
 import SavePatternForm from './SavePatternForm';
@@ -10,6 +11,7 @@ type PatternEditorProps = {
 export default function PatternEditor(props: PatternEditorProps) {
   const { pattern, changePatternSentence } = props;
 
+  const { addPattern } = usePatterns();
   return (
     <div className="w-full max-w-2xl">
       <label htmlFor="pattern-input" className="section-title block mb-2">
@@ -25,7 +27,7 @@ export default function PatternEditor(props: PatternEditorProps) {
       </label>
 
       <div className="flex justify-end mt-2">
-        <SavePatternForm pattern={pattern} />
+        <SavePatternForm pattern={pattern} onAdd={addPattern} />
       </div>
     </div>
   );
