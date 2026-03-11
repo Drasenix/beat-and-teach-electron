@@ -49,7 +49,7 @@ export default function AddPatternForm(props: PatternSaveFormProps) {
       <button
         type="button"
         onClick={handleConfirm}
-        disabled={!name.trim()}
+        disabled={!name.trim() || !pattern.sentence}
         className="btn-primary"
       >
         Confirmer

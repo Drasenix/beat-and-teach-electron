@@ -1,3 +1,4 @@
+import { extractIpcError } from '../../../utils/util';
 import { usePatternsContext } from '../contexts/PatternsContext';
 import { savePattern } from '../facade/pattern-facade';
 import { Pattern } from '../models/pattern-model';
@@ -14,8 +15,8 @@ const usePatterns = () => {
       setPatterns((prev) => [...prev, saved]);
       setSaveError(null);
       return true;
-    } catch {
-      setSaveError('Un pattern avec ce nom existe déjà.');
+    } catch (error: any) {
+      setSaveError(extractIpcError(error));
       return false;
     }
   };

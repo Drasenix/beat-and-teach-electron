@@ -23,15 +23,22 @@ export function createPattern(
   if (!pattern.sentence?.trim()) throw new Error('La phrase est requise.');
   const db = getDatabase();
   const slug = toSnakeCase(pattern.name);
-  const result = db
-    .prepare(
-      `
-  INSERT INTO patterns (slug, name, sentence)
-  VALUES (@slug, @name, @sentence)
-`,
-    )
-    .run({ ...pattern, slug });
-  return getPatternById(result.lastInsertRowid as number)!;
+  try {
+    const result = db
+      .prepare(
+        `
+    INSERT INTO patterns (slug, name, sentence)
+    VALUES (@slug, @name, @sentence)
+  `,
+      )
+      .run({ ...pattern, slug });
+    return getPatternById(result.lastInsertRowid as number)!;
+  } catch (error: any) {
+    if (error?.message?.includes('UNIQUE constraint failed: patterns.slug')) {
+      throw new Error('Un pattern avec ce nom existe déjà.');
+    }
+    throw error;
+  }
 }
 
 export function updatePattern(
