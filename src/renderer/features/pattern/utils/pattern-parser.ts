@@ -6,7 +6,7 @@ export function createStep(
   id: number,
 ): PatternStep {
   return {
-    id: `token-${id}`,
+    id: `step-${id}`,
     symbol,
     valid: validSymbols.includes(symbol),
     isGroup: false,
@@ -36,18 +36,18 @@ export function parseSteps(
   validSymbols: string[],
 ): PatternStep[] {
   const regex = /\(([^)]*)\)|(\S+)/g;
-  const tokens: PatternStep[] = [];
+  const steps: PatternStep[] = [];
   let counter = 0;
   let match: RegExpExecArray | null;
 
   while ((match = regex.exec(sentence)) !== null) {
     if (match[1] !== undefined) {
-      tokens.push(createGroup(match[1], validSymbols, counter));
+      steps.push(createGroup(match[1], validSymbols, counter));
     } else {
-      tokens.push(createStep(match[2], validSymbols, counter));
+      steps.push(createStep(match[2], validSymbols, counter));
     }
     counter++;
   }
 
-  return tokens;
+  return steps;
 }
