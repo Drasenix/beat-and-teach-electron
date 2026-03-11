@@ -18,6 +18,17 @@ export async function createInstrumentAPI(
   );
 }
 
+export async function updateInstrumentAPI(
+  id: number,
+  instrument: Partial<Omit<InstrumentDB, 'id' | 'slug'>>,
+): Promise<InstrumentDB> {
+  return window.electron.ipcRenderer.invokeMessage(
+    'update-instrument',
+    id,
+    instrument,
+  );
+}
+
 export async function deleteInstrumentAPI(id: number): Promise<void> {
   return window.electron.ipcRenderer.invokeMessage('delete-instrument', id);
 }

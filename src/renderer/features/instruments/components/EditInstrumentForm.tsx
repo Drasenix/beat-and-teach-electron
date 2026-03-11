@@ -3,20 +3,24 @@ import { Instrument } from '../models/instrument-model';
 import InstrumentForm from './InstrumentForm';
 import { extractIpcError } from '../../../utils/util';
 
-type AddInstrumentFormProps = {
-  onAdd: (data: Omit<Instrument, 'id' | 'slug'>) => Promise<void>;
+type EditInstrumentFormProps = {
+  instrument: Instrument;
+  onUpdate: (data: Omit<Instrument, 'id' | 'slug'>) => Promise<void>;
   onCancel: () => void;
   onOpenFileDialog: () => Promise<string | null>;
 };
 
-export default function AddInstrumentForm({
-  onAdd,
+export default function EditInstrumentForm({
+  instrument,
+  onUpdate,
   onCancel,
   onOpenFileDialog,
-}: AddInstrumentFormProps) {
-  const [symbol, setSymbol] = useState('');
-  const [name, setName] = useState('');
-  const [filepath, setFilepath] = useState<string | null>(null);
+}: EditInstrumentFormProps) {
+  const [symbol, setSymbol] = useState(instrument.symbol);
+  const [name, setName] = useState(instrument.name ?? '');
+  const [filepath, setFilepath] = useState<string | null>(
+    instrument.filepath ?? null,
+  );
   const [errors, setErrors] = useState<string[]>([]);
 
   const validate = (): boolean => {
@@ -31,22 +35,23 @@ export default function AddInstrumentForm({
   const handleSubmit = async () => {
     if (!validate()) return;
     try {
-      await onAdd({ symbol, name, filepath });
-      onCancel();
+      await onUpdate({ symbol, name, filepath });
     } catch (error) {
-      setErrors([extractIpcError(error, "Impossible de créer l'instrument.")]);
+      setErrors([
+        extractIpcError(error, "Impossible de modifier l'instrument."),
+      ]);
     }
   };
 
   return (
     <div className="bg-surface border border-border rounded-lg p-6 mt-4">
-      <h3 className="section-title mb-4">Nouvel instrument</h3>
+      <h3 className="section-title mb-4">Modifier l&apos;instrument</h3>
       <InstrumentForm
         symbol={symbol}
         name={name}
         filepath={filepath}
         errors={errors}
-        submitLabel="Ajouter"
+        submitLabel="Enregistrer"
         onSymbolChange={setSymbol}
         onNameChange={setName}
         onFilepathChange={setFilepath}

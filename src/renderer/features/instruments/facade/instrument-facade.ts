@@ -4,6 +4,7 @@ import {
   createInstrumentAPI,
   deleteInstrumentAPI,
   getAllInstruments,
+  updateInstrumentAPI,
 } from '../services/instrument-service';
 import { InstrumentFile } from '../types/instrument-file';
 import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
@@ -46,6 +47,18 @@ export async function createInstrument(
     filepath: instrument.filepath,
   });
   return adaptInstrument(created);
+}
+
+export async function updateInstrument(
+  id: number,
+  instrument: Partial<Omit<Instrument, 'id' | 'slug'>>,
+): Promise<Instrument> {
+  const updated = await updateInstrumentAPI(id, {
+    symbol: instrument.symbol,
+    name: instrument.name,
+    filepath: instrument.filepath,
+  });
+  return adaptInstrument(updated);
 }
 
 export async function deleteInstrument(id: number): Promise<void> {
