@@ -1,16 +1,16 @@
-import { Instrument } from '../models/instrument-model';
 import { useInstrumentsContext } from '../contexts/InstrumentsContext';
 import {
   createInstrument,
   deleteInstrument,
   updateInstrument,
 } from '../facade/instrument-facade';
+import { InstrumentFormValues } from '../types/instrument-types';
 
 const useInstruments = () => {
   const { instruments, setInstruments, error } = useInstrumentsContext();
 
   const addNewInstrument = async (
-    instrument: Omit<Instrument, 'id' | 'slug'>,
+    instrument: InstrumentFormValues,
   ): Promise<void> => {
     const created = await createInstrument(instrument);
     setInstruments((prev) => [...prev, created]);
@@ -18,7 +18,7 @@ const useInstruments = () => {
 
   const editInstrument = async (
     id: number,
-    instrument: Partial<Omit<Instrument, 'id' | 'slug'>>,
+    instrument: Partial<InstrumentFormValues>,
   ): Promise<void> => {
     const updated = await updateInstrument(id, instrument);
     setInstruments((prev) => prev.map((i) => (i.id === id ? updated : i)));

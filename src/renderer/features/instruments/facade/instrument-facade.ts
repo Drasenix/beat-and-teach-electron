@@ -6,9 +6,8 @@ import {
   getAllInstruments,
   updateInstrumentAPI,
 } from '../services/instrument-service';
-import { InstrumentFile } from '../types/instrument-file';
+import { InstrumentFile, InstrumentFormValues } from '../types/instrument-types';
 import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
-import { InstrumentDB } from '../../../../shared/models/instrument-db';
 import { adaptInstrument } from '../adapters/instrument-adapter';
 
 async function prepareInstrumentEngine(): Promise<InstrumentEngine> {
@@ -39,7 +38,7 @@ export async function getInstrumentFilePathsFromSymbol(
 }
 
 export async function createInstrument(
-  instrument: Omit<Instrument, 'id' | 'slug'>,
+  instrument: InstrumentFormValues,
 ): Promise<Instrument> {
   const created = await createInstrumentAPI({
     symbol: instrument.symbol,
@@ -51,7 +50,7 @@ export async function createInstrument(
 
 export async function updateInstrument(
   id: number,
-  instrument: Partial<Omit<Instrument, 'id' | 'slug'>>,
+  instrument: Partial<InstrumentFormValues>,
 ): Promise<Instrument> {
   const updated = await updateInstrumentAPI(id, {
     symbol: instrument.symbol,

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Instrument } from '../models/instrument-model';
 import useInstruments from '../hooks/useInstruments';
-import AddInstrumentForm from './AddInstrumentForm';
-import EditInstrumentForm from './EditInstrumentForm';
+import AddInstrumentForm from './form/AddInstrumentForm';
+import EditInstrumentForm from './form/EditInstrumentForm';
+import { InstrumentFormValues } from '../types/instrument-types';
 
 export default function InstrumentConfiguration() {
   const [addingInstrument, setAddingInstrument] = useState(false);
@@ -25,7 +25,7 @@ export default function InstrumentConfiguration() {
 
   const handleEdit = async (
     id: number,
-    data: Omit<Instrument, 'id' | 'slug'>,
+    data: InstrumentFormValues,
   ): Promise<void> => {
     await editInstrument(id, data);
     setEditingId(null);

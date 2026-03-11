@@ -1,4 +1,4 @@
-import { InstrumentFile } from '../types/instrument-file';
+import { InstrumentFile } from '../types/instrument-types';
 
 export interface Instrument {
   id: number;

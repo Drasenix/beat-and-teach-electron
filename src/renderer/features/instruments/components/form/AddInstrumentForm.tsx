@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Instrument } from '../models/instrument-model';
 import InstrumentForm from './InstrumentForm';
-import { extractIpcError } from '../../../utils/util';
+import { extractIpcError } from '../../../../utils/util';
+import { InstrumentFormValues } from '../../types/instrument-types';
 
 type AddInstrumentFormProps = {
-  onAdd: (data: Omit<Instrument, 'id' | 'slug'>) => Promise<void>;
+  onAdd: (data: InstrumentFormValues) => Promise<void>;
   onCancel: () => void;
   onOpenFileDialog: () => Promise<string | null>;
 };
@@ -14,16 +14,18 @@ export default function AddInstrumentForm({
   onCancel,
   onOpenFileDialog,
 }: AddInstrumentFormProps) {
-  const [symbol, setSymbol] = useState('');
-  const [name, setName] = useState('');
-  const [filepath, setFilepath] = useState<string | null>(null);
+  const [fields, setFields] = useState<InstrumentFormValues>({
+    symbol: '',
+    name: '',
+    filepath: null,
+  });
   const [errors, setErrors] = useState<string[]>([]);
 
   const validate = (): boolean => {
     const next: string[] = [];
-    if (!symbol.trim()) next.push('Le symbole est requis.');
-    if (!name.trim()) next.push('Le nom est requis.');
-    if (!filepath) next.push('Le fichier audio est requis.');
+    if (!fields.symbol.trim()) next.push('Le symbole est requis.');
+    if (!fields.name?.trim()) next.push('Le nom est requis.');
+    if (!fields.filepath) next.push('Le fichier audio est requis.');
     setErrors(next);
     return next.length === 0;
   };
@@ -31,7 +33,7 @@ export default function AddInstrumentForm({
   const handleSubmit = async () => {
     if (!validate()) return;
     try {
-      await onAdd({ symbol, name, filepath });
+      await onAdd(fields);
       onCancel();
     } catch (error) {
       setErrors([extractIpcError(error, "Impossible de créer l'instrument.")]);
@@ -42,14 +44,12 @@ export default function AddInstrumentForm({
     <div className="bg-surface border border-border rounded-lg p-6 mt-4">
       <h3 className="section-title mb-4">Nouvel instrument</h3>
       <InstrumentForm
-        symbol={symbol}
-        name={name}
-        filepath={filepath}
+        instrument={fields}
         errors={errors}
         submitLabel="Ajouter"
-        onSymbolChange={setSymbol}
-        onNameChange={setName}
-        onFilepathChange={setFilepath}
+        onInstrumentChange={(partial) =>
+          setFields((prev) => ({ ...prev, ...partial }))
+        }
         onOpenFileDialog={onOpenFileDialog}
         onSubmit={handleSubmit}
         onCancel={onCancel}

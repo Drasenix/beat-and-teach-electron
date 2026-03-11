@@ -1,5 +1,5 @@
 import { Instrument } from '../models/instrument-model';
-import { InstrumentFile } from '../types/instrument-file';
+import { InstrumentFile } from '../types/instrument-types';
 import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
 
 export class InstrumentEngine {

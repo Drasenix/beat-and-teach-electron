@@ -1,47 +1,41 @@
+import { InstrumentFormValues } from '../../types/instrument-types';
+
 type InstrumentFormProps = {
-  symbol: string;
-  name: string;
-  filepath: string | null;
+  instrument: InstrumentFormValues;
   errors: string[];
   submitLabel: string;
-  onSymbolChange: (v: string) => void;
-  onNameChange: (v: string) => void;
-  onFilepathChange: (path: string) => void;
+  onInstrumentChange: (fields: Partial<InstrumentFormValues>) => void;
   onOpenFileDialog: () => Promise<string | null>;
   onSubmit: () => void;
   onCancel: () => void;
 };
 
 export default function InstrumentForm({
-  symbol,
-  name,
-  filepath,
+  instrument,
   errors,
   submitLabel,
-  onSymbolChange,
-  onNameChange,
-  onFilepathChange,
+  onInstrumentChange,
   onOpenFileDialog,
   onSubmit,
   onCancel,
 }: InstrumentFormProps) {
   const handleSelectFile = async () => {
     const path = await onOpenFileDialog();
-    if (path) onFilepathChange(path);
+    if (path) onInstrumentChange({ filepath: path });
   };
 
   return (
     <div className="flex flex-col gap-3">
       <input
         placeholder="Symbole (ex: P)"
-        value={symbol}
-        onChange={(e) => onSymbolChange(e.target.value)}
+        value={instrument.symbol}
+        onChange={(e) => onInstrumentChange({ symbol: e.target.value })}
         className="input-field w-full"
       />
       <input
         placeholder="Nom (ex: Kickdrum)"
-        value={name}
-        onChange={(e) => onNameChange(e.target.value)}
+        value={instrument.name ?? ''}
+        onChange={(e) => onInstrumentChange({ name: e.target.value })}
         className="input-field w-full"
       />
 
@@ -51,14 +45,16 @@ export default function InstrumentForm({
           onClick={handleSelectFile}
           className="btn-secondary"
         >
-          {filepath ? 'Remplacer le fichier' : 'Sélectionner un fichier'}
+          {instrument.filepath
+            ? 'Remplacer le fichier'
+            : 'Sélectionner un fichier'}
         </button>
-        {filepath && (
+        {instrument.filepath && (
           <span
             className="text-text-secondary text-xs font-mono truncate"
-            title={filepath}
+            title={instrument.filepath}
           >
-            {filepath}
+            {instrument.filepath}
           </span>
         )}
       </div>
