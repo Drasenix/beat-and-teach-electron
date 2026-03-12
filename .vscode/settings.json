@@ -4,13 +4,18 @@
     ".prettierrc": "jsonc",
     ".eslintignore": "ignore"
   },
-  
+
   "eslint.validate": [
     "javascript",
     "javascriptreact",
+    "typescript",
     "html",
     "typescriptreact"
   ],
+  "eslint.nodePath": "./node_modules/.bin/eslint",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
 
   "javascript.validate.enable": false,
   "javascript.format.enable": false,
