@@ -15,7 +15,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import createIcpEvents from './icpEvents';
-import { getDatabase } from './db/database';
+import getDatabase from './db/database';
 
 class AppUpdater {
   constructor() {

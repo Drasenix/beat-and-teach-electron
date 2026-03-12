@@ -8,11 +8,11 @@ import { SequenceNotes } from '../types/sequence-note';
 export async function prepareFilePaths(
   sentence: string,
 ): Promise<InstrumentFilePath[]> {
-  return await prepareFilePathsService(sentence);
+  return prepareFilePathsService(sentence);
 }
 
 export async function preparePattern(
   sentence: string,
 ): Promise<SequenceNotes[]> {
-  return await preparePatternService(sentence);
+  return preparePatternService(sentence);
 }

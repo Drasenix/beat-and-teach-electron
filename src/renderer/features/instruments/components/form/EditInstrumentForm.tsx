@@ -3,7 +3,7 @@ import { Instrument } from '../../models/instrument-model';
 import { extractIpcError } from '../../../../utils/util';
 import { InstrumentFormValues } from '../../types/instrument-types';
 import InstrumentForm from './InstrumentForm';
-import { validateInstrument } from '../../utils/instrument-validator';
+import validateInstrument from '../../utils/instrument-validator';
 
 type EditInstrumentFormProps = {
   instrument: Instrument;

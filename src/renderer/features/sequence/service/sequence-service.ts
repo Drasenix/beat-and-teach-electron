@@ -5,7 +5,7 @@ import {
 } from '../../instruments/facade/instrument-facade';
 import { InstrumentFilePath } from '../../../../shared/types/instrument';
 import { SequenceNotes, SequenceNote } from '../types/sequence-note';
-import { toSequenceNote } from '../adapters/sequence-adapter';
+import toSequenceNote from '../adapters/sequence-adapter';
 
 export async function prepareFilePaths(
   sentence: string,

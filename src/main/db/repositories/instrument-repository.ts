@@ -1,6 +1,6 @@
 import { toSnakeCase } from '../../../renderer/utils/util';
 import { InstrumentDB } from '../../../shared/models/instrument-db';
-import { getDatabase } from '../database';
+import getDatabase from '../database';
 
 export function getAllInstruments(): InstrumentDB[] {
   const db = getDatabase();

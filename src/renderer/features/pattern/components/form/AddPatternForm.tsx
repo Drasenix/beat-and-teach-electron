@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { extractIpcError } from '../../../../utils/util';
 import { PatternFormValues } from '../../types/pattern-types';
 import PatternForm from './PatternForm';
-import { validatePattern } from '../../utils/pattern-validator';
+import validatePattern from '../../utils/pattern-validator';
 
 type AddPatternFormProps = {
   onAdd: (data: PatternFormValues) => Promise<void>;

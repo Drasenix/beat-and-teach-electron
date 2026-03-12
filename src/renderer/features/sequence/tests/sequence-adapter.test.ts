@@ -1,4 +1,4 @@
-import { toSequenceNote } from '../adapters/sequence-adapter';
+import toSequenceNote from '../adapters/sequence-adapter';
 
 describe('#toSequenceNote', () => {
   it('retourne la valeur string telle quelle', () => {

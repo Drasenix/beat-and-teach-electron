@@ -4,7 +4,7 @@ import {
   InstrumentName,
 } from '../../../../shared/types/instrument';
 
-export class InstrumentEngine {
+export default class InstrumentEngine {
   static #instance: InstrumentEngine;
 
   private _instruments: Instrument[] = [];

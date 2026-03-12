@@ -1,4 +1,4 @@
-import { validateInstrument } from '../utils/instrument-validator';
+import validateInstrument from '../utils/instrument-validator';
 
 describe('#validateInstrument', () => {
   it('retourne une erreur si le symbole est vide', () => {

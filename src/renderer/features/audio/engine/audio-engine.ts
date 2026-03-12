@@ -5,12 +5,10 @@ import {
   SequenceNotes,
 } from '../../sequence/types/sequence-note';
 
-export class AudioEngine {
+export default class AudioEngine {
   static #instance: AudioEngine;
 
   private players?: Tone.Players;
-
-  private constructor() {}
 
   public static getInstance(): AudioEngine {
     if (!AudioEngine.#instance) {

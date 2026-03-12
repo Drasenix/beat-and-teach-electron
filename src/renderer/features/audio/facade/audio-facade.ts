@@ -4,12 +4,12 @@ import {
   prepareFilePaths,
   preparePattern,
 } from '../../sequence/facade/sequence-facade';
-import { AudioEngine } from '../engine/audio-engine';
-import { getAudioBuffers } from '../services/audio-service';
+import AudioEngine from '../engine/audio-engine';
+import getAudioBuffers from '../services/audio-service';
 
 async function createAudioBuffers(sentence: string): Promise<AudioFileBuffer> {
   const filePaths: InstrumentFilePath[] = await prepareFilePaths(sentence);
-  return await getAudioBuffers(filePaths);
+  return getAudioBuffers(filePaths);
 }
 
 async function prepareAudioEngine(

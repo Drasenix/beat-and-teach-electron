@@ -1,4 +1,4 @@
-import { InstrumentEngine } from '../engine/instrument-engine';
+import InstrumentEngine from '../engine/instrument-engine';
 import { Instrument } from '../models/instrument-model';
 import {
   createInstrumentAPI,
@@ -23,7 +23,7 @@ async function prepareInstrumentEngine(): Promise<InstrumentEngine> {
 }
 
 export async function getInstruments(): Promise<Instrument[]> {
-  return await getAllInstruments();
+  return getAllInstruments();
 }
 
 export async function getInstrumentNameFromSymbol(

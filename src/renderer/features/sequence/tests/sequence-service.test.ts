@@ -2,7 +2,7 @@ import * as sequenceFacade from '../service/sequence-service';
 import * as instrumentService from '../../instruments/services/instrument-service';
 import { SequenceNotes } from '../types/sequence-note';
 import { InstrumentDB } from '../../../../shared/models/instrument-db';
-import { InstrumentEngine } from '../../instruments/engine/instrument-engine';
+import InstrumentEngine from '../../instruments/engine/instrument-engine';
 import { InstrumentFilePath } from '../../../../shared/types/instrument';
 
 const instrumentDBOne: InstrumentDB = {
@@ -31,8 +31,8 @@ const instrumentsDB: InstrumentDB[] = [
   instrumentDBTwo,
   instrumentDBThree,
 ];
-let instrumentEngine: InstrumentEngine;
 
+let instrumentEngine: InstrumentEngine;
 describe('#prepareFilePaths', () => {
   beforeAll(async () => {
     jest
@@ -43,10 +43,10 @@ describe('#prepareFilePaths', () => {
 
   it('should return a list of filepaths based on a sentence and a list of instruments', async () => {
     // Given
-    const sentence_OK: string = 'P (Ts P) Ts .';
+    const sentenceOK: string = 'P (Ts P) Ts .';
     // When
     const result: InstrumentFilePath[] =
-      await sequenceFacade.prepareFilePaths(sentence_OK);
+      await sequenceFacade.prepareFilePaths(sentenceOK);
     // Then
     const expectedResult: InstrumentFilePath[] = [
       { name: 'kickdrum', filepath: './assets/audio/kickdrum.mp3' },
@@ -58,9 +58,9 @@ describe('#prepareFilePaths', () => {
 
   it('should throw an error because one of the symbols in the sentence does not match any instrument', async () => {
     // Given
-    const sentence_KO: string = 'P (Ts K) Ts .';
+    const sentenceKO: string = 'P (Ts K) Ts .';
     // When - Then
-    await expect(sequenceFacade.prepareFilePaths(sentence_KO)).rejects.toThrow(
+    await expect(sequenceFacade.prepareFilePaths(sentenceKO)).rejects.toThrow(
       `Le symbole K n'existe pas.`,
     );
   });
@@ -76,10 +76,10 @@ describe('#preparePattern', () => {
 
   it('should return a list of symbols based on a sentence and a list of instruments', async () => {
     // Given
-    const sentence_OK: string = 'P (Ts P) Ts .';
+    const sentenceOK: string = 'P (Ts P) Ts .';
     // When
     const result: SequenceNotes[] =
-      await sequenceFacade.preparePattern(sentence_OK);
+      await sequenceFacade.preparePattern(sentenceOK);
     // Then
     const expected: SequenceNotes[] = [
       'kickdrum',
@@ -92,9 +92,9 @@ describe('#preparePattern', () => {
 
   it('should throw an error because on of the symbols in the sentence does not match any instrument', async () => {
     // Given
-    const sentence_KO: string = 'P (Ts K) Ts .';
+    const sentenceKO: string = 'P (Ts K) Ts .';
     // When - Then
-    await expect(sequenceFacade.preparePattern(sentence_KO)).rejects.toThrow(
+    await expect(sequenceFacade.preparePattern(sentenceKO)).rejects.toThrow(
       `Le symbole K n'existe pas.`,
     );
   });

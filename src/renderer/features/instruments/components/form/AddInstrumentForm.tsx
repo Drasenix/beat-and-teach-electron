@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { extractIpcError } from '../../../../utils/util';
 import { InstrumentFormValues } from '../../types/instrument-types';
 import InstrumentForm from './InstrumentForm';
-import { validateInstrument } from '../../utils/instrument-validator';
+import validateInstrument from '../../utils/instrument-validator';
 
 type AddInstrumentFormProps = {
   onAdd: (data: InstrumentFormValues) => Promise<void>;

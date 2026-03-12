@@ -1,4 +1,4 @@
-import { validatePattern } from '../utils/pattern-validator';
+import validatePattern from '../utils/pattern-validator';
 
 describe('#validatePattern', () => {
   it('retourne une erreur si le nom est vide', () => {

@@ -1,4 +1,4 @@
-import { InstrumentEngine } from '../engine/instrument-engine';
+import InstrumentEngine from '../engine/instrument-engine';
 import { InstrumentDB } from '../../../../shared/models/instrument-db';
 import * as instrumentService from '../services/instrument-service';
 

@@ -1,6 +1,6 @@
 import { toSnakeCase } from '../../../renderer/utils/util';
 import { PatternDB } from '../../../shared/models/pattern-db';
-import { getDatabase } from '../database';
+import getDatabase from '../database';
 
 export function getAllPatterns(): PatternDB[] {
   const db = getDatabase();
