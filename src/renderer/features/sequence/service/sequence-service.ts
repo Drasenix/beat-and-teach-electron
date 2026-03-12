@@ -20,6 +20,22 @@ export async function prepareFilePaths(
   return resolved.flat();
 }
 
+async function toGroupNotes(group: string): Promise<SequenceNote[]> {
+  const symbols = group.trim().split(/\s+/);
+  return Promise.all(
+    symbols.map(async (symbol) =>
+      toSequenceNote(await getInstrumentNameFromSymbol(symbol)),
+    ),
+  );
+}
+
+async function toSequenceNotes(match: RegExpExecArray): Promise<SequenceNotes> {
+  if (match[1] !== undefined) {
+    return toGroupNotes(match[1]); // Groupe 1 : plusieurs notes par temps
+  }
+  return toSequenceNote(await getInstrumentNameFromSymbol(match[2])); // Groupe 2 : une seule note
+}
+
 export async function preparePattern(
   sentence: string,
 ): Promise<SequenceNotes[]> {
@@ -32,22 +48,5 @@ export async function preparePattern(
     match = regex.exec(sentence);
   }
 
-  const result: SequenceNotes[] = await Promise.all(
-    matches.map(async (m) => {
-      if (m[1] !== undefined) {
-        // Groupe 1 : plusieurs notes par temps
-        const symbols: string[] = m[1].trim().split(/\s+/);
-        const notes: SequenceNote[] = await Promise.all(
-          symbols.map(async (symbol) =>
-            toSequenceNote(await getInstrumentNameFromSymbol(symbol)),
-          ),
-        );
-        return notes;
-      }
-      // Groupe 2 : une seule note
-      return toSequenceNote(await getInstrumentNameFromSymbol(m[2]));
-    }),
-  );
-
-  return result;
+  return Promise.all(matches.map(toSequenceNotes));
 }
