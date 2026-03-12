@@ -8,6 +8,7 @@ const useAudio = () => {
       await playPattern(sentence, bpm);
       setPlaying(true);
     } catch (error) {
+      // eslint-disable-next-line no-alert
       alert(error);
     }
   };

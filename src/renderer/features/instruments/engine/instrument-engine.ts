@@ -5,22 +5,15 @@ import {
 } from '../../../../shared/types/instrument';
 
 export default class InstrumentEngine {
+  // eslint-disable-next-line no-use-before-define
   static #instance: InstrumentEngine;
 
-  private _instruments: Instrument[] = [];
+  private instruments: Instrument[] = [];
 
-  private _initialized = false;
+  private initialized = false;
 
   public get isInitialized(): boolean {
-    return this._initialized;
-  }
-
-  public set instruments(value: Instrument[]) {
-    this._instruments = value;
-  }
-
-  public get instruments(): Instrument[] {
-    return this._instruments;
+    return this.initialized;
   }
 
   public static getInstance(): InstrumentEngine {
@@ -32,7 +25,7 @@ export default class InstrumentEngine {
 
   public loadInstruments(instruments: Instrument[]): void {
     this.instruments = instruments;
-    this._initialized = true;
+    this.initialized = true;
   }
 
   public getInstrumentFilePathsFromSymbol(

@@ -38,15 +38,16 @@ export function parseSteps(
   const regex = /\(([^)]*)\)|(\S+)/g;
   const steps: PatternStep[] = [];
   let counter = 0;
-  let match: RegExpExecArray | null;
+  let match: RegExpExecArray | null = regex.exec(sentence);
 
-  while ((match = regex.exec(sentence)) !== null) {
+  while (match !== null) {
     if (match[1] !== undefined) {
       steps.push(createGroup(match[1], validSymbols, counter));
     } else {
       steps.push(createStep(match[2], validSymbols, counter));
     }
-    counter++;
+    counter += 1;
+    match = regex.exec(sentence);
   }
 
   return steps;

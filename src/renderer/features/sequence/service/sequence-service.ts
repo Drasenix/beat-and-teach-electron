@@ -23,26 +23,31 @@ export async function prepareFilePaths(
 export async function preparePattern(
   sentence: string,
 ): Promise<SequenceNotes[]> {
-  const result: SequenceNotes[] = [];
   const regex = /\(([^)]*)\)|(\S+)/g; // "hello (world foo) bar" --> ["hello", "(world foo)", "bar"]
-  let match: RegExpExecArray | null;
+  const matches: RegExpExecArray[] = [];
+  let match: RegExpExecArray | null = regex.exec(sentence);
 
-  while ((match = regex.exec(sentence)) !== null) {
-    if (match[1] !== undefined) {
-      // Groupe 1 : plusieurs notes par temps
-      const symbols: string[] = match[1].trim().split(/\s+/);
-      const notes: SequenceNote[] = await Promise.all(
-        symbols.map(async (symbol) =>
-          toSequenceNote(await getInstrumentNameFromSymbol(symbol)),
-        ),
-      );
-      result.push(notes);
-    } else {
-      // Groupe 2 : une seule note
-      const symbol: string = match[2];
-      result.push(toSequenceNote(await getInstrumentNameFromSymbol(symbol)));
-    }
+  while (match !== null) {
+    matches.push(match);
+    match = regex.exec(sentence);
   }
+
+  const result: SequenceNotes[] = await Promise.all(
+    matches.map(async (m) => {
+      if (m[1] !== undefined) {
+        // Groupe 1 : plusieurs notes par temps
+        const symbols: string[] = m[1].trim().split(/\s+/);
+        const notes: SequenceNote[] = await Promise.all(
+          symbols.map(async (symbol) =>
+            toSequenceNote(await getInstrumentNameFromSymbol(symbol)),
+          ),
+        );
+        return notes;
+      }
+      // Groupe 2 : une seule note
+      return toSequenceNote(await getInstrumentNameFromSymbol(m[2]));
+    }),
+  );
 
   return result;
 }

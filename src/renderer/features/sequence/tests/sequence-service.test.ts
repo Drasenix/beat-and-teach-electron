@@ -32,6 +32,7 @@ const instrumentsDB: InstrumentDB[] = [
   instrumentDBThree,
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let instrumentEngine: InstrumentEngine;
 describe('#prepareFilePaths', () => {
   beforeAll(async () => {

@@ -6,6 +6,7 @@ import {
 } from '../../sequence/types/sequence-note';
 
 export default class AudioEngine {
+  // eslint-disable-next-line no-use-before-define
   static #instance: AudioEngine;
 
   private players?: Tone.Players;
@@ -17,20 +18,25 @@ export default class AudioEngine {
     return AudioEngine.#instance;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public setTempo(bpm: number) {
     Tone.getTransport().bpm.value = bpm;
   }
 
-  public async createPlayers(buffers: AudioFileBuffer) {
+  public async createPlayers(audioBuffers: AudioFileBuffer) {
     const context: Tone.Context = new Tone.Context();
     this.players = new Tone.Players();
 
-    for (const buffer in buffers) {
-      const audioBuffer = await context.decodeAudioData(
-        buffers[buffer] as ArrayBuffer,
-      );
-      this.players.add(buffer, audioBuffer);
-    }
+    const buffers = Object.entries(audioBuffers);
+    const decoded = await Promise.all(
+      buffers.map(([, buffer]) =>
+        context.decodeAudioData(buffer as ArrayBuffer),
+      ),
+    );
+
+    buffers.forEach(([instrumentName], index) => {
+      this.players!.add(instrumentName, decoded[index]);
+    });
 
     this.players.toDestination();
   }
@@ -43,10 +49,12 @@ export default class AudioEngine {
     }, notes).start(0);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public async play(): Promise<void> {
     Tone.getTransport().start();
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public stop(): void {
     Tone.getTransport().stop();
     Tone.getTransport().cancel(0);

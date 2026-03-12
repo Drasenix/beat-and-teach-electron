@@ -44,9 +44,10 @@ function seedPatterns(db: Database.Database): void {
   );
 
   const insertMany = db.transaction((patterns) => {
-    for (const pattern of patterns) {
-      insert.run(pattern);
-    }
+    patterns.forEach(
+      (pattern: { slug: string; name: string; sentence: string }) =>
+        insert.run(pattern),
+    );
   });
 
   insertMany(SEED_PATTERNS);
@@ -105,9 +106,14 @@ function seedInstruments(db: Database.Database): void {
   `);
 
   const insertMany = db.transaction((instruments) => {
-    for (const instrument of instruments) {
-      insert.run(instrument);
-    }
+    instruments.forEach(
+      (instrument: {
+        slug: string;
+        symbol: string;
+        name: string | null;
+        filepath: string | null;
+      }) => insert.run(instrument),
+    );
   });
 
   insertMany(SEED_INSTRUMENTS);
