@@ -26,8 +26,8 @@ export default function PatternConfiguration() {
   };
 
   return (
-    <div className="flex flex-col items-center p-8">
-      <div className="w-full max-w-2xl">
+    <div className="config-page">
+      <div className="config-content">
         <h2 className="section-title mb-6">Patterns</h2>
 
         {error && <div className="w-full mb-6 error-message">{error}</div>}
@@ -35,7 +35,7 @@ export default function PatternConfiguration() {
         <ul className="flex flex-col gap-2 mb-6">
           {patterns.map((pattern) => (
             <li key={pattern.id} className="flex flex-col">
-              <div className="flex items-center gap-4 bg-surface border border-border rounded-lg px-4 py-3">
+              <div className="item-row">
                 <span className="text-text-primary font-mono flex-1">
                   {pattern.name}
                 </span>
@@ -51,8 +51,7 @@ export default function PatternConfiguration() {
                     <button
                       type="button"
                       onClick={() => handleDelete(pattern.id)}
-                      className="px-3 py-1 bg-red-500 hover:opacity-90 text-background
-                                 font-mono text-xs rounded-lg transition-opacity duration-200"
+                      className="btn-confirm-delete"
                     >
                       Oui
                     </button>
@@ -74,16 +73,14 @@ export default function PatternConfiguration() {
                         );
                         setAddingPattern(false);
                       }}
-                      className="text-text-secondary hover:text-primary font-mono text-xs
-                                 transition-colors duration-200"
+                      className="btn-edit"
                     >
                       ✎
                     </button>
                     <button
                       type="button"
                       onClick={() => setConfirmDeleteId(pattern.id)}
-                      className="text-text-secondary hover:text-red-400 font-mono text-xs
-                                 transition-colors duration-200"
+                      className="btn-delete"
                     >
                       ✕
                     </button>

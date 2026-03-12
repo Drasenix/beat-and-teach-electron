@@ -38,7 +38,7 @@ export default function AddInstrumentForm({
   };
 
   return (
-    <div className="bg-surface border border-border rounded-lg p-6 mt-4">
+    <div className="form-card">
       <h3 className="section-title mb-4">Nouvel instrument</h3>
       <InstrumentForm
         instrument={instrumentValues}

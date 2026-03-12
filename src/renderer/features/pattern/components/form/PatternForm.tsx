@@ -36,7 +36,7 @@ export default function PatternForm({
       {errors.length > 0 && (
         <ul className="flex flex-col gap-1">
           {errors.map((e) => (
-            <li key={e} className="text-red-400 text-xs font-mono">
+            <li key={e} className="form-error-item">
               {e}
             </li>
           ))}

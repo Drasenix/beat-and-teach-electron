@@ -34,8 +34,8 @@ export default function InstrumentConfiguration() {
   };
 
   return (
-    <div className="flex flex-col items-center p-8">
-      <div className="w-full max-w-2xl">
+    <div className="config-page">
+      <div className="config-content">
         <h2 className="section-title mb-6">Instruments</h2>
 
         {error && <div className="w-full mb-6 error-message">{error}</div>}
@@ -45,8 +45,7 @@ export default function InstrumentConfiguration() {
             .filter((instrument) => instrument.symbol !== '.')
             .map((instrument) => (
               <li key={instrument.id} className="flex flex-col">
-                {/* Ligne instrument */}
-                <div className="flex items-center gap-4 bg-surface border border-border rounded-lg px-4 py-3">
+                <div className="item-row">
                   <span className="text-primary font-mono font-bold w-8">
                     {instrument.symbol}
                   </span>
@@ -57,7 +56,6 @@ export default function InstrumentConfiguration() {
                     {instrument.filepath ?? ''}
                   </span>
 
-                  {/* Actions */}
                   {confirmDeleteId === instrument.id ? (
                     <div className="flex items-center gap-2">
                       <span className="text-text-secondary text-xs font-mono">
@@ -66,8 +64,7 @@ export default function InstrumentConfiguration() {
                       <button
                         type="button"
                         onClick={() => handleDelete(instrument.id)}
-                        className="px-3 py-1 bg-red-500 hover:opacity-90 text-background
-                                   font-mono text-xs rounded-lg transition-opacity duration-200"
+                        className="btn-confirm-delete"
                       >
                         Oui
                       </button>
@@ -89,16 +86,14 @@ export default function InstrumentConfiguration() {
                           );
                           setAddingInstrument(false);
                         }}
-                        className="text-text-secondary hover:text-primary font-mono text-xs
-                                   transition-colors duration-200"
+                        className="btn-edit"
                       >
                         ✎
                       </button>
                       <button
                         type="button"
                         onClick={() => setConfirmDeleteId(instrument.id)}
-                        className="text-text-secondary hover:text-red-400 font-mono text-xs
-                                   transition-colors duration-200"
+                        className="btn-delete"
                       >
                         ✕
                       </button>
@@ -106,7 +101,6 @@ export default function InstrumentConfiguration() {
                   )}
                 </div>
 
-                {/* Formulaire d'édition inline */}
                 {editingId === instrument.id && (
                   <EditInstrumentForm
                     key={instrument.id}

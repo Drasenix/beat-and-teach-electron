@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer components {
+  /* Boutons */
   .btn-primary {
     @apply px-6 py-3 bg-primary hover:opacity-90 disabled:opacity-30
            disabled:cursor-not-allowed text-background font-bold rounded-lg
@@ -11,21 +12,25 @@
 
   .btn-secondary {
     @apply px-4 py-2 bg-surface border border-border hover:border-primary
-         text-text-secondary hover:text-primary font-mono text-sm
-         rounded-lg transition-colors duration-200 uppercase tracking-widest
-         disabled:opacity-30 disabled:cursor-not-allowed;
+           text-text-secondary hover:text-primary font-mono text-sm
+           rounded-lg transition-colors duration-200 uppercase tracking-widest
+           disabled:opacity-30 disabled:cursor-not-allowed;
   }
 
-  .section-title {
-    @apply text-xs font-mono text-primary uppercase tracking-widest;
+  .btn-edit {
+    @apply font-mono text-xs text-text-secondary transition-colors duration-200 hover:text-primary;
   }
 
-  .input-field {
-    @apply bg-background border border-border focus:border-primary focus:outline-none
-           text-text-accent font-mono px-4 py-2 rounded-lg
-           placeholder-text-secondary transition-colors duration-200;
+  .btn-delete {
+    @apply font-mono text-xs text-text-secondary transition-colors duration-200 hover:text-red-400;
   }
 
+  .btn-confirm-delete {
+    @apply px-3 py-1 bg-red-500 hover:opacity-90 text-background
+           font-mono text-xs rounded-lg transition-opacity duration-200;
+  }
+
+  /* Navigation */
   .nav-item {
     @apply w-10 h-10 flex items-center justify-center rounded-lg
            font-mono text-lg transition-colors duration-200
@@ -34,6 +39,40 @@
 
   .nav-item-active {
     @apply bg-primary text-background hover:text-background;
+  }
+
+  /* Formulaires */
+  .input-field {
+    @apply bg-background border border-border focus:border-primary focus:outline-none
+           text-text-accent font-mono px-4 py-2 rounded-lg
+           placeholder-text-secondary transition-colors duration-200;
+  }
+
+  .form-card {
+    @apply bg-surface border border-border rounded-lg p-6 mt-4;
+  }
+
+  .form-error-item {
+    @apply text-red-400 text-xs font-mono;
+  }
+
+  /* Listes */
+  .item-row {
+    @apply flex items-center gap-4 bg-surface border border-border rounded-lg px-4 py-3;
+  }
+
+  /* Pages configuration */
+  .config-page {
+    @apply flex flex-col items-center p-8;
+  }
+
+  .config-content {
+    @apply w-full max-w-2xl;
+  }
+
+  /* Typographie */
+  .section-title {
+    @apply text-xs font-mono text-primary uppercase tracking-widest;
   }
 
   .error-message {
