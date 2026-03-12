@@ -1,12 +1,13 @@
+import * as Tone from 'tone';
 import AudioFileBuffer from '../../../../shared/types/audio-file-buffer';
 import {
   SequenceNote,
   SequenceNotes,
 } from '../../sequence/types/sequence-note';
-import * as Tone from 'tone';
 
 export class AudioEngine {
   static #instance: AudioEngine;
+
   private players?: Tone.Players;
 
   private constructor() {}

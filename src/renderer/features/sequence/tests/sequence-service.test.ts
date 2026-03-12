@@ -60,7 +60,7 @@ describe('#prepareFilePaths', () => {
     // Given
     const sentence_KO: string = 'P (Ts K) Ts .';
     // When - Then
-    expect(sequenceFacade.prepareFilePaths(sentence_KO)).rejects.toThrow(
+    await expect(sequenceFacade.prepareFilePaths(sentence_KO)).rejects.toThrow(
       `Le symbole K n'existe pas.`,
     );
   });
@@ -94,7 +94,7 @@ describe('#preparePattern', () => {
     // Given
     const sentence_KO: string = 'P (Ts K) Ts .';
     // When - Then
-    expect(sequenceFacade.preparePattern(sentence_KO)).rejects.toThrow(
+    await expect(sequenceFacade.preparePattern(sentence_KO)).rejects.toThrow(
       `Le symbole K n'existe pas.`,
     );
   });

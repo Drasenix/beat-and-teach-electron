@@ -53,11 +53,11 @@ export function runMigrations(db: Database.Database): void {
       },
       { slug: 'boom-bap', name: 'boom bap', sentence: 'P K P P P Kch' },
     ];
-    const count = (
-      db.prepare('SELECT COUNT(*) as count FROM patterns').get() as {
-        count: number;
-      }
-    ).count;
+    const { count } = db
+      .prepare('SELECT COUNT(*) as count FROM patterns')
+      .get() as {
+      count: number;
+    };
 
     if (count > 0) return; // ← ne seed qu'une seule fois
 
@@ -75,11 +75,11 @@ export function runMigrations(db: Database.Database): void {
   }
 
   function seedInstruments(db: Database.Database): void {
-    const count = (
-      db.prepare('SELECT COUNT(*) as count FROM instruments').get() as {
-        count: number;
-      }
-    ).count;
+    const { count } = db
+      .prepare('SELECT COUNT(*) as count FROM instruments')
+      .get() as {
+      count: number;
+    };
 
     if (count > 0) return;
 

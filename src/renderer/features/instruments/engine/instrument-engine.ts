@@ -6,7 +6,9 @@ import {
 
 export class InstrumentEngine {
   static #instance: InstrumentEngine;
+
   private _instruments: Instrument[] = [];
+
   private _initialized = false;
 
   public get isInitialized(): boolean {
