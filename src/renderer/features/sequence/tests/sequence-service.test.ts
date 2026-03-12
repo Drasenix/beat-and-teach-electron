@@ -6,20 +6,14 @@ import {
   InstrumentName,
 } from '../../../../shared/types/instrument';
 
-const filepathMap: Record<string, InstrumentFilePath[]> = {
+const instrumentFilePaths: Record<string, InstrumentFilePath[]> = {
   P: [{ name: 'kickdrum', filepath: './assets/audio/kickdrum.mp3' }],
   Ts: [{ name: 'hihat', filepath: './assets/audio/hihat.mp3' }],
   '.': [{ name: null, filepath: null }],
 };
 
-const nameMap: Record<string, InstrumentName> = {
-  P: 'kickdrum',
-  Ts: 'hihat',
-  '.': null,
-};
-
-const throwSymbolUnknown = (symbol: string) => {
-  if (!(symbol in filepathMap)) {
+const assertSymbolKnown = (symbol: string) => {
+  if (!(symbol in instrumentFilePaths)) {
     throw new Error(`Le symbole ${symbol} n'existe pas.`);
   }
 };
@@ -29,8 +23,8 @@ describe('#prepareFilePaths', () => {
     jest
       .spyOn(instrumentFacade, 'getInstrumentFilePathsFromSymbol')
       .mockImplementation(async (symbol: string) => {
-        throwSymbolUnknown(symbol);
-        return filepathMap[symbol];
+        assertSymbolKnown(symbol);
+        return instrumentFilePaths[symbol];
       });
   });
 
@@ -61,11 +55,16 @@ describe('#prepareFilePaths', () => {
 
 describe('#preparePattern', () => {
   beforeAll(() => {
+    const instrumentNames: Record<string, InstrumentName> = {
+      P: 'kickdrum',
+      Ts: 'hihat',
+      '.': null,
+    };
     jest
       .spyOn(instrumentFacade, 'getInstrumentNameFromSymbol')
       .mockImplementation(async (symbol: string) => {
-        throwSymbolUnknown(symbol);
-        return nameMap[symbol];
+        assertSymbolKnown(symbol);
+        return instrumentNames[symbol];
       });
   });
 
