@@ -12,5 +12,6 @@
     "allowJs": true,
     "outDir": ".erb/dll",
     "moduleResolution": "node"
-  }
+  },
+  "exclude": ["node_modules", "release", "assets"]
 }
