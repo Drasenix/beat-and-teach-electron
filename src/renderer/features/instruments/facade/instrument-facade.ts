@@ -6,8 +6,11 @@ import {
   getAllInstruments,
   updateInstrumentAPI,
 } from '../services/instrument-service';
-import { InstrumentFile, InstrumentFormValues } from '../types/instrument-types';
-import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
+import { InstrumentFormValues } from '../types/instrument-types';
+import {
+  InstrumentFilePath,
+  InstrumentName,
+} from '../../../../shared/types/instrument';
 import { adaptInstrument } from '../adapters/instrument-adapter';
 
 async function prepareInstrumentEngine(): Promise<InstrumentEngine> {
@@ -25,7 +28,7 @@ export async function getInstruments(): Promise<Instrument[]> {
 
 export async function getInstrumentNameFromSymbol(
   symbol: string,
-): Promise<InstrumentFile> {
+): Promise<InstrumentName> {
   const instrumentEngine = await prepareInstrumentEngine();
   return instrumentEngine.getInstrumentNameFromSymbol(symbol);
 }

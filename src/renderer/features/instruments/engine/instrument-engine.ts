@@ -1,6 +1,8 @@
 import { Instrument } from '../models/instrument-model';
-import { InstrumentFile } from '../types/instrument-types';
-import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
+import {
+  InstrumentFilePath,
+  InstrumentName,
+} from '../../../../shared/types/instrument';
 
 export class InstrumentEngine {
   static #instance: InstrumentEngine;
@@ -41,7 +43,7 @@ export class InstrumentEngine {
     throw new Error(`Le symbole ${symbol} n'existe pas.`);
   }
 
-  public getInstrumentNameFromSymbol(symbol: string): InstrumentFile {
+  public getInstrumentNameFromSymbol(symbol: string): InstrumentName {
     const instru: Instrument | undefined = this.instruments.find(
       (instrument: Instrument) => instrument.symbol === symbol,
     );

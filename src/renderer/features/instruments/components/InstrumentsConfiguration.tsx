@@ -3,6 +3,7 @@ import useInstruments from '../hooks/useInstruments';
 import AddInstrumentForm from './form/AddInstrumentForm';
 import EditInstrumentForm from './form/EditInstrumentForm';
 import { InstrumentFormValues } from '../types/instrument-types';
+import useFileDialog from '../../../hooks/useFileDialog';
 
 export default function InstrumentConfiguration() {
   const [addingInstrument, setAddingInstrument] = useState(false);
@@ -14,9 +15,10 @@ export default function InstrumentConfiguration() {
     addNewInstrument,
     editInstrument,
     removeInstrument,
-    openFileDialog,
     error,
   } = useInstruments();
+
+  const { openFileDialog } = useFileDialog();
 
   const handleDelete = async (id: number): Promise<void> => {
     await removeInstrument(id);

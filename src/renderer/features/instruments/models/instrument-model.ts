@@ -1,9 +1,10 @@
-import { InstrumentFile } from '../types/instrument-types';
+import { FilePath } from '../../../../shared/types/file';
+import { InstrumentName } from '../../../../shared/types/instrument';
 
 export interface Instrument {
   id: number;
   slug: string;
   symbol: string;
-  filepath: InstrumentFile;
-  name: InstrumentFile;
+  filepath: FilePath;
+  name: InstrumentName;
 }

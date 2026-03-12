@@ -3,7 +3,7 @@ import * as instrumentService from '../../instruments/services/instrument-servic
 import { SequenceNotes } from '../types/sequence-note';
 import { InstrumentDB } from '../../../../shared/models/instrument-db';
 import { InstrumentEngine } from '../../instruments/engine/instrument-engine';
-import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
+import { InstrumentFilePath } from '../../../../shared/types/instrument';
 
 const instrumentDBOne: InstrumentDB = {
   id: 1,

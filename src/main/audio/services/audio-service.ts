@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import AudioFileBuffer from '../../../shared/types/audio-file-buffer';
-import { InstrumentFilePath } from '../../../shared/types/instrument-file-path';
+import { InstrumentFilePath } from '../../../shared/types/instrument';
 
 export function getAudioBufferFromFile(
   filepath: string,

@@ -1,4 +1,4 @@
-import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
+import { InstrumentFilePath } from '../../../../shared/types/instrument';
 import {
   prepareFilePaths as prepareFilePathsService,
   preparePattern as preparePatternService,

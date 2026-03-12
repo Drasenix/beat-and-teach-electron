@@ -29,16 +29,11 @@ const useInstruments = () => {
     setInstruments((prev) => prev.filter((instrument) => instrument.id !== id));
   };
 
-  const openFileDialog = async (): Promise<string | null> => {
-    return window.electron.ipcRenderer.invokeMessage('open-file-dialog');
-  };
-
   return {
     instruments,
     addNewInstrument,
     editInstrument,
     removeInstrument,
-    openFileDialog,
     error,
   };
 };

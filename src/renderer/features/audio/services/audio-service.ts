@@ -1,5 +1,5 @@
 import AudioFileBuffer from '../../../../shared/types/audio-file-buffer';
-import { InstrumentFilePath } from '../../../../shared/types/instrument-file-path';
+import { InstrumentFilePath } from '../../../../shared/types/instrument';
 
 export async function getAudioBuffers(
   filePaths: InstrumentFilePath[],

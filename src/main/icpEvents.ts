@@ -15,7 +15,7 @@ import {
   updatePattern,
   deletePattern,
 } from './db/repositories/pattern-repository';
-import { InstrumentFilePath } from '../shared/types/instrument-file-path';
+import { InstrumentFilePath } from '../shared/types/instrument';
 
 export default function createIcpEvents() {
   ipcMain.handle(
