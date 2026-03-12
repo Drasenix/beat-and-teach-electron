@@ -53,7 +53,7 @@ export default function InstrumentConfiguration() {
                   <span className="text-text-primary font-mono flex-1">
                     {instrument.name}
                   </span>
-                  <span className="text-text-secondary text-xs font-mono truncate max-w-xs flex-1">
+                  <span className="text-text-secondary text-xs font-mono break-all max-w-xs flex-1">
                     {instrument.filepath ?? ''}
                   </span>
 

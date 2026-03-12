@@ -51,7 +51,7 @@ export default function InstrumentForm({
         </button>
         {instrument.filepath && (
           <span
-            className="text-text-secondary text-xs font-mono truncate"
+            className="text-text-secondary text-xs font-mono break-all"
             title={instrument.filepath}
           >
             {instrument.filepath}
