@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Pattern } from '../models/pattern-model';
-import { PatternFormValues } from '../types/pattern-types';
-import { extractIpcError } from '../../../utils/util';
-import validatePattern from '../utils/pattern-validator';
+import { Pattern } from '../../models/pattern-model';
+import { PatternFormValues } from '../../types/pattern-types';
+import { extractIpcError } from '../../../../utils/util';
+import validatePattern from '../../utils/pattern-validator';
 
 type SavePatternFormProps = {
   pattern: Pattern;

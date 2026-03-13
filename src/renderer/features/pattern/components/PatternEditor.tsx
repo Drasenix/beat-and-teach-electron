@@ -1,7 +1,7 @@
 import usePatterns from '../hooks/usePatterns';
 import { Pattern } from '../models/pattern-model';
 import PatternSteps from './PatternSteps';
-import SavePatternForm from './SavePatternForm';
+import SavePatternForm from './form/SavePatternForm';
 
 type PatternEditorProps = {
   pattern: Pattern;
