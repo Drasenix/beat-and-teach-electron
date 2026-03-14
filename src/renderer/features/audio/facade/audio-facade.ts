@@ -4,23 +4,31 @@ import {
   prepareFilePaths,
   preparePattern,
 } from '../../sequence/facade/sequence-facade';
+import { SequenceNotes } from '../../sequence/types/sequence-note';
 import AudioEngine from '../engine/audio-engine';
 import getAudioBuffers from '../services/audio-service';
 
-async function createAudioBuffers(sentence: string): Promise<AudioFileBuffer> {
-  const filePaths: InstrumentFilePath[] = await prepareFilePaths(sentence);
-  return getAudioBuffers(filePaths);
+async function createAudioBuffers(
+  sentences: string[],
+): Promise<AudioFileBuffer> {
+  const allFilePaths: InstrumentFilePath[][] = await Promise.all(
+    sentences.map((sentence) => prepareFilePaths(sentence)),
+  );
+  return getAudioBuffers(allFilePaths.flat());
 }
 
 async function prepareAudioEngine(
-  sentence: string,
+  sentences: string[],
   bpm: number,
 ): Promise<AudioEngine> {
   const audioEngine: AudioEngine = AudioEngine.getInstance();
   try {
     audioEngine.setTempo(bpm);
-    await audioEngine.createPlayers(await createAudioBuffers(sentence));
-    audioEngine.createSequence(await preparePattern(sentence));
+    await audioEngine.createPlayers(await createAudioBuffers(sentences));
+    const allNotes: SequenceNotes[][] = await Promise.all(
+      sentences.map((sentence) => preparePattern(sentence)),
+    );
+    audioEngine.createSequence(allNotes);
   } catch (error: any) {
     throw new Error(`Erreur : ${error}`);
   }
@@ -28,11 +36,11 @@ async function prepareAudioEngine(
 }
 
 export async function playPattern(
-  sentence: string,
+  sentences: string[],
   bpm: number,
 ): Promise<void> {
-  if (!sentence) throw new Error('Aucun pattern fourni');
-  const audioEngine: AudioEngine = await prepareAudioEngine(sentence, bpm);
+  if (!sentences.length) throw new Error('Aucun pattern fourni');
+  const audioEngine: AudioEngine = await prepareAudioEngine(sentences, bpm);
   await audioEngine.play();
 }
 

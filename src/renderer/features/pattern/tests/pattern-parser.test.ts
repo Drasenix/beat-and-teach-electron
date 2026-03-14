@@ -1,4 +1,11 @@
-import { createStep, createGroup, parseSteps } from '../utils/pattern-parser';
+import {
+  createStep,
+  createGroup,
+  parseSteps,
+  countSentenceSteps,
+  normalizeSentences,
+  parseMultiTrackSteps,
+} from '../utils/pattern-parser';
 
 describe('#createStep', () => {
   it('should create a valid step when symbol exists', () => {
@@ -69,5 +76,86 @@ describe('#parseSteps', () => {
     const result = parseSteps('(P X)', ['P', 'Ts', 'K']);
     expect(result[0].isGroup).toBe(true);
     expect(result[0].valid).toBe(false);
+  });
+});
+
+describe('#countSentenceSteps', () => {
+  it('should count simple steps', () => {
+    expect(countSentenceSteps('P Ts K .')).toBe(4);
+  });
+
+  it('should count a group as one step', () => {
+    expect(countSentenceSteps('P (Ts K) .')).toBe(3);
+  });
+
+  it('should return 0 for empty sentence', () => {
+    expect(countSentenceSteps('')).toBe(0);
+  });
+
+  it('should count multiple groups correctly', () => {
+    expect(countSentenceSteps('P (Ts K) (. P) .')).toBe(4);
+  });
+});
+
+describe('#normalizeSentences', () => {
+  it('should return empty array unchanged', () => {
+    expect(normalizeSentences([])).toEqual([]);
+  });
+
+  it('should not modify the first sentence', () => {
+    const result = normalizeSentences(['P Ts K .', 'P']);
+    expect(result[0]).toBe('P Ts K .');
+  });
+
+  it('should pad a shorter sentence with silences', () => {
+    const result = normalizeSentences(['P Ts K .', 'P K Ts']);
+    expect(result[1]).toBe('P K Ts .');
+  });
+
+  it('should truncate a longer sentence', () => {
+    const result = normalizeSentences(['P Ts K .', 'P K Ts Pf Ts']);
+    expect(result[1]).toBe('P K Ts Pf');
+  });
+
+  it('should count a group as one step when truncating', () => {
+    const result = normalizeSentences(['P Ts K .', 'P (K . . .) P (Ts .) Ts']);
+    expect(result[1]).toBe('P (K . . .) P (Ts .)');
+  });
+
+  it('should count a group as one step when padding', () => {
+    const result = normalizeSentences(['P Ts Pf K', 'P (K . . .) P']);
+    expect(result[1]).toBe('P (K . . .) P .');
+  });
+});
+
+describe('#parseMultiTrackSteps', () => {
+  it('should return columns aligned across tracks', () => {
+    const result = parseMultiTrackSteps(['P Ts', 'K .'], ['P', 'Ts', 'K', '.']);
+    expect(result).toHaveLength(2);
+    expect(result[0].steps[0]?.symbol).toBe('P');
+    expect(result[0].steps[1]?.symbol).toBe('K');
+    expect(result[1].steps[0]?.symbol).toBe('Ts');
+    expect(result[1].steps[1]?.symbol).toBe('.');
+  });
+
+  it('should fill with null when a track is shorter', () => {
+    const result = parseMultiTrackSteps(['P Ts K', 'P'], ['P', 'Ts', 'K']);
+    expect(result).toHaveLength(3);
+    expect(result[1].steps[1]).toBeNull();
+    expect(result[2].steps[1]).toBeNull();
+  });
+
+  it('should return empty array for empty sentences', () => {
+    const result = parseMultiTrackSteps([], ['P', 'Ts', 'K']);
+    expect(result).toHaveLength(0);
+  });
+
+  it('should handle groups as single columns', () => {
+    const result = parseMultiTrackSteps(
+      ['P (Ts K)', 'K .'],
+      ['P', 'Ts', 'K', '.'],
+    );
+    expect(result).toHaveLength(2);
+    expect(result[1].steps[0]?.isGroup).toBe(true);
   });
 });

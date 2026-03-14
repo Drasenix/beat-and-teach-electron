@@ -9,7 +9,7 @@ describe('adaptPattern', () => {
       id: 1,
       slug: 'drum-and-bass',
       name: 'drum and bass',
-      sentence: 'P Ts K P Ts K P',
+      sentences: '["P Ts K P Ts K P"]',
     };
     // When
     const result: Pattern = adaptPattern(tested);
@@ -18,7 +18,7 @@ describe('adaptPattern', () => {
       id: 1,
       slug: 'drum-and-bass',
       name: 'drum and bass',
-      sentence: 'P Ts K P Ts K P',
+      sentences: ['P Ts K P Ts K P'],
     };
     expect(result).toEqual(expected);
   });
@@ -31,13 +31,13 @@ describe('adaptPatterns', () => {
       id: 1,
       slug: 'drum-and-bass',
       name: 'drum and bass',
-      sentence: 'P Ts K P Ts K P',
+      sentences: '["P Ts K P Ts K P"]',
     };
     const pattern2: PatternDB = {
       id: 2,
       slug: 'dubstep',
       name: 'dubstep',
-      sentence: 'P (Ts P) Ts P K (Ts P) Ts P K Ts',
+      sentences: '["P (Ts P) Ts P K (Ts P) Ts P K Ts"]',
     };
     const tested: PatternDB[] = [pattern1, pattern2];
     // When
@@ -47,13 +47,13 @@ describe('adaptPatterns', () => {
       id: 1,
       slug: 'drum-and-bass',
       name: 'drum and bass',
-      sentence: 'P Ts K P Ts K P',
+      sentences: ['P Ts K P Ts K P'],
     };
     const pattern2Expected: Pattern = {
       id: 2,
       slug: 'dubstep',
       name: 'dubstep',
-      sentence: 'P (Ts P) Ts P K (Ts P) Ts P K Ts',
+      sentences: ['P (Ts P) Ts P K (Ts P) Ts P K Ts'],
     };
     const expected: Pattern[] = [pattern1Expected, pattern2Expected];
     expect(result).toEqual(expected);

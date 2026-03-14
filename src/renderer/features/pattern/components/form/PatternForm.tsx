@@ -5,6 +5,7 @@ type PatternFormProps = {
   errors: string[];
   submitLabel: string;
   onPatternChange: (fields: Partial<PatternFormValues>) => void;
+  onNormalize: () => void;
   onSubmit: () => void;
   onCancel: () => void;
 };
@@ -16,7 +17,23 @@ export default function PatternForm({
   onPatternChange,
   onSubmit,
   onCancel,
+  onNormalize,
 }: PatternFormProps) {
+  const handleSentenceChange = (index: number, value: string) => {
+    const next = [...pattern.sentences];
+    next[index] = value;
+    onPatternChange({ sentences: next });
+  };
+
+  const handleAddSentence = () => {
+    onPatternChange({ sentences: [...pattern.sentences, ''] });
+  };
+
+  const handleRemoveSentence = (index: number) => {
+    const next = pattern.sentences.filter((_, i) => i !== index);
+    onPatternChange({ sentences: next });
+  };
+
   return (
     <div className="flex flex-col gap-3">
       <input
@@ -25,13 +42,38 @@ export default function PatternForm({
         onChange={(e) => onPatternChange({ name: e.target.value })}
         className="input-field w-full"
       />
-      <textarea
-        placeholder="Phrase (ex: P . P . K .)"
-        value={pattern.sentence}
-        onChange={(e) => onPatternChange({ sentence: e.target.value })}
-        className="input-field w-full resize-none"
-        rows={3}
-      />
+
+      <div className="flex flex-col gap-2">
+        {pattern.sentences.map((sentence, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={index} className="flex items-start gap-2">
+            <textarea
+              placeholder="Phrase (ex: P . P . K .)"
+              value={sentence}
+              onChange={(e) => handleSentenceChange(index, e.target.value)}
+              onBlur={onNormalize}
+              className="input-field flex-1 resize-none"
+              rows={2}
+            />
+            {pattern.sentences.length > 1 && (
+              <button
+                type="button"
+                onClick={() => handleRemoveSentence(index)}
+                className="btn-delete mt-2"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={handleAddSentence}
+          className="btn-secondary self-start"
+        >
+          + Ajouter une phrase
+        </button>
+      </div>
 
       {errors.length > 0 && (
         <ul className="flex flex-col gap-1">

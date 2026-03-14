@@ -1,6 +1,6 @@
 import { Pattern } from '../models/pattern-model';
 import getAllPatterns, {
-  createPattern,
+  createPatternAPI,
   updatePatternAPI,
   deletePatternAPI,
 } from '../services/pattern-service';
@@ -12,7 +12,7 @@ export default async function getPatterns(): Promise<Pattern[]> {
 export async function savePattern(
   pattern: Omit<Pattern, 'id' | 'slug'>,
 ): Promise<Pattern> {
-  return createPattern(pattern);
+  return createPatternAPI(pattern);
 }
 
 export async function updatePattern(

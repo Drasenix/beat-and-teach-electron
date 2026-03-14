@@ -39,9 +39,16 @@ export default function PatternConfiguration() {
                 <span className="text-text-primary font-mono flex-1">
                   {pattern.name}
                 </span>
-                <span className="text-text-secondary text-xs font-mono truncate max-w-xs flex-1">
-                  {pattern.sentence}
-                </span>
+                <div className="flex flex-col gap-1 flex-1">
+                  {pattern.sentences.map((sentence) => (
+                    <span
+                      key={sentence}
+                      className="text-text-secondary text-xs font-mono truncate max-w-xs"
+                    >
+                      {sentence}
+                    </span>
+                  ))}
+                </div>
 
                 {confirmDeleteId === pattern.id ? (
                   <div className="flex items-center gap-2">

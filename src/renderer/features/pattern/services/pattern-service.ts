@@ -8,12 +8,15 @@ export default async function getAllPatterns(): Promise<Pattern[]> {
   return adaptPatterns(patterns);
 }
 
-export async function createPattern(
+export async function createPatternAPI(
   pattern: Omit<Pattern, 'id' | 'slug'>,
 ): Promise<Pattern> {
   const patternDB: PatternDB = await window.electron.ipcRenderer.invokeMessage(
     'create-pattern',
-    pattern,
+    {
+      ...pattern,
+      sentences: JSON.stringify(pattern.sentences),
+    },
   );
   return adaptPattern(patternDB);
 }
@@ -25,7 +28,12 @@ export async function updatePatternAPI(
   const patternDB: PatternDB = await window.electron.ipcRenderer.invokeMessage(
     'update-pattern',
     id,
-    pattern,
+    {
+      ...pattern,
+      sentences: pattern.sentences
+        ? JSON.stringify(pattern.sentences)
+        : undefined,
+    },
   );
   return adaptPattern(patternDB);
 }

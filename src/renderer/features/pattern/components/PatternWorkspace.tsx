@@ -1,18 +1,23 @@
-import { Pattern } from '../models/pattern-model';
-import PatternComposer from './PatternComposer';
 import usePattern from '../hooks/usePattern';
-import PatternChoices from './PatternChoices';
 import usePatterns from '../hooks/usePatterns';
+import { Pattern } from '../models/pattern-model';
+import PatternChoices from './PatternChoices';
+import PatternComposer from './PatternComposer';
 
 export default function PatternWorkspace() {
-  const { pattern, setPattern, changePatternSentence } = usePattern();
+  const {
+    pattern,
+    setPattern,
+    changePatternSentence,
+    addSentence,
+    removeSentence,
+    normalizeAllSentences,
+  } = usePattern();
   const { patterns } = usePatterns();
 
   const selectPattern = (id: number): void => {
-    const selectedPattern: Pattern | undefined = patterns.find(
-      (pat) => pat.id === id,
-    );
-    if (selectedPattern) setPattern(selectedPattern);
+    const selected: Pattern | undefined = patterns.find((p) => p.id === id);
+    if (selected) setPattern(selected);
   };
 
   return (
@@ -21,6 +26,9 @@ export default function PatternWorkspace() {
       <PatternComposer
         pattern={pattern}
         changePatternSentence={changePatternSentence}
+        addSentence={addSentence}
+        removeSentence={removeSentence}
+        normalizeAllSentences={normalizeAllSentences}
       />
     </div>
   );

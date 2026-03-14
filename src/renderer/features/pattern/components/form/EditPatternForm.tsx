@@ -4,6 +4,7 @@ import { extractIpcError } from '../../../../utils/util';
 import { PatternFormValues } from '../../types/pattern-types';
 import PatternForm from './PatternForm';
 import validatePattern from '../../utils/pattern-validator';
+import usePatternForm from '../../hooks/usePatternForm';
 
 type EditPatternFormProps = {
   pattern: Pattern;
@@ -16,14 +17,15 @@ export default function EditPatternForm({
   onUpdate,
   onCancel,
 }: EditPatternFormProps) {
-  const [patternValues, setPatternValues] = useState<PatternFormValues>({
-    name: pattern.name,
-    sentence: pattern.sentence,
-  });
+  const { patternValues, handlePatternChange, handleNormalize } =
+    usePatternForm({
+      name: pattern.name,
+      sentences: pattern.sentences.length > 0 ? pattern.sentences : [''],
+    });
   const [errors, setErrors] = useState<string[]>([]);
 
   const handleSubmit = async () => {
-    const issues: string[] = validatePattern(patternValues);
+    const issues = validatePattern(patternValues);
     if (issues.length > 0) {
       setErrors(issues);
       return;
@@ -42,9 +44,8 @@ export default function EditPatternForm({
         pattern={patternValues}
         errors={errors}
         submitLabel="Enregistrer"
-        onPatternChange={(partial) =>
-          setPatternValues((prev) => ({ ...prev, ...partial }))
-        }
+        onPatternChange={handlePatternChange}
+        onNormalize={handleNormalize}
         onSubmit={handleSubmit}
         onCancel={onCancel}
       />

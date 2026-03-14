@@ -1,25 +1,32 @@
-import { Pattern } from '../models/pattern-model';
-import InstrumentsLegend from '../../instruments/components/InstrumentsLegend';
-import PatternEditor from './PatternEditor';
 import AudioControls from '../../audio/components/AudioControls';
+import InstrumentsLegend from '../../instruments/components/InstrumentsLegend';
+import { Pattern } from '../models/pattern-model';
+import PatternEditor from './PatternEditor';
 
-type PatternFormComponentProps = {
+type PatternComposerProps = {
   pattern: Pattern;
-  changePatternSentence: (event: any) => void;
+  changePatternSentence: (index: number, value: string) => void;
+  addSentence: () => void;
+  removeSentence: (index: number) => void;
+  normalizeAllSentences: () => void;
 };
-
-export default function PatternComposer(props: PatternFormComponentProps) {
-  const { pattern, changePatternSentence } = props;
-
+export default function PatternComposer({
+  pattern,
+  changePatternSentence,
+  addSentence,
+  removeSentence,
+  normalizeAllSentences,
+}: PatternComposerProps) {
   return (
     <div className="flex flex-col items-center w-full">
       <PatternEditor
         pattern={pattern}
         changePatternSentence={changePatternSentence}
+        addSentence={addSentence}
+        removeSentence={removeSentence}
+        normalizeAllSentences={normalizeAllSentences}
       />
-
-      <AudioControls sentence={pattern.sentence} />
-
+      <AudioControls sentences={pattern.sentences} />
       <InstrumentsLegend />
     </div>
   );

@@ -7,29 +7,45 @@ function seedPatterns(db: Database.Database): void {
     {
       slug: 'drum-and-bass',
       name: 'drum and bass',
-      sentence: 'P Ts K P Ts K P .',
+      sentences: JSON.stringify(['P Ts K P Ts K P .']),
     },
     {
       slug: 'dubstep',
       name: 'dubstep',
-      sentence: 'P (Ts P) Ts P K (Ts P) Ts P K Ts',
+      sentences: JSON.stringify(['P (Ts P) Ts P K (Ts P) Ts P K Ts']),
     },
     {
       slug: 'funk',
       name: 'funk',
-      sentence: 'P Ts P Ts K Ts Ts K Ts K P K K P Ts K',
+      sentences: JSON.stringify(['P Ts P Ts K Ts Ts K Ts K P K K P Ts K']),
     },
     {
       slug: 'reggae',
       name: 'reggae',
-      sentence: 'P (Ts K) (. K) . (Ts K) (. K)',
+      sentences: JSON.stringify(['P (Ts K) (. K) . (Ts K) (. K)']),
     },
     {
       slug: 'jazz',
       name: 'jazz',
-      sentence: 'P (P Ts) (Ts P) (Ts Ts) (P K) . Ts (P Ts) (Ts P)  K (. Ts) .',
+      sentences: JSON.stringify([
+        'P (P Ts) (Ts P) (Ts Ts) (P K) . Ts (P Ts) (Ts P) K (. Ts) .',
+      ]),
     },
-    { slug: 'boom-bap', name: 'boom bap', sentence: 'P K P P P Kch' },
+    {
+      slug: 'boom-bap',
+      name: 'boom bap',
+      sentences: JSON.stringify(['P K P P P Kch']),
+    },
+    {
+      slug: '23',
+      name: '2/3',
+      sentences: JSON.stringify(['P Ts Pf', 'K (. K) .']),
+    },
+    {
+      slug: '43',
+      name: '4/3',
+      sentences: JSON.stringify(['P Ts Pf Ts', 'K (. K . ) ( . . K) .']),
+    },
   ];
   const { count } = db
     .prepare('SELECT COUNT(*) as count FROM patterns')
@@ -40,7 +56,7 @@ function seedPatterns(db: Database.Database): void {
   if (count > 0) return; // ← ne seed qu'une seule fois
 
   const insert = db.prepare(
-    'INSERT INTO patterns (slug, name, sentence) VALUES (@slug, @name, @sentence)',
+    'INSERT INTO patterns (slug, name, sentences) VALUES (@slug, @name, @sentences)',
   );
 
   const insertMany = db.transaction((patterns) => {
@@ -130,10 +146,10 @@ export default function runMigrations(db: Database.Database): void {
     );
 
     CREATE TABLE IF NOT EXISTS patterns (
-      id       INTEGER PRIMARY KEY AUTOINCREMENT,
-      slug     TEXT NOT NULL UNIQUE,
-      name     TEXT NOT NULL,
-      sentence TEXT NOT NULL
+      id        INTEGER PRIMARY KEY AUTOINCREMENT,
+      slug      TEXT NOT NULL UNIQUE,
+      name      TEXT NOT NULL,
+      sentences TEXT
     );
   `);
 

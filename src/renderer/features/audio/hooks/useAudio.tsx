@@ -3,9 +3,10 @@ import { changeTempo, playPattern, stopPattern } from '../facade/audio-facade';
 
 const useAudio = () => {
   const [playing, setPlaying] = useState<boolean>(false);
-  const playTrack = async (sentence: string, bpm: number): Promise<void> => {
+
+  const playTrack = async (sentences: string[], bpm: number): Promise<void> => {
     try {
-      await playPattern(sentence, bpm);
+      await playPattern(sentences, bpm);
       setPlaying(true);
     } catch (error) {
       // eslint-disable-next-line no-alert

@@ -11,6 +11,8 @@ export default class AudioEngine {
 
   private players?: Tone.Players;
 
+  private sequences: Tone.Sequence[] = [];
+
   public static getInstance(): AudioEngine {
     if (!AudioEngine.#instance) {
       AudioEngine.#instance = new AudioEngine();
@@ -24,7 +26,12 @@ export default class AudioEngine {
   }
 
   public async createPlayers(audioBuffers: AudioFileBuffer) {
-    const context: Tone.Context = new Tone.Context();
+    const context = Tone.getContext();
+
+    if (this.players) {
+      this.players.dispose();
+    }
+
     this.players = new Tone.Players();
 
     const buffers = Object.entries(audioBuffers);
@@ -41,17 +48,35 @@ export default class AudioEngine {
     this.players.toDestination();
   }
 
-  public createSequence(notes: SequenceNotes[]) {
-    new Tone.Sequence((time: any, note: SequenceNote) => {
-      if (this.players && note) {
-        this.players.player(note).start(time);
-      }
-    }, notes).start(0);
+  public createSequence(tracks: SequenceNotes[][]) {
+    // Nettoyer les séquences existantes avant d'en créer de nouvelles
+    this.clearSequences();
+
+    tracks.forEach((notes) => {
+      const seq = new Tone.Sequence(
+        (time: Tone.Unit.Time, note: SequenceNote) => {
+          if (this.players && note) {
+            this.players.player(note).start(time);
+          }
+        },
+        notes,
+        '8n',
+      );
+
+      seq.start(0);
+      this.sequences.push(seq);
+    });
+  }
+
+  private clearSequences(): void {
+    this.sequences.forEach((seq) => seq.dispose());
+    this.sequences = [];
   }
 
   // eslint-disable-next-line class-methods-use-this
   public async play(): Promise<void> {
-    Tone.getTransport().start();
+    await Tone.start(); // indispensable : débloque l'AudioContext après un geste utilisateur
+    Tone.getTransport().start('+0.1');
   }
 
   // eslint-disable-next-line class-methods-use-this

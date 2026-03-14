@@ -2,10 +2,10 @@ import { useState } from 'react';
 import useAudio from '../hooks/useAudio';
 
 type AudioControlsProps = {
-  sentence: string;
+  sentences: string[];
 };
 
-export default function AudioControls({ sentence }: AudioControlsProps) {
+export default function AudioControls({ sentences }: AudioControlsProps) {
   const { playing, playTrack, stopTrack, changeBpm } = useAudio();
   const [bpm, setBPM] = useState<number>(100);
 
@@ -14,12 +14,16 @@ export default function AudioControls({ sentence }: AudioControlsProps) {
     setBPM(newBpm);
     changeBpm(newBpm);
   };
+
+  const allSentencesValid =
+    sentences.length > 0 && sentences.every((s) => s.trim().length > 0);
+
   return (
     <div className="w-full max-w-2xl mt-6 flex items-center gap-4">
       <button
         type="button"
-        disabled={playing || !sentence}
-        onClick={() => playTrack(sentence, bpm)}
+        disabled={playing || !allSentencesValid}
+        onClick={() => playTrack(sentences, bpm)}
         className="btn-primary"
       >
         ▶ Play
