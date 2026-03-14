@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import useInstruments from '../../instruments/hooks/useInstruments';
-import { parseMultiTrackSteps, TrackColumn } from '../utils/pattern-parser';
+import { parseMultiTrackSteps } from '../utils/pattern-parser';
 import { PatternStep } from '../types/pattern-types';
+import { TrackColumn } from '../types/track-column';
 
 type PatternStepsProps = {
   sentences: string[];
