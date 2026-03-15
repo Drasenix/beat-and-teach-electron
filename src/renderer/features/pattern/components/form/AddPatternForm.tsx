@@ -21,7 +21,7 @@ export default function AddPatternForm({
     });
   const [errors, setErrors] = useState<string[]>([]);
 
-  const handleSubmit = async () => {
+  const onSubmit = async () => {
     const issues = validatePattern(patternValues);
     if (issues.length > 0) {
       setErrors(issues);
@@ -37,15 +37,14 @@ export default function AddPatternForm({
 
   return (
     <div className="form-card">
-      <h3 className="section-title mb-4">Nouveau pattern</h3>
       <PatternForm
         pattern={patternValues}
         errors={errors}
-        submitLabel="Ajouter"
         onPatternChange={handlePatternChange}
         onNormalize={handleNormalize}
-        onSubmit={handleSubmit}
+        onSubmit={onSubmit}
         onCancel={onCancel}
+        titleLabel="Nouveau pattern"
       />
     </div>
   );

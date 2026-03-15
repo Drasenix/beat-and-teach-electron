@@ -8,12 +8,14 @@ type InstrumentFormProps = {
   onOpenFileDialog: () => Promise<string | null>;
   onSubmit: () => void;
   onCancel: () => void;
+  titleLabel: string;
 };
 
 export default function InstrumentForm({
   instrument,
   errors,
   submitLabel,
+  titleLabel,
   onInstrumentChange,
   onOpenFileDialog,
   onSubmit,
@@ -25,7 +27,8 @@ export default function InstrumentForm({
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="form-content">
+      <h3 className="section-title">{titleLabel}</h3>
       <input
         placeholder="Symbole (ex: P)"
         value={instrument.symbol}
@@ -69,7 +72,7 @@ export default function InstrumentForm({
         </ul>
       )}
 
-      <div className="flex gap-3 mt-2">
+      <div className="flex gap-3">
         <button type="button" onClick={onSubmit} className="btn-primary">
           {submitLabel}
         </button>

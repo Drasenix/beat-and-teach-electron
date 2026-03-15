@@ -14,7 +14,13 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const handleConfirm = async (): Promise<void> => {
+  const resetFields = (): void => {
+    setName('');
+    setSaving(false);
+    setError(null);
+  };
+
+  const onSubmit = async (): Promise<void> => {
     const errors = validatePattern({
       name,
       sentences: pattern.sentences,
@@ -28,18 +34,10 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
         name,
         sentences: pattern.sentences,
       });
-      setName('');
-      setSaving(false);
-      setError(null);
+      resetFields();
     } catch (e) {
       setError(extractIpcError(e, 'Impossible de créer le pattern.'));
     }
-  };
-
-  const handleCancel = (): void => {
-    setName('');
-    setSaving(false);
-    setError(null);
   };
 
   const allSentencesValid =
@@ -54,7 +52,7 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
         onClick={() => setSaving(true)}
         className="btn-primary"
       >
-        Save
+        Sauvegarder
       </button>
     );
   }
@@ -70,13 +68,13 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
       {error && <span className="error-message">{error}</span>}
       <button
         type="button"
-        onClick={handleConfirm}
+        onClick={onSubmit}
         disabled={!name.trim() || !allSentencesValid}
         className="btn-primary"
       >
-        Confirmer
+        Enregistrer
       </button>
-      <button type="button" onClick={handleCancel} className="btn-secondary">
+      <button type="button" onClick={resetFields} className="btn-secondary">
         Annuler
       </button>
     </div>

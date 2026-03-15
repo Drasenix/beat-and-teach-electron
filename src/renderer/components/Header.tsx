@@ -10,20 +10,12 @@ export default function Header() {
   ];
 
   return (
-    <aside
-      className="fixed left-0 top-0 h-screen w-16 bg-surface border-r border-border
-                      flex flex-col items-center py-6 gap-6 z-10"
-    >
-      <Link
-        to="/"
-        className="w-8 h-8 flex items-center justify-center text-primary font-bold
-                   font-mono text-lg hover:opacity-70 transition-opacity duration-200"
-        title="Home"
-      >
+    <aside className="bar-aside">
+      <Link to="/" className="nav-main-button" title="Home">
         B
       </Link>
 
-      <div className="w-6 border-t border-border" />
+      <div className="w-6 border-t border-primary" />
 
       {navItems.map(({ to, label, title }) => (
         <Link

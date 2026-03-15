@@ -26,13 +26,13 @@ export default function PatternConfiguration() {
   };
 
   return (
-    <div className="config-page">
-      <div className="config-content">
-        <h2 className="section-title mb-6">Patterns</h2>
+    <div className="content-page">
+      <div className="workspace-section-content">
+        <h2 className="section-title">Patterns</h2>
 
-        {error && <div className="w-full mb-6 error-message">{error}</div>}
+        {error && <div className="w-full error-message">{error}</div>}
 
-        <ul className="flex flex-col gap-2 mb-6">
+        <ul className="config-liste">
           {patterns.map((pattern) => (
             <li key={pattern.id} className="flex flex-col">
               <div className="item-row">
@@ -119,7 +119,7 @@ export default function PatternConfiguration() {
               setAddingPattern(true);
               setEditingId(null);
             }}
-            className="btn-secondary"
+            className="btn-secondary self-start"
           >
             + Ajouter un pattern
           </button>

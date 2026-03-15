@@ -24,7 +24,7 @@ export default function EditPatternForm({
     });
   const [errors, setErrors] = useState<string[]>([]);
 
-  const handleSubmit = async () => {
+  const onSubmit = async () => {
     const issues = validatePattern(patternValues);
     if (issues.length > 0) {
       setErrors(issues);
@@ -39,15 +39,14 @@ export default function EditPatternForm({
 
   return (
     <div className="form-card">
-      <h3 className="section-title mb-4">Modifier le pattern</h3>
       <PatternForm
         pattern={patternValues}
         errors={errors}
-        submitLabel="Enregistrer"
         onPatternChange={handlePatternChange}
         onNormalize={handleNormalize}
-        onSubmit={handleSubmit}
+        onSubmit={onSubmit}
         onCancel={onCancel}
+        titleLabel="Modifier le pattern"
       />
     </div>
   );

@@ -9,9 +9,9 @@ type PatternStepsProps = {
 };
 
 function StepBadge({ token }: { token: PatternStep }) {
-  const baseClass = 'font-mono font-bold px-2 py-1 rounded text-sm';
-  const validClass = 'text-primary bg-background border border-border';
-  const invalidClass = 'text-red-400 bg-background border border-red-400';
+  const baseClass = 'step-badge-base';
+  const validClass = 'step-badge-valid';
+  const invalidClass = 'step-badge-invalid';
 
   return (
     <span className={`${baseClass} ${token.valid ? validClass : invalidClass}`}>
@@ -22,15 +22,11 @@ function StepBadge({ token }: { token: PatternStep }) {
 
 function StepCell({ step }: { step: PatternStep | null }) {
   if (!step) {
-    return (
-      <span className="font-mono font-bold px-2 py-1 rounded text-sm text-border bg-background border border-border opacity-30">
-        —
-      </span>
-    );
+    return <span className="step-cell-empty">—</span>;
   }
   if (step.isGroup && step.steps) {
     return (
-      <div className="flex items-center gap-1 border border-dashed border-border rounded-lg px-2 py-1">
+      <div className="step-cell-group">
         {step.steps.map((innerToken) => (
           <StepBadge key={innerToken.id} token={innerToken} />
         ))}
@@ -38,7 +34,7 @@ function StepCell({ step }: { step: PatternStep | null }) {
     );
   }
   return (
-    <div className="flex items-center gap-1 rounded-lg px-2 py-1">
+    <div className="step-cell-atomic">
       <StepBadge token={step} />
     </div>
   );
@@ -46,7 +42,7 @@ function StepCell({ step }: { step: PatternStep | null }) {
 
 function Column({ column }: { column: TrackColumn }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="step-column">
       {column.steps.map((step, trackIndex) => (
         // eslint-disable-next-line react/no-array-index-key
         <StepCell key={trackIndex} step={step} />
@@ -70,12 +66,14 @@ export default function PatternSteps({ sentences }: PatternStepsProps) {
   if (columns.length === 0) return null;
 
   return (
-    <div className="w-full mt-4 p-4 bg-surface rounded-lg border border-border">
-      <p className="section-title mb-3">Aperçu</p>
-      <div className="flex flex-wrap gap-2">
-        {columns.map((column) => (
-          <Column key={column.id} column={column} />
-        ))}
+    <div className="pattern-section-content">
+      <h2 className="section-title">Pattern</h2>
+      <div className="section-background">
+        <div className="flex flex-wrap gap-2">
+          {columns.map((column) => (
+            <Column key={column.id} column={column} />
+          ))}
+        </div>
       </div>
     </div>
   );

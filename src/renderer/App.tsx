@@ -15,7 +15,7 @@ export default function App() {
         <InstrumentsProvider>
           <div className="bg-background min-h-screen">
             <Header />
-            <div className="pl-16">
+            <div className="main-container">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/workspace" element={<PatternWorkspace />} />

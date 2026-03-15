@@ -8,8 +8,8 @@ import {
 const usePattern = () => {
   const [pattern, setPattern] = useState<Pattern>(DEFAULT_PATTERN);
 
-  const changePatternSentence = (index: number, value: string) => {
-    const next = [...pattern.sentences];
+  const changeSentence = (index: number, value: string) => {
+    const sentences = [...pattern.sentences];
 
     if (index !== 0) {
       const targetLength = countSentenceSteps(pattern.sentences[0]);
@@ -17,25 +17,32 @@ const usePattern = () => {
       if (currentLength > targetLength) return;
     }
 
-    next[index] = value;
-    const normalized = index === 0 ? normalizeSentences(next) : next;
+    sentences[index] = value;
+    const normalized = index === 0 ? normalizeSentences(sentences) : sentences;
     setPattern({ ...pattern, sentences: normalized });
   };
 
   const addSentence = () => {
-    const reference = pattern.sentences[0]?.trim().split(/\s+/) ?? [];
-    const empty =
-      reference.length > 0 ? Array(reference.length).fill('.').join(' ') : '';
-    setPattern({ ...pattern, sentences: [...pattern.sentences, empty] });
+    const firstSentence = pattern.sentences[0]?.trim().split(/\s+/) ?? [];
+    const newEmptySentence =
+      firstSentence.length > 0
+        ? Array(firstSentence.length).fill('.').join(' ')
+        : '';
+    setPattern({
+      ...pattern,
+      sentences: [...pattern.sentences, newEmptySentence],
+    });
   };
 
   const removeSentence = (index: number) => {
-    const next = pattern.sentences.filter((_, i) => i !== index);
-    setPattern({ ...pattern, sentences: next });
+    const newSentences: string[] = pattern.sentences.filter(
+      (_, i) => i !== index,
+    );
+    setPattern({ ...pattern, sentences: newSentences });
   };
 
   const normalizeAllSentences = () => {
-    const normalized = normalizeSentences(pattern.sentences);
+    const normalized: string[] = normalizeSentences(pattern.sentences);
     if (normalized.some((s, i) => s !== pattern.sentences[i])) {
       setPattern({ ...pattern, sentences: normalized });
     }
@@ -44,7 +51,7 @@ const usePattern = () => {
   return {
     pattern,
     setPattern,
-    changePatternSentence,
+    changeSentence,
     addSentence,
     removeSentence,
     normalizeAllSentences,

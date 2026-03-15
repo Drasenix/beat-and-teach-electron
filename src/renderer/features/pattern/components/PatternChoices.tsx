@@ -16,9 +16,9 @@ export default function PatternChoices(props: PatternChoicesProps) {
   };
 
   return (
-    <div className="w-full max-w-2xl mb-8">
-      <h2 className="section-title mb-3">Exemples</h2>
-      <div className="flex flex-wrap gap-2">
+    <div className="workspace-section-content">
+      <h2 className="section-title">Patterns</h2>
+      <div className="flex flex-wrap gap-3 section-background">
         {patterns.map((pat) => (
           <button
             key={pat.id}

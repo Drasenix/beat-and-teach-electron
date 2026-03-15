@@ -34,13 +34,13 @@ export default function InstrumentConfiguration() {
   };
 
   return (
-    <div className="config-page">
-      <div className="config-content">
-        <h2 className="section-title mb-6">Instruments</h2>
+    <div className="content-page">
+      <div className="workspace-section-content">
+        <h2 className="section-title">Instruments</h2>
 
-        {error && <div className="w-full mb-6 error-message">{error}</div>}
+        {error && <div className="w-full error-message">{error}</div>}
 
-        <ul className="flex flex-col gap-2 mb-6">
+        <ul className="config-liste">
           {instruments
             .filter((instrument) => instrument.symbol !== '.')
             .map((instrument) => (
@@ -57,7 +57,7 @@ export default function InstrumentConfiguration() {
                   </span>
 
                   {confirmDeleteId === instrument.id ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <span className="text-text-secondary text-xs font-mono">
                         Confirmer ?
                       </span>
@@ -127,7 +127,7 @@ export default function InstrumentConfiguration() {
               setAddingInstrument(true);
               setEditingId(null);
             }}
-            className="btn-secondary"
+            className="btn-secondary self-start"
           >
             + Ajouter un instrument
           </button>

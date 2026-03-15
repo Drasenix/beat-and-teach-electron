@@ -49,7 +49,6 @@ export default class AudioEngine {
   }
 
   public createSequence(tracks: SequenceNotes[][]) {
-    // Nettoyer les séquences existantes avant d'en créer de nouvelles
     this.clearSequences();
 
     tracks.forEach((notes) => {
@@ -75,7 +74,7 @@ export default class AudioEngine {
 
   // eslint-disable-next-line class-methods-use-this
   public async play(): Promise<void> {
-    await Tone.start(); // indispensable : débloque l'AudioContext après un geste utilisateur
+    await Tone.start();
     Tone.getTransport().start('+0.1');
   }
 

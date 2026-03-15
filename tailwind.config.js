@@ -5,14 +5,24 @@ module.exports = {
     extend: {
       colors: {
         // Couleurs principales de ton app
-        primary: '#22d3ee', // cyan-400 — accents néon
-        background: '#030712', // gray-950 — fond principal
-        surface: '#111827', // gray-900 — cartes/zones
-        border: '#1f2937', // gray-800 — bordures
+        primary: '#679ff9', // accents néon
+        background: '#030712', // fond principal
+        surface: '#1d273c', // cartes/zones
+        border: '#1f2937', // bordures
+        field: '#111827', // fond text area
         text: {
-          primary: '#f3f4f6', // gray-100 — texte principal
-          secondary: '#6b7280', // gray-500 — texte secondaire
-          accent: '#67e8f9', // cyan-300 — texte mis en valeur
+          primary: '#f3f4f6', // texte principal
+          secondary: '#6b7280', // texte secondaire
+          accent: '#679ff9', // texte mis en valeur
+        },
+        button: {
+          surface: '#111827', // boutons
+          delete: '#990033', // bouton delete
+          edit: '#679ff9',
+          'confirm-delete': '#770000', // bouton confirm delete
+        },
+        step: {
+          'cell-border': '#3f87fb', // bordure pour les steps du pattern en groupe
         },
       },
     },

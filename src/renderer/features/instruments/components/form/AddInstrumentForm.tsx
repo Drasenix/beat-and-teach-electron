@@ -39,7 +39,6 @@ export default function AddInstrumentForm({
 
   return (
     <div className="form-card">
-      <h3 className="section-title mb-4">Nouvel instrument</h3>
       <InstrumentForm
         instrument={instrumentValues}
         errors={errors}
@@ -50,6 +49,7 @@ export default function AddInstrumentForm({
         onOpenFileDialog={onOpenFileDialog}
         onSubmit={handleSubmit}
         onCancel={onCancel}
+        titleLabel="Nouvel instrument"
       />
     </div>
   );

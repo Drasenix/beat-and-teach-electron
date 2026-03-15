@@ -8,7 +8,7 @@ export default function PatternWorkspace() {
   const {
     pattern,
     setPattern,
-    changePatternSentence,
+    changeSentence,
     addSentence,
     removeSentence,
     normalizeAllSentences,
@@ -21,11 +21,11 @@ export default function PatternWorkspace() {
   };
 
   return (
-    <div className="flex flex-col items-center p-8">
+    <div className="content-page gap-3">
       <PatternChoices patterns={patterns} selectPattern={selectPattern} />
       <PatternComposer
         pattern={pattern}
-        changePatternSentence={changePatternSentence}
+        changeSentence={changeSentence}
         addSentence={addSentence}
         removeSentence={removeSentence}
         normalizeAllSentences={normalizeAllSentences}

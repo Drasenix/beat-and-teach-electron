@@ -11,39 +11,49 @@
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-surface border border-border hover:border-primary
+    @apply px-4 py-2 bg-button-surface border border-border hover:border-primary
            text-text-secondary hover:text-primary font-mono text-sm
            rounded-lg transition-colors duration-200 uppercase tracking-widest
            disabled:opacity-30 disabled:cursor-not-allowed;
   }
 
   .btn-edit {
-    @apply font-mono text-xs text-text-secondary transition-colors duration-200 hover:text-primary;
+    @apply font-mono text-xl text-text-secondary transition-colors duration-200 hover:text-button-edit;
   }
 
   .btn-delete {
-    @apply font-mono text-xs text-text-secondary transition-colors duration-200 hover:text-red-400;
+    @apply font-mono text-xl text-text-secondary transition-colors duration-200 hover:text-button-delete;
   }
 
   .btn-confirm-delete {
-    @apply px-3 py-1 bg-red-500 hover:opacity-90 text-background
+    @apply px-3 py-1 bg-button-confirm-delete hover:opacity-90 text-background
            font-mono text-xs rounded-lg transition-opacity duration-200;
   }
 
   /* Navigation */
+  .bar-aside {
+    @apply fixed left-0 top-0 h-screen w-16 bg-surface border-r border-border
+                      flex flex-col items-center py-6 gap-6 z-10;
+  }
+
+  .nav-main-button {
+    @apply w-8 h-8 flex items-center justify-center text-primary font-bold
+                   font-mono text-3xl hover:opacity-70 transition-opacity duration-200;
+  }
+
   .nav-item {
     @apply w-10 h-10 flex items-center justify-center rounded-lg
-           font-mono text-lg transition-colors duration-200
+           font-mono text-2xl transition-colors duration-200
            text-text-secondary hover:text-primary hover:bg-background;
   }
 
   .nav-item-active {
-    @apply bg-primary text-background hover:text-background;
+    @apply bg-primary text-background;
   }
 
   /* Formulaires */
   .input-field {
-    @apply bg-background border border-border focus:border-primary focus:outline-none
+    @apply bg-field border border-border focus:border-primary focus:outline-none
            text-text-accent font-mono px-4 py-2 rounded-lg
            placeholder-text-secondary transition-colors duration-200;
   }
@@ -56,26 +66,85 @@
     @apply text-red-400 text-xs font-mono;
   }
 
+  .form-content {
+    @apply flex flex-col gap-3;
+  }
+
   /* Listes */
   .item-row {
     @apply flex items-center gap-4 bg-surface border border-border rounded-lg px-4 py-3;
   }
 
-  /* Pages configuration */
-  .config-page {
+  .config-liste {
+    @apply flex flex-col gap-3;
+  }
+
+  /* Pages */
+  .main-container {
+    @apply pl-16;
+  }
+  .content-page {
     @apply flex flex-col items-center p-8;
   }
 
-  .config-content {
-    @apply w-full max-w-2xl;
+  .workspace-section-content {
+    @apply flex flex-col gap-3 w-full md:max-w-4xl lg:max-w-6xl;
+  }
+
+  .pattern-section-content {
+    @apply flex flex-col gap-3;
   }
 
   /* Typographie */
   .section-title {
-    @apply text-xs font-mono text-primary uppercase tracking-widest;
+    @apply text-xs font-mono text-primary uppercase tracking-widest font-bold;
   }
 
   .error-message {
     @apply px-4 py-3 bg-surface border border-red-400 rounded-lg text-red-400 text-xs font-mono;
+  }
+
+  /* Autres */
+  .section-background {
+    @apply p-4 bg-surface rounded-lg border border-border;
+  }
+
+  .step-badge-base {
+    @apply font-mono font-bold px-2 py-1 rounded text-sm;
+  }
+
+  .step-badge-valid {
+    @apply text-primary bg-background border border-border;
+  }
+
+  .step-badge-invalid {
+    @apply text-red-400 bg-background border border-red-400;
+  }
+
+  .step-cell-empty {
+    @apply font-mono font-bold px-2 py-1 rounded text-sm text-border bg-background border border-border opacity-30;
+  }
+  .step-cell-atomic {
+    @apply border border-dashed border-border rounded-lg px-2 py-1;
+  }
+
+  .step-cell-group {
+    @apply flex items-center gap-1 border border-dashed border-primary rounded-lg px-2 py-1;
+  }
+
+  .step-column {
+    @apply flex flex-col gap-2;
+  }
+
+  .instrument-card {
+    @apply flex items-center gap-2 bg-field px-3 py-1 rounded-full border border-border;
+  }
+
+  .instrument-symbol {
+    @apply text-primary font-mono font-bold;
+  }
+
+  .instrument-name {
+    @apply text-text-secondary text-xs;
   }
 }
