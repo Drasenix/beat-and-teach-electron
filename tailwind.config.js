@@ -21,9 +21,6 @@ module.exports = {
           edit: '#679ff9',
           'confirm-delete': '#770000', // bouton confirm delete
         },
-        step: {
-          'cell-border': '#3f87fb', // bordure pour les steps du pattern en groupe
-        },
       },
     },
   },

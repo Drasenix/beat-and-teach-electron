@@ -3,6 +3,28 @@
 @tailwind utilities;
 
 @layer components {
+  /* Animations */
+  @keyframes rotate {
+    100% {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes glow-pulse {
+    0%,
+    100% {
+      text-shadow:
+        0 0 8px theme('colors.primary'),
+        0 0 20px theme('colors.primary');
+    }
+    50% {
+      text-shadow:
+        0 0 16px theme('colors.primary'),
+        0 0 40px theme('colors.primary'),
+        0 0 60px theme('colors.primary');
+    }
+  }
+
   /* Boutons */
   .btn-primary {
     @apply px-6 py-3 bg-primary hover:opacity-90 disabled:opacity-30
@@ -30,15 +52,68 @@
            font-mono text-xs rounded-lg transition-opacity duration-200;
   }
 
-  /* Navigation */
-  .bar-aside {
-    @apply fixed left-0 top-0 h-screen w-16 bg-surface border-r border-border
-                      flex flex-col items-center py-6 gap-6 z-10;
+  .btn-animated-wrapper {
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    padding: 3px;
+    transition: transform 0.3s;
+  }
+
+  .btn-animated-wrapper:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-animated-wrapper::before {
+    content: '';
+    position: absolute;
+    z-index: -2;
+    left: -50%;
+    top: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: linear-gradient(
+      theme('colors.primary'),
+      theme('colors.primary')
+    );
+    background-position: 100% 50%;
+    background-repeat: no-repeat;
+    background-size: 50% 30%;
+    filter: blur(50px);
+    animation: rotate 8s linear infinite;
+  }
+
+  .btn-animated-inner {
+    @apply btn-secondary;
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    background-color: theme('colors.field');
+    border-radius: 0.4rem;
+    text-align: center;
+    border: none;
+  }
+
+  .btn-animated-inner:hover {
+    color: theme('colors.text.primary');
   }
 
   .nav-main-button {
     @apply w-8 h-8 flex items-center justify-center text-primary font-bold
-                   font-mono text-3xl hover:opacity-70 transition-opacity duration-200;
+         font-mono text-3xl hover:opacity-70 transition-opacity duration-200;
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  .home-button-icon {
+    @apply text-primary text-4xl;
+  }
+
+  /* Navigation */
+  .bar-aside {
+    @apply fixed left-0 top-0 h-screen w-16 bg-surface border-r border-border
+                      flex flex-col items-center py-6 gap-6 z-10;
   }
 
   .nav-item {
@@ -105,6 +180,10 @@
   }
 
   /* Autres */
+  .app-title {
+    @apply text-3xl font-bold tracking-widest text-primary uppercase;
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
   .section-background {
     @apply p-4 bg-surface rounded-lg border border-border;
   }
