@@ -4,9 +4,9 @@ export default function Header() {
   const location = useLocation();
 
   const navItems = [
-    { to: '/workspace', label: '▶', title: 'Pattern' },
-    { to: '/configuration/instruments', label: '⚙', title: 'Instruments' },
-    { to: '/configuration/patterns', label: '☰', title: 'Patterns' },
+    { to: '/workspace', label: '🎙', title: 'Pattern' },
+    { to: '/configuration/instruments', label: '🎝', title: 'Instruments' },
+    { to: '/configuration/patterns', label: '🕮', title: 'Patterns' },
   ];
 
   return (
