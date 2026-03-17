@@ -34,7 +34,7 @@ function seedPatterns(db: Database.Database): void {
     {
       slug: 'boom-bap',
       name: 'boom bap',
-      sentences: JSON.stringify(['P K P P P Kch']),
+      sentences: JSON.stringify(['P Ts K (Ts P) P P K Ts']),
     },
     {
       slug: '23',
