@@ -99,7 +99,7 @@
     animation: rotate 8s linear infinite;
   }
 
-  .div-animated-inner {
+  .link-animated-inner {
     @apply btn-secondary;
     position: relative;
     z-index: 1;
@@ -111,7 +111,7 @@
     border: none;
   }
 
-  .div-animated-inner:hover {
+  .link-animated-inner:hover {
     color: theme('colors.text.primary');
   }
 

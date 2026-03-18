@@ -13,22 +13,27 @@ export default function PatternOverwrite({
 }: PatternOverwriteProps) {
   return (
     <Modal onClose={onCancel}>
-      <p className="section-title mb-4">Pattern existant</p>
-      <p className="text-text-secondary text-sm font-mono mb-6">
-        Le pattern <span className="text-primary uppercase">{name}</span> existe
-        déjà. Voulez-vous l&apos;écraser ?
-      </p>
-      <div className="flex gap-3 justify-end">
-        <button type="button" onClick={onCancel} className="btn-secondary">
-          Annuler
-        </button>
-        <button
-          type="button"
-          onClick={onConfirm}
-          className="btn-confirm-delete"
-        >
-          Confirmer
-        </button>
+      <div className="flex flex-col gap-4">
+        <p className="section-title">Pattern existant</p>
+        <p className="text-text-secondary font-mono">
+          <div>
+            Le pattern <span className="text-primary uppercase">{name}</span>{' '}
+            existe déjà.
+          </div>
+          <div>Voulez-vous l&apos;écraser ?</div>
+        </p>
+        <div className="flex gap-3 justify-end">
+          <button type="button" onClick={onCancel} className="btn-secondary">
+            Annuler
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="btn-confirm-delete"
+          >
+            Confirmer
+          </button>
+        </div>
       </div>
     </Modal>
   );

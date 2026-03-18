@@ -11,7 +11,7 @@ export default function Home() {
       </div>
       <div className="flex flex-col gap-4 w-full max-w-sm">
         <div className="div-animated-wrapper">
-          <Link to="/workspace" className="div-animated-inner group">
+          <Link to="/workspace" className="link-animated-inner group">
             <p className="home-button-icon">🎙</p>
             <p className="text-primary">Je construis mon pattern</p>
           </Link>
@@ -19,7 +19,7 @@ export default function Home() {
         <div className="div-animated-wrapper">
           <Link
             to="/configuration/instruments"
-            className="div-animated-inner group"
+            className="link-animated-inner group"
           >
             <p className="home-button-icon">🎝</p>
             <p className="text-primary">Je gère les instruments</p>
@@ -28,7 +28,7 @@ export default function Home() {
         <div className="div-animated-wrapper">
           <Link
             to="/configuration/patterns"
-            className="div-animated-inner group"
+            className="link-animated-inner group"
           >
             <p className="home-button-icon">🕮</p>
             <p className="text-primary">Je gère les patterns</p>
