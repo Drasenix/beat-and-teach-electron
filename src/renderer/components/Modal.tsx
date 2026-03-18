@@ -14,12 +14,14 @@ export default function Modal({ children, onClose }: ModalProps) {
     >
       <button
         type="button"
-        className="absolute inset-0 bg-background/70 backdrop-blur-sm w-full cursor-default"
+        className="absolute inset-0 bg-background/70 backdrop-blur-sm cursor-default"
         onClick={onClose}
         aria-label="Fermer"
       />
-      <div className="relative bg-surface border border-border rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-        {children}
+      <div className="div-animated-wrapper">
+        <div className="relative bg-surface border border-border rounded-lg p-6 max-w-md ">
+          {children}
+        </div>
       </div>
     </div>
   );

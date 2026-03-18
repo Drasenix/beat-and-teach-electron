@@ -67,7 +67,7 @@
            font-mono text-xs rounded-lg transition-opacity duration-200;
   }
 
-  .btn-animated-wrapper {
+  .div-animated-wrapper {
     position: relative;
     z-index: 0;
     overflow: hidden;
@@ -76,11 +76,11 @@
     transition: transform 0.3s;
   }
 
-  .btn-animated-wrapper:hover {
+  .div-animated-wrapper:hover {
     transform: scale(1.05);
   }
 
-  .btn-animated-wrapper::before {
+  .div-animated-wrapper::before {
     content: '';
     position: absolute;
     z-index: -2;
@@ -99,7 +99,7 @@
     animation: rotate 8s linear infinite;
   }
 
-  .btn-animated-inner {
+  .div-animated-inner {
     @apply btn-secondary;
     position: relative;
     z-index: 1;
@@ -111,14 +111,8 @@
     border: none;
   }
 
-  .btn-animated-inner:hover {
+  .div-animated-inner:hover {
     color: theme('colors.text.primary');
-  }
-
-  .nav-main-button {
-    @apply w-8 h-8 flex items-center justify-center text-primary font-bold
-         font-mono text-3xl hover:opacity-70 transition-opacity duration-200;
-    animation: glow-pulse-high 3s ease-in-out infinite;
   }
 
   .home-button-icon {
@@ -134,7 +128,7 @@
   .nav-main-button {
     @apply w-8 h-8 flex items-center justify-center text-primary font-bold
          font-mono text-3xl hover:opacity-70 transition-opacity duration-200;
-    animation: glow-pulse 3s ease-in-out infinite;
+    animation: glow-pulse-high 3s ease-in-out infinite;
   }
 
   .home-button-icon {
