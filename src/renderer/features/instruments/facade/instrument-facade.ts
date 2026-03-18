@@ -22,6 +22,12 @@ async function prepareInstrumentEngine(): Promise<InstrumentEngine> {
   return instrumentEngine;
 }
 
+async function refreshInstrumentEngine(): Promise<void> {
+  const instrumentEngine = InstrumentEngine.getInstance();
+  const instruments = await getAllInstruments();
+  instrumentEngine.loadInstruments(instruments);
+}
+
 export async function getInstruments(): Promise<Instrument[]> {
   return getAllInstruments();
 }
@@ -48,6 +54,7 @@ export async function createInstrument(
     name: instrument.name,
     filepath: instrument.filepath,
   });
+  refreshInstrumentEngine();
   return adaptInstrument(created);
 }
 
@@ -60,9 +67,11 @@ export async function updateInstrument(
     name: instrument.name,
     filepath: instrument.filepath,
   });
+  refreshInstrumentEngine();
   return adaptInstrument(updated);
 }
 
 export async function deleteInstrument(id: number): Promise<void> {
   await deleteInstrumentAPI(id);
+  refreshInstrumentEngine();
 }
