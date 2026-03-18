@@ -112,9 +112,19 @@ describe('#normalizeSentences', () => {
     expect(result[1]).toBe('P K Ts .');
   });
 
+  it('should pad a shorter sentence with silences and preserve trailing space', () => {
+    const result = normalizeSentences(['P Ts K .', 'P K Ts ']);
+    expect(result[1]).toBe('P K Ts . ');
+  });
+
   it('should truncate a longer sentence', () => {
     const result = normalizeSentences(['P Ts K .', 'P K Ts Pf Ts']);
     expect(result[1]).toBe('P K Ts Pf');
+  });
+
+  it('should truncate a longer sentence and preserve trailing space', () => {
+    const result = normalizeSentences(['P Ts K .', 'P K Ts Pf Ts ']);
+    expect(result[1]).toBe('P K Ts Pf ');
   });
 
   it('should count a group as one step when truncating', () => {

@@ -1,3 +1,5 @@
+import SentenceInput from './SentenceInput';
+
 type SentencesFormProps = {
   sentences: string[];
   withBackground?: boolean;
@@ -25,12 +27,10 @@ export default function SentencesForm({
           // eslint-disable-next-line react/no-array-index-key
           <div key={index} className="flex flex-col gap-1">
             <div className="flex items-start gap-2">
-              <textarea
-                value={sentence}
-                onChange={(e) => onChangeSentence(index, e.target.value)}
+              <SentenceInput
+                sentence={sentence}
+                onChange={(value) => onChangeSentence(index, value)}
                 onBlur={onBlur}
-                placeholder="P Ts K . P (Ts P) K"
-                className="input-field flex-1 text-xl p-4 resize-none h-24"
               />
               {sentences.length > 1 && (
                 <button

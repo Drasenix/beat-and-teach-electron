@@ -121,7 +121,8 @@ function normalizeSentence(sentence: string, targetLength: number): string {
   const tokens = tokenize(sentence);
   const collected = collectTokensUpTo(tokens, targetLength);
   const padded = padWithSilence(collected, targetLength);
-  return padded.join(' ');
+  const trailingSpace = sentence.endsWith(' ') ? ' ' : '';
+  return padded.join(' ') + trailingSpace;
 }
 
 export function normalizeSentences(sentences: string[]): string[] {
