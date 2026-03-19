@@ -1,3 +1,4 @@
+import { countSentenceSteps } from '../../utils/pattern-parser';
 import SentenceInput from './SentenceInput';
 
 type SentencesFormProps = {
@@ -17,6 +18,7 @@ export default function SentencesForm({
   onAddSentence,
   onBlur,
 }: SentencesFormProps) {
+  const maxTokens = countSentenceSteps(sentences[0]);
   return (
     <div className="pattern-section-content">
       <h2 className="section-title">Pistes</h2>
@@ -29,6 +31,7 @@ export default function SentencesForm({
             <div className="flex items-start gap-2">
               <SentenceInput
                 sentence={sentence}
+                maxTokens={index > 0 ? maxTokens : undefined}
                 onChange={(value) => onChangeSentence(index, value)}
                 onBlur={onBlur}
               />

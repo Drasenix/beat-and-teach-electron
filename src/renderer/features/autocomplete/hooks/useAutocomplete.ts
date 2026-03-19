@@ -54,7 +54,7 @@ const useAutocomplete = ({
         setSelectedIndex(
           (i) => (i - 1 + suggestions.length) % suggestions.length,
         );
-      } else if (e.key === 'Tab' || e.key === ' ') {
+      } else if (e.key === 'Tab' || e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         confirmSuggestion(suggestions[selectedIndex]);
       } else if (e.key === ')') {
