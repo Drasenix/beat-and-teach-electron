@@ -7,31 +7,34 @@ import InstrumentConfiguration from './features/instruments/components/Instrumen
 import PatternConfiguration from './features/pattern/components/PatternConfiguration';
 import { InstrumentsProvider } from './features/instruments/contexts/InstrumentsContext';
 import { PatternsProvider } from './features/pattern/contexts/PatternsContext';
+import { AudioProvider } from './features/audio/contexts/AudioContext';
 
 export default function App() {
   return (
     <Router>
-      <PatternsProvider>
-        <InstrumentsProvider>
-          <div className="bg-background min-h-screen">
-            <Header />
-            <div className="main-container">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/workspace" element={<PatternWorkspace />} />
-                <Route
-                  path="/configuration/instruments"
-                  element={<InstrumentConfiguration />}
-                />
-                <Route
-                  path="/configuration/patterns"
-                  element={<PatternConfiguration />}
-                />
-              </Routes>
+      <AudioProvider>
+        <PatternsProvider>
+          <InstrumentsProvider>
+            <div className="bg-background min-h-screen">
+              <Header />
+              <div className="main-container">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/workspace" element={<PatternWorkspace />} />
+                  <Route
+                    path="/configuration/instruments"
+                    element={<InstrumentConfiguration />}
+                  />
+                  <Route
+                    path="/configuration/patterns"
+                    element={<PatternConfiguration />}
+                  />
+                </Routes>
+              </div>
             </div>
-          </div>
-        </InstrumentsProvider>
-      </PatternsProvider>
+          </InstrumentsProvider>
+        </PatternsProvider>
+      </AudioProvider>
     </Router>
   );
 }

@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
+import useAudio from '../features/audio/hooks/useAudio';
 
 export default function Header() {
   const location = useLocation();
+  const { playing, stopTrack } = useAudio();
 
   const navItems = [
     { to: '/workspace', label: '🎙', title: 'Pattern' },
@@ -11,7 +13,14 @@ export default function Header() {
 
   return (
     <aside className="bar-aside">
-      <Link to="/" className="nav-main-button" title="Home">
+      <Link
+        to="/"
+        className="nav-main-button"
+        title="Home"
+        onClick={() => {
+          if (playing) stopTrack();
+        }}
+      >
         B
       </Link>
 
@@ -22,6 +31,9 @@ export default function Header() {
           key={to}
           to={to}
           title={title}
+          onClick={() => {
+            if (playing) stopTrack();
+          }}
           className={`nav-item ${location.pathname === to ? 'nav-item-active' : ''}`}
         >
           {label}
