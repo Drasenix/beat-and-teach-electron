@@ -18,6 +18,7 @@ export default function AddPatternForm({
     usePatternForm({
       name: '',
       sentences: [''],
+      highlights: [[]],
     });
   const [errors, setErrors] = useState<string[]>([]);
 

@@ -16,6 +16,7 @@ export async function createPatternAPI(
     {
       ...pattern,
       sentences: JSON.stringify(pattern.sentences),
+      highlights: JSON.stringify(pattern.highlights),
     },
   );
   return adaptPattern(patternDB);
@@ -32,6 +33,9 @@ export async function updatePatternAPI(
       ...pattern,
       sentences: pattern.sentences
         ? JSON.stringify(pattern.sentences)
+        : undefined,
+      highlights: pattern.highlights
+        ? JSON.stringify(pattern.highlights)
         : undefined,
     },
   );

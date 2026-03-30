@@ -12,6 +12,7 @@ export default function PatternWorkspace() {
     addSentence,
     removeSentence,
     normalizeAllSentences,
+    changeHighlight,
   } = usePattern();
   const { patterns } = usePatterns();
 
@@ -29,6 +30,7 @@ export default function PatternWorkspace() {
         addSentence={addSentence}
         removeSentence={removeSentence}
         normalizeAllSentences={normalizeAllSentences}
+        changeHighlight={changeHighlight}
       />
     </div>
   );

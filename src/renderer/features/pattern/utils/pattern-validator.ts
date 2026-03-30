@@ -1,6 +1,10 @@
 import { PatternFormValues } from '../types/pattern-types';
 
-export default function validatePattern(fields: PatternFormValues): string[] {
+type ValidatePatternFields = Pick<PatternFormValues, 'name' | 'sentences'>;
+
+export default function validatePattern(
+  fields: ValidatePatternFields,
+): string[] {
   const errors: string[] = [];
   if (!fields.name.trim()) errors.push('Le nom est requis.');
   if (fields.sentences.length === 0)

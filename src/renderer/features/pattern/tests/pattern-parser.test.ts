@@ -5,6 +5,7 @@ import {
   countSentenceSteps,
   normalizeSentences,
   parseMultiTrackSteps,
+  flatTokenCount,
 } from '../utils/pattern-parser';
 
 describe('#createStep', () => {
@@ -142,17 +143,17 @@ describe('#parseMultiTrackSteps', () => {
   it('should return columns aligned across tracks', () => {
     const result = parseMultiTrackSteps(['P Ts', 'K .'], ['P', 'Ts', 'K', '.']);
     expect(result).toHaveLength(2);
-    expect(result[0].steps[0]?.symbol).toBe('P');
-    expect(result[0].steps[1]?.symbol).toBe('K');
-    expect(result[1].steps[0]?.symbol).toBe('Ts');
-    expect(result[1].steps[1]?.symbol).toBe('.');
+    expect(result[0].steps[0].step?.symbol).toBe('P');
+    expect(result[0].steps[1].step?.symbol).toBe('K');
+    expect(result[1].steps[0].step?.symbol).toBe('Ts');
+    expect(result[1].steps[1].step?.symbol).toBe('.');
   });
 
   it('should fill with null when a track is shorter', () => {
     const result = parseMultiTrackSteps(['P Ts K', 'P'], ['P', 'Ts', 'K']);
     expect(result).toHaveLength(3);
-    expect(result[1].steps[1]).toBeNull();
-    expect(result[2].steps[1]).toBeNull();
+    expect(result[1].steps[1].step).toBeNull();
+    expect(result[2].steps[1].step).toBeNull();
   });
 
   it('should return empty array for empty sentences', () => {
@@ -166,6 +167,48 @@ describe('#parseMultiTrackSteps', () => {
       ['P', 'Ts', 'K', '.'],
     );
     expect(result).toHaveLength(2);
-    expect(result[1].steps[0]?.isGroup).toBe(true);
+    expect(result[1].steps[0].step?.isGroup).toBe(true);
+  });
+
+  it('should carry correct sentenceIndex', () => {
+    const result = parseMultiTrackSteps(['P Ts', 'K .'], ['P', 'Ts', 'K', '.']);
+    expect(result[0].steps[0].sentenceIndex).toBe(0);
+    expect(result[0].steps[1].sentenceIndex).toBe(1);
+  });
+
+  it('should carry correct tokenIndex for simple tokens', () => {
+    const result = parseMultiTrackSteps(['P Ts K'], ['P', 'Ts', 'K']);
+    expect(result[0].steps[0].tokenIndex).toBe(0);
+    expect(result[1].steps[0].tokenIndex).toBe(1);
+    expect(result[2].steps[0].tokenIndex).toBe(2);
+  });
+
+  it('should carry correct tokenIndex for groups', () => {
+    const result = parseMultiTrackSteps(['P (Ts K) .'], ['P', 'Ts', 'K', '.']);
+    expect(result[0].steps[0].tokenIndex).toBe(0); // P
+    expect(result[1].steps[0].tokenIndex).toBe(1); // (Ts K) -> Ts à l'index 1, K à 2
+    expect(result[2].steps[0].tokenIndex).toBe(3); // .
+  });
+});
+
+describe('#flatTokenCount', () => {
+  it('should count simple tokens', () => {
+    expect(flatTokenCount('P Ts K .')).toBe(4);
+  });
+
+  it('should count tokens inside groups', () => {
+    expect(flatTokenCount('P (Ts K) .')).toBe(4);
+  });
+
+  it('should count multiple groups correctly', () => {
+    expect(flatTokenCount('P (Ts K) (. P) .')).toBe(6);
+  });
+
+  it('should return 0 for empty sentence', () => {
+    expect(flatTokenCount('')).toBe(0);
+  });
+
+  it('should count nested tokens in multiple groups', () => {
+    expect(flatTokenCount('(P Ts) (K .)')).toBe(4);
   });
 });

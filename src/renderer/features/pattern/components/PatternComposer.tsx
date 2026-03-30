@@ -11,6 +11,11 @@ type PatternComposerProps = {
   addSentence: () => void;
   removeSentence: (index: number) => void;
   normalizeAllSentences: () => void;
+  changeHighlight: (
+    sentenceIndex: number,
+    tokenIndex: number,
+    color: string | null,
+  ) => void;
 };
 
 export default function PatternComposer({
@@ -19,6 +24,7 @@ export default function PatternComposer({
   addSentence,
   removeSentence,
   normalizeAllSentences,
+  changeHighlight,
 }: PatternComposerProps) {
   return (
     <>
@@ -34,12 +40,15 @@ export default function PatternComposer({
           onBlur={normalizeAllSentences}
           withBackground
         />
-        <PatternSteps sentences={pattern.sentences} />
+        <PatternSteps
+          sentences={pattern.sentences}
+          highlights={pattern.highlights}
+          onChangeHighlight={changeHighlight}
+        />
         <div className="flex justify-end">
           <SavePatternForm pattern={pattern} />
         </div>
       </div>
-
       <div className="workspace-section-content">
         <AudioControls sentences={pattern.sentences} />
       </div>

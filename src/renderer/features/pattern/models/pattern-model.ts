@@ -3,6 +3,7 @@ export interface Pattern {
   slug: string;
   name: string;
   sentences: string[];
+  highlights: (string | null)[][];
 }
 
 export const DEFAULT_PATTERN: Pattern = {
@@ -10,4 +11,5 @@ export const DEFAULT_PATTERN: Pattern = {
   slug: '',
   name: '',
   sentences: [],
+  highlights: [],
 };

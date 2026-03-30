@@ -57,6 +57,28 @@ export function parseSteps(
   });
 }
 
+export function flatTokenCount(sentence: string): number {
+  return sentence
+    .trim()
+    .replace(/[()]/g, '')
+    .split(/\s+/)
+    .filter((t) => t.length > 0).length;
+}
+
+function getFlatTokenCount(step: PatternStep): number {
+  if (step.isGroup && step.steps) return step.steps.length;
+  return 1;
+}
+
+function buildFlatTokenIndices(track: PatternStep[]): number[] {
+  let counter = 0;
+  return track.map((step) => {
+    const index = counter;
+    counter += getFlatTokenCount(step);
+    return index;
+  });
+}
+
 export function parseMultiTrackSteps(
   sentences: string[],
   validSymbols: string[],
@@ -64,10 +86,16 @@ export function parseMultiTrackSteps(
   const tracks: PatternStep[][] = sentences.map((sentence) =>
     parseSteps(sentence, validSymbols),
   );
+  const flatIndices: number[][] = tracks.map(buildFlatTokenIndices);
   const maxLength = Math.max(...tracks.map((track) => track.length), 0);
+
   return Array.from({ length: maxLength }).map((_, colIndex) => ({
     id: `col-${colIndex}`,
-    steps: tracks.map((track) => track[colIndex] ?? null),
+    steps: tracks.map((track, sentenceIndex) => ({
+      step: track[colIndex] ?? null,
+      sentenceIndex,
+      tokenIndex: flatIndices[sentenceIndex]?.[colIndex] ?? -1,
+    })),
   }));
 }
 

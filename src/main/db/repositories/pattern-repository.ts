@@ -2,17 +2,32 @@ import { toSnakeCase } from '../../../renderer/utils/util';
 import { PatternDB } from '../../../shared/models/pattern-db';
 import getDatabase from '../database';
 
+function buildDefaultHighlights(sentences: string): string {
+  const parsed: string[] = JSON.parse(sentences);
+  const highlights: (string | null)[][] = parsed.map((sentence) => {
+    const flatTokens = sentence
+      .trim()
+      .replace(/[()]/g, '')
+      .split(/\s+/)
+      .filter((t) => t.length > 0);
+    return flatTokens.map(() => null);
+  });
+  return JSON.stringify(highlights);
+}
+
 export function getAllPatterns(): PatternDB[] {
   const db = getDatabase();
   return db
-    .prepare('SELECT id, slug, name, sentences FROM patterns')
+    .prepare('SELECT id, slug, name, sentences, highlights FROM patterns')
     .all() as PatternDB[];
 }
 
 export function getPatternById(id: number): PatternDB | undefined {
   const db = getDatabase();
   return db
-    .prepare('SELECT id, slug, name, sentences FROM patterns WHERE id = ?')
+    .prepare(
+      'SELECT id, slug, name, sentences, highlights FROM patterns WHERE id = ?',
+    )
     .get(id) as PatternDB | undefined;
 }
 
@@ -25,14 +40,16 @@ export function createPattern(
   const db = getDatabase();
   const slug = toSnakeCase(pattern.name);
   const sentence = JSON.parse(pattern.sentences)[0] ?? '';
+  const highlights =
+    pattern.highlights ?? buildDefaultHighlights(pattern.sentences);
 
   try {
     const result = db
       .prepare(
-        `INSERT INTO patterns (slug, name, sentences)
-         VALUES (@slug, @name, @sentences)`,
+        `INSERT INTO patterns (slug, name, sentences, highlights)
+         VALUES (@slug, @name, @sentences, @highlights)`,
       )
-      .run({ ...pattern, slug, sentence });
+      .run({ ...pattern, slug, sentence, highlights });
     return getPatternById(result.lastInsertRowid as number)!;
   } catch (error: any) {
     if (error?.message?.includes('UNIQUE constraint failed: patterns.slug')) {
@@ -60,9 +77,10 @@ export function updatePattern(
   try {
     db.prepare(
       `UPDATE patterns
-       SET slug      = COALESCE(@slug, slug),
-           name      = COALESCE(@name, name),
-           sentences = COALESCE(@sentences, sentences)
+       SET slug       = COALESCE(@slug, slug),
+           name       = COALESCE(@name, name),
+           sentences  = COALESCE(@sentences, sentences),
+           highlights = COALESCE(@highlights, highlights)
        WHERE id = @id`,
     ).run({ ...pattern, slug, sentence, id });
     return getPatternById(id)!;

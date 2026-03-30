@@ -43,7 +43,11 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
     }
 
     try {
-      await addPattern({ name, sentences: pattern.sentences });
+      await addPattern({
+        name,
+        sentences: pattern.sentences,
+        highlights: pattern.highlights,
+      });
       resetFields();
     } catch (e) {
       setError(extractIpcError(e, 'Impossible de créer le pattern.'));
@@ -56,6 +60,7 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
       await editPattern(confirmOverwrite.id, {
         name,
         sentences: pattern.sentences,
+        highlights: pattern.highlights,
       });
       resetFields();
     } catch (e) {

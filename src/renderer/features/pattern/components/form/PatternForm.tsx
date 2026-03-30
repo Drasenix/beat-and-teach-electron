@@ -1,5 +1,6 @@
 import { PatternFormValues } from '../../types/pattern-types';
 import SentencesForm from './SentencesForm';
+import PatternSteps from '../PatternSteps';
 
 type PatternFormProps = {
   pattern: PatternFormValues;
@@ -35,6 +36,19 @@ export default function PatternForm({
     onPatternChange({ sentences: [...pattern.sentences, ''] });
   };
 
+  const changeHighlight = (
+    sentenceIndex: number,
+    tokenIndex: number,
+    color: string | null,
+  ) => {
+    const next = pattern.highlights.map((row, i) =>
+      i === sentenceIndex
+        ? row.map((c, j) => (j === tokenIndex ? color : c))
+        : row,
+    );
+    onPatternChange({ highlights: next });
+  };
+
   return (
     <div className="form-content">
       <h3 className="section-title">{titleLabel}</h3>
@@ -51,7 +65,11 @@ export default function PatternForm({
         onAddSentence={addSentence}
         onBlur={onNormalize}
       />
-
+      <PatternSteps
+        sentences={pattern.sentences}
+        highlights={pattern.highlights}
+        onChangeHighlight={changeHighlight}
+      />
       {errors.length > 0 && (
         <ul className="flex flex-col gap-1">
           {errors.map((e) => (
@@ -61,7 +79,6 @@ export default function PatternForm({
           ))}
         </ul>
       )}
-
       <div className="flex gap-3">
         <button type="button" onClick={onSubmit} className="btn-primary">
           Enregistrer

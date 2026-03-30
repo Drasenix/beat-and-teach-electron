@@ -21,6 +21,7 @@ export default function EditPatternForm({
     usePatternForm({
       name: pattern.name,
       sentences: pattern.sentences.length > 0 ? pattern.sentences : [''],
+      highlights: pattern.highlights.length > 0 ? pattern.highlights : [[]],
     });
   const [errors, setErrors] = useState<string[]>([]);
 
