@@ -12,17 +12,28 @@ function seedPatterns(db: Database.Database): void {
     {
       slug: 'dubstep',
       name: 'dubstep',
-      sentences: JSON.stringify(['P (Ts P) Ts P K (Ts P) Ts P K Ts']),
+      sentences: JSON.stringify(['P (Ts P) Ts P K (Ts P) Ts P K Bw']),
     },
     {
       slug: 'funk',
       name: 'funk',
-      sentences: JSON.stringify(['P Ts P Ts K Ts Ts K Ts K P K K P Ts K']),
+      sentences: JSON.stringify([
+        'P Ts P Ts Kch Ts Ts Kch Ts Kch P Kch Kch P Ts Kch',
+      ]),
+    },
+    {
+      slug: 'funk-2',
+      name: 'funk 2',
+      sentences: JSON.stringify([
+        'P (. Kch) . P . P Kch Ts (P Ts) (Ts Kch) (. Ts) (P Ts) (Ts Ts) (P P) (Kch .) Bw',
+      ]),
     },
     {
       slug: 'reggae',
       name: 'reggae',
-      sentences: JSON.stringify(['P (Ts K) (. K) . (Ts K) (. K)']),
+      sentences: JSON.stringify([
+        'Tum (Ts K) (. K) . (Ts K) (. K) Tum (Ts K) (. K) . (Ts K) (. Tum)',
+      ]),
     },
     {
       slug: 'jazz',
@@ -39,12 +50,22 @@ function seedPatterns(db: Database.Database): void {
     {
       slug: '23',
       name: '2/3',
-      sentences: JSON.stringify(['P Ts Pf', 'K (. K) .']),
+      sentences: JSON.stringify(['P Ts Pf', 'Eh (. Eh) .']),
     },
     {
       slug: '43',
       name: '4/3',
-      sentences: JSON.stringify(['P Ts Pf Ts', 'K (. K . ) ( . . K) .']),
+      sentences: JSON.stringify(['P Ts Pf Ts', 'Eh (. Eh . ) ( . . Eh) .']),
+    },
+    {
+      slug: 'inward-drag',
+      name: 'inward drag',
+      sentences: JSON.stringify(['P A< F> S< A> F< Eh A< F> S< A> F<']),
+    },
+    {
+      slug: 'drop-it-like-its-hot',
+      name: 'drop it like its hot',
+      sentences: JSON.stringify(['P (Lo P) (Pf Lo) P Lo (P Lo) Pf .']),
     },
   ];
   const { count } = db
@@ -113,6 +134,90 @@ function seedInstruments(db: Database.Database): void {
       symbol: 'W',
       name: 'sonic boom',
       filepath: path.join(soundsPath, 'sonic-boom.mp3'),
+    },
+    {
+      slug: 'air-A-inward',
+      symbol: 'A<',
+      name: 'air-A-inward',
+      filepath: path.join(soundsPath, 'air-A-inward.mp3'),
+    },
+    {
+      slug: 'air-A',
+      symbol: 'A>',
+      name: 'air-A',
+      filepath: path.join(soundsPath, 'air-A.mp3'),
+    },
+    {
+      slug: 'air-F-inward',
+      symbol: 'F<',
+      name: 'air-F-inward',
+      filepath: path.join(soundsPath, 'air-F-inward.mp3'),
+    },
+    {
+      slug: 'air-F',
+      symbol: 'F>',
+      name: 'air-F',
+      filepath: path.join(soundsPath, 'air-F.mp3'),
+    },
+    {
+      slug: 'air-S-inward',
+      symbol: 'S<',
+      name: 'air-S-inward',
+      filepath: path.join(soundsPath, 'air-S-inward.mp3'),
+    },
+    {
+      slug: 'air-S',
+      symbol: 'S>',
+      name: 'air-S',
+      filepath: path.join(soundsPath, 'air-S.mp3'),
+    },
+    {
+      slug: 'clock',
+      symbol: 'Lo',
+      name: 'clock',
+      filepath: path.join(soundsPath, 'clock.mp3'),
+    },
+    {
+      slug: 'cough-snare',
+      symbol: 'Eh',
+      name: 'cough-snare',
+      filepath: path.join(soundsPath, 'cough-snare.mp3'),
+    },
+    {
+      slug: 'kch-snare',
+      symbol: 'Kch',
+      name: 'kch-snare',
+      filepath: path.join(soundsPath, 'kch-snare.mp3'),
+    },
+    {
+      slug: 'liproll-bass',
+      symbol: 'Bwr',
+      name: 'liproll-bass',
+      filepath: path.join(soundsPath, 'liproll-bass.mp3'),
+    },
+    {
+      slug: 'liproll',
+      symbol: 'Bw',
+      name: 'liproll',
+      filepath: path.join(soundsPath, 'liproll.mp3'),
+    },
+    {
+      slug: 'throat-bass',
+      symbol: 'Rr',
+      name: 'throat-bass',
+      filepath: path.join(soundsPath, 'throat-bass.mp3'),
+    },
+    {
+      slug: 'tom-bass',
+      symbol: 'Tum',
+      name: 'tom-bass',
+      filepath: path.join(soundsPath, 'tom-bass.mp3'),
+    },
+    {
+      slug: 'tongue-kick',
+      symbol: 'p',
+      name: 'tongue-kick',
+      filepath: path.join(soundsPath, 'tongue-kick.mp3'),
     },
   ];
 
