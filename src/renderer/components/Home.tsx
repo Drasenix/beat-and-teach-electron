@@ -13,7 +13,7 @@ export default function Home() {
         <div className="div-animated-wrapper">
           <Link to="/workspace" className="link-animated-inner group">
             <p className="home-button-icon">🎙</p>
-            <p className="text-primary">Je construis mon pattern</p>
+            <p className="text-primary">player</p>
           </Link>
         </div>
         <div className="div-animated-wrapper">
@@ -22,7 +22,7 @@ export default function Home() {
             className="link-animated-inner group"
           >
             <p className="home-button-icon">🎝</p>
-            <p className="text-primary">Je gère les instruments</p>
+            <p className="text-primary">instruments</p>
           </Link>
         </div>
         <div className="div-animated-wrapper">
@@ -31,7 +31,7 @@ export default function Home() {
             className="link-animated-inner group"
           >
             <p className="home-button-icon">🕮</p>
-            <p className="text-primary">Je gère les patterns</p>
+            <p className="text-primary">patterns</p>
           </Link>
         </div>
       </div>

@@ -110,6 +110,10 @@ const usePattern = () => {
     setPattern({ ...pattern, highlights });
   };
 
+  const resetPattern = () => {
+    setPattern(DEFAULT_PATTERN);
+  };
+
   return {
     pattern,
     setPattern,
@@ -118,6 +122,7 @@ const usePattern = () => {
     removeSentence,
     normalizeAllSentences,
     changeHighlight,
+    resetPattern,
   };
 };
 

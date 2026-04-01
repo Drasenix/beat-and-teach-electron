@@ -7,6 +7,7 @@ import PatternOverwrite from './PatternOverwrite';
 
 type SavePatternFormProps = {
   pattern: Pattern;
+  selectedPattern: Pattern | null;
 };
 
 type ConfirmOverwriteState = {
@@ -14,9 +15,11 @@ type ConfirmOverwriteState = {
   name: string;
 };
 
-export default function SavePatternForm({ pattern }: SavePatternFormProps) {
+export default function SavePatternForm({
+  pattern,
+  selectedPattern,
+}: SavePatternFormProps) {
   const { patterns, addPattern, editPattern } = usePatterns();
-  const [saving, setSaving] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [confirmOverwrite, setConfirmOverwrite] =
@@ -24,12 +27,26 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
 
   const resetFields = (): void => {
     setName('');
-    setSaving(false);
     setError(null);
     setConfirmOverwrite(null);
   };
 
-  const onSubmit = async (): Promise<void> => {
+  // Cas 1 : pattern sélectionné → écrasement direct
+  const onSaveExisting = async (): Promise<void> => {
+    if (!selectedPattern) return;
+    try {
+      await editPattern(selectedPattern.id, {
+        name: selectedPattern.name,
+        sentences: pattern.sentences,
+        highlights: pattern.highlights,
+      });
+    } catch (e) {
+      setError(extractIpcError(e, 'Impossible de modifier le pattern.'));
+    }
+  };
+
+  // Cas 2 : aucun pattern sélectionné → création avec nom
+  const onSaveNew = async (): Promise<void> => {
     const errors = validatePattern({ name, sentences: pattern.sentences });
     if (errors.length > 0) {
       setError(errors[0]);
@@ -73,19 +90,24 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
     pattern.sentences.length > 0 &&
     pattern.sentences.every((s) => s.trim().length > 0);
 
-  if (!saving) {
+  // Cas 1 : pattern sélectionné
+  if (selectedPattern) {
     return (
-      <button
-        type="button"
-        disabled={!allSentencesValid}
-        onClick={() => setSaving(true)}
-        className="btn-primary"
-      >
-        Sauvegarder
-      </button>
+      <div className="flex items-center gap-3">
+        {error && <span className="error-message">{error}</span>}
+        <button
+          type="button"
+          onClick={onSaveExisting}
+          disabled={!allSentencesValid}
+          className="btn-primary"
+        >
+          Sauvegarder
+        </button>
+      </div>
     );
   }
 
+  // Cas 2 : aucun pattern sélectionné → champ nom toujours visible
   return (
     <>
       {confirmOverwrite && (
@@ -105,14 +127,11 @@ export default function SavePatternForm({ pattern }: SavePatternFormProps) {
         {error && <span className="error-message">{error}</span>}
         <button
           type="button"
-          onClick={onSubmit}
+          onClick={onSaveNew}
           disabled={!name.trim() || !allSentencesValid}
           className="btn-primary"
         >
-          Enregistrer
-        </button>
-        <button type="button" onClick={resetFields} className="btn-secondary">
-          Annuler
+          Sauvegarder
         </button>
       </div>
     </>

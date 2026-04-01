@@ -50,7 +50,7 @@ export default function SentencesForm({
         <button
           type="button"
           onClick={onAddSentence}
-          className="btn-secondary self-start"
+          className="btn-add self-start"
         >
           + Ajouter une piste
         </button>

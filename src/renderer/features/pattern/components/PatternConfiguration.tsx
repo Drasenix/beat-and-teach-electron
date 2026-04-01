@@ -119,7 +119,7 @@ export default function PatternConfiguration() {
               setAddingPattern(true);
               setEditingId(null);
             }}
-            className="btn-secondary self-start"
+            className="btn-add self-start"
           >
             + Ajouter un pattern
           </button>

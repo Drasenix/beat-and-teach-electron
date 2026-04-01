@@ -7,6 +7,7 @@ import PatternSteps from './PatternSteps';
 
 type PatternComposerProps = {
   pattern: Pattern;
+  selectedPattern: Pattern | null;
   changeSentence: (index: number, value: string) => void;
   addSentence: () => void;
   removeSentence: (index: number) => void;
@@ -20,6 +21,7 @@ type PatternComposerProps = {
 
 export default function PatternComposer({
   pattern,
+  selectedPattern,
   changeSentence,
   addSentence,
   removeSentence,
@@ -46,7 +48,10 @@ export default function PatternComposer({
           onChangeHighlight={changeHighlight}
         />
         <div className="flex justify-end">
-          <SavePatternForm pattern={pattern} />
+          <SavePatternForm
+            pattern={pattern}
+            selectedPattern={selectedPattern}
+          />
         </div>
       </div>
       <div className="workspace-section-content">

@@ -127,7 +127,7 @@ export default function InstrumentConfiguration() {
               setAddingInstrument(true);
               setEditingId(null);
             }}
-            className="btn-secondary self-start"
+            className="btn-add self-start"
           >
             + Ajouter un instrument
           </button>
