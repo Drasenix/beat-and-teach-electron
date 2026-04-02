@@ -1,13 +1,9 @@
-import AudioControls from '../../audio/components/AudioControls';
-import InstrumentsLegend from '../../instruments/components/InstrumentsLegend';
 import { Pattern } from '../models/pattern-model';
-import SavePatternForm from './form/SavePatternForm';
 import SentencesForm from './form/SentencesForm';
 import PatternSteps from './PatternSteps';
 
 type PatternComposerProps = {
   pattern: Pattern;
-  selectedPattern: Pattern | null;
   changeSentence: (index: number, value: string) => void;
   addSentence: () => void;
   removeSentence: (index: number) => void;
@@ -21,7 +17,6 @@ type PatternComposerProps = {
 
 export default function PatternComposer({
   pattern,
-  selectedPattern,
   changeSentence,
   addSentence,
   removeSentence,
@@ -29,10 +24,7 @@ export default function PatternComposer({
   changeHighlight,
 }: PatternComposerProps) {
   return (
-    <>
-      <div className="workspace-section-content">
-        <InstrumentsLegend />
-      </div>
+    <div className="flex flex-col gap-3">
       <div className="workspace-section-content">
         <SentencesForm
           sentences={pattern.sentences}
@@ -47,16 +39,7 @@ export default function PatternComposer({
           highlights={pattern.highlights}
           onChangeHighlight={changeHighlight}
         />
-        <div className="flex justify-end">
-          <SavePatternForm
-            pattern={pattern}
-            selectedPattern={selectedPattern}
-          />
-        </div>
       </div>
-      <div className="workspace-section-content">
-        <AudioControls sentences={pattern.sentences} />
-      </div>
-    </>
+    </div>
   );
 }

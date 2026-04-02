@@ -4,10 +4,12 @@ import { extractIpcError } from '../../../../utils/util';
 import validatePattern from '../../utils/pattern-validator';
 import usePatterns from '../../hooks/usePatterns';
 import PatternOverwrite from './PatternOverwrite';
+import Modal from '../../../../components/Modal';
 
-type SavePatternFormProps = {
+type SavePatternModalProps = {
   pattern: Pattern;
   selectedPattern: Pattern | null;
+  onClose: () => void;
 };
 
 type ConfirmOverwriteState = {
@@ -15,10 +17,11 @@ type ConfirmOverwriteState = {
   name: string;
 };
 
-export default function SavePatternForm({
+export default function SavePatternModal({
   pattern,
   selectedPattern,
-}: SavePatternFormProps) {
+  onClose,
+}: SavePatternModalProps) {
   const { patterns, addPattern, editPattern } = usePatterns();
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +34,6 @@ export default function SavePatternForm({
     setConfirmOverwrite(null);
   };
 
-  // Cas 1 : pattern sélectionné → écrasement direct
   const onSaveExisting = async (): Promise<void> => {
     if (!selectedPattern) return;
     try {
@@ -40,12 +42,12 @@ export default function SavePatternForm({
         sentences: pattern.sentences,
         highlights: pattern.highlights,
       });
+      onClose();
     } catch (e) {
       setError(extractIpcError(e, 'Impossible de modifier le pattern.'));
     }
   };
 
-  // Cas 2 : aucun pattern sélectionné → création avec nom
   const onSaveNew = async (): Promise<void> => {
     const errors = validatePattern({ name, sentences: pattern.sentences });
     if (errors.length > 0) {
@@ -66,6 +68,7 @@ export default function SavePatternForm({
         highlights: pattern.highlights,
       });
       resetFields();
+      onClose();
     } catch (e) {
       setError(extractIpcError(e, 'Impossible de créer le pattern.'));
     }
@@ -80,6 +83,7 @@ export default function SavePatternForm({
         highlights: pattern.highlights,
       });
       resetFields();
+      onClose();
     } catch (e) {
       setError(extractIpcError(e, 'Impossible de modifier le pattern.'));
       setConfirmOverwrite(null);
@@ -90,50 +94,52 @@ export default function SavePatternForm({
     pattern.sentences.length > 0 &&
     pattern.sentences.every((s) => s.trim().length > 0);
 
-  // Cas 1 : pattern sélectionné
-  if (selectedPattern) {
+  if (confirmOverwrite) {
     return (
-      <div className="flex items-center gap-3">
-        {error && <span className="error-message">{error}</span>}
-        <button
-          type="button"
-          onClick={onSaveExisting}
-          disabled={!allSentencesValid}
-          className="btn-primary"
-        >
-          Sauvegarder
-        </button>
-      </div>
-    );
-  }
-
-  // Cas 2 : aucun pattern sélectionné → champ nom toujours visible
-  return (
-    <>
-      {confirmOverwrite && (
+      <Modal onClose={onClose}>
         <PatternOverwrite
           name={confirmOverwrite.name}
           onConfirm={onConfirmOverwrite}
           onCancel={resetFields}
         />
+      </Modal>
+    );
+  }
+
+  return (
+    <Modal onClose={onClose}>
+      <h2 className="section-title mb-4">Sauvegarder le pattern</h2>
+      {selectedPattern ? (
+        <div className="flex flex-col gap-3">
+          {error && <span className="error-message">{error}</span>}
+          <button
+            type="button"
+            onClick={onSaveExisting}
+            disabled={!allSentencesValid}
+            className="btn-primary"
+          >
+            Sauvegarder
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {error && <span className="error-message">{error}</span>}
+          <input
+            placeholder="Nom du pattern"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input-field w-full"
+          />
+          <button
+            type="button"
+            onClick={onSaveNew}
+            disabled={!name.trim() || !allSentencesValid}
+            className="btn-primary"
+          >
+            Sauvegarder
+          </button>
+        </div>
       )}
-      <div className="flex items-center gap-3 w-full">
-        <input
-          placeholder="Nom du pattern"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="input-field flex-1"
-        />
-        {error && <span className="error-message">{error}</span>}
-        <button
-          type="button"
-          onClick={onSaveNew}
-          disabled={!name.trim() || !allSentencesValid}
-          className="btn-primary"
-        >
-          Sauvegarder
-        </button>
-      </div>
-    </>
+    </Modal>
   );
 }

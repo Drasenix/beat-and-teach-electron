@@ -41,6 +41,10 @@
   }
 
   /* Boutons */
+  .btn-hover {
+    background: theme('colors.primary');
+    color: theme('colors.background');
+  }
   .btn-primary {
     @apply px-6 py-3 bg-primary hover:opacity-90 disabled:opacity-30
            disabled:cursor-not-allowed text-background font-bold rounded-lg
@@ -55,9 +59,13 @@
   }
 
   .btn-add {
-    @apply px-4 py-2 bg-button-surface border  border-primary text-primary
-          font-mono text-sm rounded-lg transition-colors duration-200 uppercase tracking-widest
+    @apply px-4 py-2 bg-button-surface border border-primary text-primary
+           font-mono text-sm rounded-lg transition-colors duration-200 uppercase tracking-widest
            disabled:opacity-30 disabled:cursor-not-allowed;
+  }
+
+  .btn-add:hover {
+    @apply btn-hover;
   }
 
   .btn-edit {
@@ -137,16 +145,6 @@
     animation: glow-pulse-high 3s ease-in-out infinite;
   }
 
-  .home-button-icon {
-    @apply text-primary text-4xl;
-  }
-
-  /* Navigation */
-  .bar-aside {
-    @apply fixed left-0 top-0 h-screen w-16 bg-surface border-r border-border
-                      flex flex-col items-center py-6 gap-6 z-10;
-  }
-
   .nav-item {
     @apply w-10 h-10 flex items-center justify-center rounded-lg
            font-mono text-2xl transition-colors duration-200
@@ -214,7 +212,6 @@
   /* Autres */
   .app-title {
     @apply text-3xl font-bold tracking-widest text-primary uppercase;
-    animation: glow-pulse 3s ease-in-out infinite;
     animation: glow-pulse-high 3s ease-in-out infinite;
   }
   .section-background {
@@ -260,4 +257,217 @@
   .instrument-name {
     @apply text-text-secondary text-xs;
   }
+
+  /* Instruments legend collapsible */
+  .instruments-legend-section {
+  }
+
+  .section-header-toggle {
+    @apply w-full flex items-center justify-between px-0 py-2 bg-transparent cursor-pointer;
+  }
+
+  .section-toggle-arrow {
+    font-size: 10px;
+    color: theme('colors.primary');
+    transition: transform 0.15s;
+  }
+
+  .section-toggle-arrow.open {
+    transform: rotate(180deg);
+  }
+
+  .section-collapsible {
+    @apply hidden;
+  }
+
+  .section-collapsible.open {
+    @apply flex flex-col flex-1 min-h-0 overflow-y-auto;
+  }
+
+  /* DAW Layout */
+  .daw-layout {
+    @apply flex flex-col h-[calc(100vh-0px)] overflow-hidden;
+  }
+
+  .transport-bar {
+    @apply flex items-center gap-4 px-4 py-2 bg-field border-b border-border flex-shrink-0;
+  }
+
+  .daw-columns {
+    @apply flex flex-1 overflow-hidden;
+  }
+
+  .daw-sidebar {
+    @apply flex flex-col bg-field border-r border-border overflow-hidden flex-shrink-0;
+    min-width: 140px;
+    max-width: 340px;
+  }
+
+  .daw-resizer {
+    @apply w-1 bg-transparent cursor-col-resize flex-shrink-0 transition-colors duration-150;
+  }
+
+  .daw-resizer:hover,
+  .daw-resizer.dragging {
+    background: theme('colors.primary');
+  }
+
+  .daw-main {
+    @apply flex-1 overflow-y-auto p-6;
+  }
+
+  .sidebar-header {
+    @apply flex items-center justify-between px-3 py-2 border-b border-border flex-shrink-0 cursor-pointer bg-transparent w-full;
+  }
+
+  .sidebar-title {
+    @apply text-xs font-mono text-primary uppercase tracking-widest font-bold;
+    animation: glow-pulse-low 1.5s ease-in-out infinite;
+  }
+
+  .sidebar-list {
+    @apply p-2 flex flex-col gap-1;
+  }
+
+  .sidebar-item {
+    @apply w-full text-left px-3 py-2 rounded-md border border-transparent transition-colors duration-100 flex items-center gap-2;
+    font-size: 13px;
+    color: theme('colors.text.secondary');
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sidebar-item:hover {
+    background: theme('colors.surface');
+    color: theme('colors.text.primary');
+  }
+
+  .sidebar-item.selected {
+    background: theme('colors.surface');
+    border-color: theme('colors.primary');
+    color: theme('colors.primary');
+  }
+
+  .sidebar-footer {
+    @apply flex gap-1.5 p-2 border-t border-border flex-shrink-0;
+  }
+
+  .sidebar-btn-new {
+    @apply w-8 h-8 rounded-md border border-primary bg-transparent transition-colors duration-100 flex items-center justify-center;
+    font-family: theme('fontFamily.mono');
+    font-size: 12px;
+    color: theme('colors.primary');
+  }
+
+  .sidebar-btn-new:hover {
+    @apply btn-hover;
+  }
+
+  .sidebar-btn-save {
+    @apply px-3 py-1 rounded-md border border-primary bg-transparent transition-colors duration-100;
+    font-family: theme('fontFamily.mono');
+    font-size: 11px;
+    color: theme('colors.primary');
+    white-space: nowrap;
+  }
+
+  .sidebar-btn-save:hover:not(:disabled) {
+    @apply btn-hover;
+  }
+
+  .sidebar-btn-save:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .section-collapsible.open::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .section-collapsible.open::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .section-collapsible.open::-webkit-scrollbar-thumb {
+    background: theme('colors.primary');
+    border-radius: 3px;
+    opacity: 0.7;
+  }
+
+  .section-collapsible.open::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.primary');
+  }
+
+  .transport-controls {
+    @apply flex items-center gap-4 flex-1;
+  }
+
+  .transport-btn {
+    @apply btn-add;
+  }
+
+  .transport-btn.active {
+    @apply bg-primary text-background;
+  }
+
+  .transport-separator {
+    @apply w-px h-5 bg-border;
+  }
+
+  .transport-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: theme('colors.primary');
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .transport-slider {
+    @apply cursor-pointer;
+    width: 120px;
+    accent-color: #679ff9;
+    background: transparent;
+  }
+
+  .transport-bpm-value {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: theme('fontFamily.mono');
+    color: theme('colors.primary');
+    min-width: 36px;
+    text-align: right;
+  }
+}
+
+/* Webkit/Moz pseudo-elements (no @apply or theme()) */
+.transport-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  background: #679ff9;
+  border-radius: 2px;
+}
+
+.transport-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #679ff9;
+  margin-top: -5px;
+  cursor: pointer;
+}
+
+.transport-slider::-moz-range-track {
+  height: 4px;
+  background: #679ff9;
+  border-radius: 2px;
+}
+
+.transport-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #679ff9;
+  border: none;
+  cursor: pointer;
 }

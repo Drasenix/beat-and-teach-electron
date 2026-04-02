@@ -67,47 +67,40 @@ export default function AudioControls({ sentences }: AudioControlsProps) {
   ]);
 
   return (
-    <>
-      <h2 className="section-title">Controls</h2>
-      <div className="flex items-center gap-4 section-background">
-        <button
-          type="button"
-          disabled={playing || !allSentencesValid}
-          onClick={() => playTrack(sentences, bpm)}
-          className="btn-primary"
-        >
-          ▶ Play
-        </button>
+    <div className="transport-controls">
+      <button
+        type="button"
+        disabled={playing || !allSentencesValid}
+        onClick={() => playTrack(sentences, bpm)}
+        className={`transport-btn ${playing ? 'active' : ''}`}
+      >
+        ▶ Play
+      </button>
 
-        <button
-          type="button"
-          disabled={!playing}
-          onClick={stopTrack}
-          className="btn-secondary"
-        >
-          ■ Stop
-        </button>
+      <button
+        type="button"
+        disabled={!playing}
+        onClick={stopTrack}
+        className="transport-btn"
+      >
+        ■ Stop
+      </button>
 
-        <div className="flex-1 flex flex-col gap-1">
-          <div className="flex justify-between text-xs font-mono">
-            <span className="text-primary uppercase tracking-widest font-bold">
-              BPM
-            </span>
-            <span className="text-text-accent font-bold">{bpm}</span>
-          </div>
-          <input
-            ref={sliderRef}
-            type="range"
-            id="tempo"
-            name="tempo"
-            min="1"
-            max="300"
-            value={bpm}
-            onChange={changeBPM}
-            className="w-full accent-primary cursor-pointer"
-          />
-        </div>
-      </div>
-    </>
+      <div className="transport-separator" />
+
+      <span className="transport-label">BPM</span>
+
+      <input
+        ref={sliderRef}
+        type="range"
+        min="40"
+        max="240"
+        value={bpm}
+        onChange={changeBPM}
+        className="transport-slider"
+      />
+
+      <span className="transport-bpm-value">{bpm}</span>
+    </div>
   );
 }
