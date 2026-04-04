@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import useInstruments from '../hooks/useInstruments';
+import useAudio from '../../audio/hooks/useAudio';
 
 export default function InstrumentsLegend() {
   const { instruments } = useInstruments();
+  const { playInstrument, playing } = useAudio();
   const [open, setOpen] = useState(true);
 
   return (
@@ -25,6 +27,18 @@ export default function InstrumentsLegend() {
                 <span className="instrument-name">
                   {instrument.slug ?? 'error: no slug defined'}
                 </span>
+                <button
+                  type="button"
+                  className="instrument-play-btn"
+                  disabled={playing}
+                  onClick={() => {
+                    if (instrument.filepath && instrument.name) {
+                      playInstrument(instrument.filepath, instrument.name);
+                    }
+                  }}
+                >
+                  ▶
+                </button>
               </div>
             ))}
         </div>

@@ -53,3 +53,15 @@ export async function changeTempo(bpm: number): Promise<void> {
   const audioEngine: AudioEngine = AudioEngine.getInstance();
   audioEngine.setTempo(bpm);
 }
+
+export async function playInstrument(
+  filepath: string,
+  name: string,
+): Promise<void> {
+  const audioEngine: AudioEngine = AudioEngine.getInstance();
+  const audioBuffers: AudioFileBuffer = await getAudioBuffers([
+    { name, filepath },
+  ]);
+  await audioEngine.createPlayers(audioBuffers);
+  audioEngine.playInstrument(name);
+}

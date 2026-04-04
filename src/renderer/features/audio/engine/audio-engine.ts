@@ -83,4 +83,9 @@ export default class AudioEngine {
     Tone.getTransport().stop();
     Tone.getTransport().cancel(0);
   }
+
+  public async playInstrument(name: string): Promise<void> {
+    await Tone.start();
+    this.players?.player(name).start();
+  }
 }

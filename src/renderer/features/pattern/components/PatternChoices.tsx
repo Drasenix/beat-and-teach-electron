@@ -33,6 +33,21 @@ export default function PatternChoices(props: PatternChoicesProps) {
         <span className="sidebar-title">Patterns</span>
         <span className={`section-toggle-arrow ${open ? 'open' : ''}`}>▲</span>
       </button>
+      {open && (
+        <div className="sidebar-footer">
+          <button type="button" onClick={handleNew} className="sidebar-btn-new">
+            +
+          </button>
+          <button
+            type="button"
+            onClick={onSave}
+            className="sidebar-btn-save"
+            disabled={!canSave}
+          >
+            Sauvegarder
+          </button>
+        </div>
+      )}
       <div className={`section-collapsible ${open ? 'open' : ''}`}>
         <div className="sidebar-list">
           {[...patterns]
@@ -51,21 +66,6 @@ export default function PatternChoices(props: PatternChoicesProps) {
             ))}
         </div>
       </div>
-      {open && (
-        <div className="sidebar-footer">
-          <button type="button" onClick={handleNew} className="sidebar-btn-new">
-            +
-          </button>
-          <button
-            type="button"
-            onClick={onSave}
-            className="sidebar-btn-save"
-            disabled={!canSave}
-          >
-            Sauvegarder
-          </button>
-        </div>
-      )}
     </>
   );
 }

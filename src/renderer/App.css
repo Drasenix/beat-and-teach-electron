@@ -381,6 +381,26 @@
     cursor: not-allowed;
   }
 
+  .instrument-play-btn {
+    @apply ml-auto flex-shrink-0 w-6 h-6 rounded flex items-center justify-center;
+    background: transparent;
+    color: theme('colors.text.secondary');
+    font-size: 10px;
+    transition:
+      color 0.15s,
+      background 0.15s;
+  }
+
+  .instrument-play-btn:hover {
+    background: theme('colors.surface');
+    color: theme('colors.primary');
+  }
+
+  .instrument-play-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
   .section-collapsible.open::-webkit-scrollbar {
     width: 3px;
   }

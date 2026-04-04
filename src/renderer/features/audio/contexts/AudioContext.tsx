@@ -1,11 +1,17 @@
 import { createContext, useContext, useState, ReactNode, useMemo } from 'react';
-import { playPattern, stopPattern, changeTempo } from '../facade/audio-facade';
+import {
+  playPattern,
+  stopPattern,
+  changeTempo,
+  playInstrument,
+} from '../facade/audio-facade';
 
 type AudioContextType = {
   playing: boolean;
   playTrack: (sentences: string[], bpm: number) => Promise<void>;
   stopTrack: () => void;
   changeBpm: (bpm: number) => void;
+  playInstrument: (filepath: string, name: string) => Promise<void>;
 };
 
 const AudioContext = createContext<AudioContextType | null>(null);
@@ -31,6 +37,14 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       },
       changeBpm: (bpm: number): void => {
         changeTempo(bpm);
+      },
+      playInstrument: async (filepath: string, name: string): Promise<void> => {
+        try {
+          await playInstrument(filepath, name);
+        } catch (error) {
+          // eslint-disable-next-line no-alert
+          alert(error);
+        }
       },
     }),
     [playing],
