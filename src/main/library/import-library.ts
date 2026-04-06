@@ -58,19 +58,19 @@ export async function importLibrary(
 
   const patternResolutionMap = new Map<string, ConflictResolution>();
   const instrumentResolutionMap = new Map<string, ConflictResolution>();
-  for (const res of conflictResolutions) {
+  conflictResolutions.forEach((res) => {
     if (res.type === 'pattern') {
       patternResolutionMap.set(res.slug, res);
     } else {
       instrumentResolutionMap.set(res.slug, res);
     }
-  }
+  });
 
-  for (const pat of manifest.patterns) {
+  manifest.patterns.forEach((pat) => {
     const resolution = patternResolutionMap.get(pat.slug);
     if (!resolution || resolution.action === 'skip') {
-      result.skippedPatterns++;
-      continue;
+      result.skippedPatterns += 1;
+      return;
     }
 
     if (resolution.action === 'rename' && resolution.newName) {
@@ -89,18 +89,19 @@ export async function importLibrary(
         sentences: JSON.stringify(pat.sentences),
         highlights: JSON.stringify(pat.highlights),
       });
-      result.importedPatterns++;
-    } catch (error: any) {
-      result.errors.push(`Pattern "${pat.name}" : ${error.message}`);
-      result.skippedPatterns++;
+      result.importedPatterns += 1;
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      result.errors.push(`Pattern "${pat.name}" : ${msg}`);
+      result.skippedPatterns += 1;
     }
-  }
+  });
 
-  for (const inst of manifest.instruments) {
+  manifest.instruments.forEach((inst) => {
     const resolution = instrumentResolutionMap.get(inst.slug);
     if (!resolution || resolution.action === 'skip') {
-      result.skippedInstruments++;
-      continue;
+      result.skippedInstruments += 1;
+      return;
     }
 
     let finalSlug = inst.slug;
@@ -142,12 +143,13 @@ export async function importLibrary(
         name: finalName,
         filepath: destPath,
       });
-      result.importedInstruments++;
-    } catch (error: any) {
-      result.errors.push(`Instrument "${finalName}" : ${error.message}`);
-      result.skippedInstruments++;
+      result.importedInstruments += 1;
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      result.errors.push(`Instrument "${finalName}" : ${msg}`);
+      result.skippedInstruments += 1;
     }
-  }
+  });
 
   return result;
 }

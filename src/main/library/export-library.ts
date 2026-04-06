@@ -32,7 +32,7 @@ function toLibraryInstrument(
   };
 }
 
-export async function exportLibrary(
+export default async function exportLibrary(
   patternIds: number[],
   instrumentIds: number[],
   outputPath: string,
@@ -45,14 +45,14 @@ export async function exportLibrary(
   const libraryInstruments: LibraryInstrument[] = [];
   const audioFiles: { filepath: string; archiveName: string }[] = [];
 
-  for (const inst of instruments) {
-    if (!inst.filepath || !fs.existsSync(inst.filepath)) continue;
+  instruments.forEach((inst) => {
+    if (!inst.filepath || !fs.existsSync(inst.filepath)) return;
 
     const ext = path.extname(inst.filepath);
     const archiveName = `${inst.slug}${ext}`;
     libraryInstruments.push(toLibraryInstrument(inst, archiveName));
     audioFiles.push({ filepath: inst.filepath, archiveName });
-  }
+  });
 
   const manifest: LibraryManifest = {
     version: 1,
@@ -74,9 +74,9 @@ export async function exportLibrary(
       name: 'manifest.json',
     });
 
-    for (const { filepath, archiveName } of audioFiles) {
+    audioFiles.forEach(({ filepath, archiveName }) => {
       archive.file(filepath, { name: `audio/${archiveName}` });
-    }
+    });
 
     archive.finalize();
   });
