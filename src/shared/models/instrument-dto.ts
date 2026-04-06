@@ -1,4 +1,4 @@
-export interface InstrumentDB {
+export interface InstrumentDTO {
   id: number;
   slug: string;
   symbol: string;

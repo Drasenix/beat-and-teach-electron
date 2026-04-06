@@ -5,6 +5,7 @@ import PatternWorkspace from './features/pattern/components/PatternWorkspace';
 import Header from './components/Header';
 import InstrumentConfiguration from './features/instruments/components/InstrumentsConfiguration';
 import PatternConfiguration from './features/pattern/components/PatternConfiguration';
+import LibraryScreen from './features/library/components/LibraryScreen';
 import { InstrumentsProvider } from './features/instruments/contexts/InstrumentsContext';
 import { PatternsProvider } from './features/pattern/contexts/PatternsContext';
 import { AudioProvider } from './features/audio/contexts/AudioContext';
@@ -29,6 +30,7 @@ export default function App() {
                     path="/configuration/patterns"
                     element={<PatternConfiguration />}
                   />
+                  <Route path="/library" element={<LibraryScreen />} />
                 </Routes>
               </div>
             </div>

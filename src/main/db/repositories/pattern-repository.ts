@@ -1,5 +1,5 @@
 import { toSnakeCase } from '../../../renderer/utils/util';
-import { PatternDB } from '../../../shared/models/pattern-db';
+import { PatternDTO } from '../../../shared/models/pattern-dto';
 import getDatabase from '../database';
 
 function buildDefaultHighlights(sentences: string): string {
@@ -15,25 +15,36 @@ function buildDefaultHighlights(sentences: string): string {
   return JSON.stringify(highlights);
 }
 
-export function getAllPatterns(): PatternDB[] {
+export function getAllPatterns(): PatternDTO[] {
   const db = getDatabase();
   return db
     .prepare('SELECT id, slug, name, sentences, highlights FROM patterns')
-    .all() as PatternDB[];
+    .all() as PatternDTO[];
 }
 
-export function getPatternById(id: number): PatternDB | undefined {
+export function getPatternById(id: number): PatternDTO | undefined {
   const db = getDatabase();
   return db
     .prepare(
       'SELECT id, slug, name, sentences, highlights FROM patterns WHERE id = ?',
     )
-    .get(id) as PatternDB | undefined;
+    .get(id) as PatternDTO | undefined;
+}
+
+export function getPatternsByIds(ids: number[]): PatternDTO[] {
+  if (ids.length === 0) return [];
+  const db = getDatabase();
+  const placeholders = ids.map(() => '?').join(',');
+  return db
+    .prepare(
+      `SELECT id, slug, name, sentences, highlights FROM patterns WHERE id IN (${placeholders})`,
+    )
+    .all(...ids) as PatternDTO[];
 }
 
 export function createPattern(
-  pattern: Omit<PatternDB, 'id' | 'slug'>,
-): PatternDB {
+  pattern: Omit<PatternDTO, 'id' | 'slug'>,
+): PatternDTO {
   if (!pattern.name?.trim()) throw new Error('Le nom est requis.');
   if (!pattern.sentences) throw new Error('Les phrases sont requises.');
 
@@ -61,8 +72,8 @@ export function createPattern(
 
 export function updatePattern(
   id: number,
-  pattern: Partial<Omit<PatternDB, 'id'>>,
-): PatternDB {
+  pattern: Partial<Omit<PatternDTO, 'id'>>,
+): PatternDTO {
   if (pattern.name !== undefined && !pattern.name?.trim())
     throw new Error('Le nom est requis.');
   if (pattern.sentences !== undefined && !pattern.sentences)

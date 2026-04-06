@@ -12,7 +12,13 @@ export type Channels =
   | 'delete-pattern'
   | 'create-instrument'
   | 'update-instrument'
-  | 'delete-instrument';
+  | 'delete-instrument'
+  | 'export-library'
+  | 'parse-library-file'
+  | 'import-library'
+  | 'save-library-file'
+  | 'open-library-file'
+  | 'get-imported-audio-path';
 
 const electronHandler = {
   ipcRenderer: {

@@ -1,11 +1,11 @@
-import { PatternDB } from '../../../../shared/models/pattern-db';
+import { PatternDTO } from '../../../../shared/models/pattern-dto';
 import { adaptPattern, adaptPatterns } from '../adapters/pattern-adapter';
 import { Pattern } from '../models/pattern-model';
 
 describe('adaptPattern', () => {
   it('should adapt a single pattern correctly', () => {
     // Given
-    const tested: PatternDB = {
+    const tested: PatternDTO = {
       id: 1,
       slug: 'drum-and-bass',
       name: 'drum and bass',
@@ -29,14 +29,14 @@ describe('adaptPattern', () => {
 describe('adaptPatterns', () => {
   it('should adapt patterns correctly', () => {
     // Given
-    const pattern1: PatternDB = {
+    const pattern1: PatternDTO = {
       id: 1,
       slug: 'drum-and-bass',
       name: 'drum and bass',
       sentences: '["P Ts K P Ts K P"]',
       highlights: '[[null, null, null, null, null, null, null]]',
     };
-    const pattern2: PatternDB = {
+    const pattern2: PatternDTO = {
       id: 2,
       slug: 'dubstep',
       name: 'dubstep',
@@ -44,7 +44,7 @@ describe('adaptPatterns', () => {
       highlights:
         '[[null, null, null, null, null, null, null, null, null, null]]',
     };
-    const tested: PatternDB[] = [pattern1, pattern2];
+    const tested: PatternDTO[] = [pattern1, pattern2];
     // When
     const result: Pattern[] = adaptPatterns(tested);
     // Then

@@ -12,8 +12,8 @@ export default function Home() {
       <div className="flex flex-col gap-4 w-full max-w-sm">
         <div className="div-animated-wrapper">
           <Link to="/workspace" className="link-animated-inner group">
-            <p className="home-button-icon">🎙</p>
-            <p className="text-primary">player</p>
+            <p className="home-button-icon">🎘</p>
+            <p className="text-primary">studio</p>
           </Link>
         </div>
         <div className="div-animated-wrapper">
@@ -21,7 +21,7 @@ export default function Home() {
             to="/configuration/instruments"
             className="link-animated-inner group"
           >
-            <p className="home-button-icon">🎝</p>
+            <p className="home-button-icon">🎙</p>
             <p className="text-primary">instruments</p>
           </Link>
         </div>
@@ -32,6 +32,12 @@ export default function Home() {
           >
             <p className="home-button-icon">🕮</p>
             <p className="text-primary">patterns</p>
+          </Link>
+        </div>
+        <div className="div-animated-wrapper">
+          <Link to="/library" className="link-animated-inner group">
+            <p className="home-button-icon">🗁</p>
+            <p className="text-primary">bibliothèque</p>
           </Link>
         </div>
       </div>

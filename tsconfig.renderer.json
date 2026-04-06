@@ -4,7 +4,8 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "lib": ["dom", "es2022"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["jest"]
   },
   "include": ["src/renderer/**/*", "src/shared/**/*"]
 }

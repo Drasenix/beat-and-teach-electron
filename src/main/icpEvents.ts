@@ -1,8 +1,9 @@
-import { dialog, ipcMain } from 'electron';
+import { app, dialog, ipcMain } from 'electron';
+import path from 'path';
 import { getAudioBuffersFromFiles } from './audio/services/audio-service';
-import { PatternDB } from '../shared/models/pattern-db';
+import { PatternDTO } from '../shared/models/pattern-dto';
 import fetchAllPatterns from './db/services/fetch-patterns';
-import { InstrumentDB } from '../shared/models/instrument-db';
+import { InstrumentDTO } from '../shared/models/instrument-dto';
 import fetchAllInstruments from './db/services/fetch-instruments';
 import AudioFileBuffer from '../shared/types/audio-file-buffer';
 import {
@@ -16,6 +17,14 @@ import {
   deletePattern,
 } from './db/repositories/pattern-repository';
 import { InstrumentFilePath } from '../shared/types/instrument';
+import { exportLibrary } from './library/export-library';
+import { parseLibraryFile, importLibrary } from './library/import-library';
+import {
+  ExportLibraryRequest,
+  ImportLibraryRequest,
+  LibraryManifest,
+  ImportResult,
+} from '../shared/models/library-dto';
 
 export default function createIcpEvents() {
   ipcMain.handle(
@@ -37,7 +46,7 @@ export default function createIcpEvents() {
 
   // Patterns
 
-  ipcMain.handle('get-all-patterns', async (): Promise<PatternDB[]> => {
+  ipcMain.handle('get-all-patterns', async (): Promise<PatternDTO[]> => {
     return fetchAllPatterns();
   });
 
@@ -45,8 +54,8 @@ export default function createIcpEvents() {
     'create-pattern',
     async (
       event,
-      pattern: Omit<PatternDB, 'id' | 'slug'>,
-    ): Promise<PatternDB> => {
+      pattern: Omit<PatternDTO, 'id' | 'slug'>,
+    ): Promise<PatternDTO> => {
       return createPattern(pattern);
     },
   );
@@ -56,8 +65,8 @@ export default function createIcpEvents() {
     async (
       event,
       id: number,
-      pattern: Partial<Omit<PatternDB, 'id'>>,
-    ): Promise<PatternDB> => {
+      pattern: Partial<Omit<PatternDTO, 'id'>>,
+    ): Promise<PatternDTO> => {
       return updatePattern(id, pattern);
     },
   );
@@ -68,7 +77,7 @@ export default function createIcpEvents() {
 
   // Instruments
 
-  ipcMain.handle('get-all-instruments', async (): Promise<InstrumentDB[]> => {
+  ipcMain.handle('get-all-instruments', async (): Promise<InstrumentDTO[]> => {
     return fetchAllInstruments();
   });
 
@@ -76,8 +85,8 @@ export default function createIcpEvents() {
     'create-instrument',
     async (
       event,
-      instrument: Omit<InstrumentDB, 'id' | 'slug'>,
-    ): Promise<InstrumentDB> => {
+      instrument: Omit<InstrumentDTO, 'id' | 'slug'>,
+    ): Promise<InstrumentDTO> => {
       return createInstrument(instrument);
     },
   );
@@ -87,8 +96,8 @@ export default function createIcpEvents() {
     async (
       event,
       id: number,
-      instrument: Partial<Omit<InstrumentDB, 'id'>>,
-    ): Promise<InstrumentDB> => {
+      instrument: Partial<Omit<InstrumentDTO, 'id'>>,
+    ): Promise<InstrumentDTO> => {
       return updateInstrument(id, instrument);
     },
   );
@@ -99,4 +108,57 @@ export default function createIcpEvents() {
       return deleteInstrument(id);
     },
   );
+
+  // Library
+
+  ipcMain.handle(
+    'export-library',
+    async (event, request: ExportLibraryRequest): Promise<string> => {
+      return exportLibrary(
+        request.patternIds,
+        request.instrumentIds,
+        request.outputPath,
+      );
+    },
+  );
+
+  ipcMain.handle(
+    'parse-library-file',
+    async (event, zipPath: string): Promise<LibraryManifest> => {
+      return parseLibraryFile(zipPath);
+    },
+  );
+
+  ipcMain.handle(
+    'import-library',
+    async (event, request: ImportLibraryRequest): Promise<ImportResult> => {
+      return importLibrary(
+        request.zipPath,
+        request.conflictResolutions,
+        request.audioDestPath,
+      );
+    },
+  );
+
+  ipcMain.handle('save-library-file', async (): Promise<string | null> => {
+    const result = await dialog.showSaveDialog({
+      title: 'Exporter la bibliothèque',
+      defaultPath: 'bibliotheque.beatpack',
+      filters: [{ name: 'BeatPack', extensions: ['beatpack'] }],
+    });
+    return result.canceled ? null : result.filePath;
+  });
+
+  ipcMain.handle('open-library-file', async (): Promise<string | null> => {
+    const result = await dialog.showOpenDialog({
+      title: 'Importer une bibliothèque',
+      properties: ['openFile'],
+      filters: [{ name: 'BeatPack', extensions: ['beatpack'] }],
+    });
+    return result.canceled ? null : result.filePaths[0];
+  });
+
+  ipcMain.handle('get-imported-audio-path', async (): Promise<string> => {
+    return path.join(app.getPath('userData'), 'imported-audio');
+  });
 }

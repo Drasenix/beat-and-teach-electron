@@ -1,9 +1,9 @@
-import { PatternDB } from '../../../../shared/models/pattern-db';
+import { PatternDTO } from '../../../../shared/models/pattern-dto';
 import { adaptPatterns, adaptPattern } from '../adapters/pattern-adapter';
 import { Pattern } from '../models/pattern-model';
 
 export default async function getAllPatterns(): Promise<Pattern[]> {
-  const patterns: PatternDB[] =
+  const patterns: PatternDTO[] =
     await window.electron.ipcRenderer.invokeMessage('get-all-patterns');
   return adaptPatterns(patterns);
 }
@@ -11,7 +11,7 @@ export default async function getAllPatterns(): Promise<Pattern[]> {
 export async function createPatternAPI(
   pattern: Omit<Pattern, 'id' | 'slug'>,
 ): Promise<Pattern> {
-  const patternDB: PatternDB = await window.electron.ipcRenderer.invokeMessage(
+  const patternDB: PatternDTO = await window.electron.ipcRenderer.invokeMessage(
     'create-pattern',
     {
       ...pattern,
@@ -26,7 +26,7 @@ export async function updatePatternAPI(
   id: number,
   pattern: Partial<Omit<Pattern, 'id' | 'slug'>>,
 ): Promise<Pattern> {
-  const patternDB: PatternDB = await window.electron.ipcRenderer.invokeMessage(
+  const patternDB: PatternDTO = await window.electron.ipcRenderer.invokeMessage(
     'update-pattern',
     id,
     {

@@ -1,17 +1,17 @@
-import { InstrumentDB } from '../../../../shared/models/instrument-db';
+import { InstrumentDTO } from '../../../../shared/models/instrument-dto';
 import adaptInstruments from '../adapters/instrument-adapter';
 import { Instrument } from '../models/instrument-model';
 
 export async function getAllInstruments(): Promise<Instrument[]> {
-  const instruments: InstrumentDB[] =
+  const instruments: InstrumentDTO[] =
     await window.electron.ipcRenderer.invokeMessage('get-all-instruments');
 
   return adaptInstruments(instruments);
 }
 
 export async function createInstrumentAPI(
-  instrument: Omit<InstrumentDB, 'id' | 'slug'>,
-): Promise<InstrumentDB> {
+  instrument: Omit<InstrumentDTO, 'id' | 'slug'>,
+): Promise<InstrumentDTO> {
   return window.electron.ipcRenderer.invokeMessage(
     'create-instrument',
     instrument,
@@ -20,8 +20,8 @@ export async function createInstrumentAPI(
 
 export async function updateInstrumentAPI(
   id: number,
-  instrument: Partial<Omit<InstrumentDB, 'id' | 'slug'>>,
-): Promise<InstrumentDB> {
+  instrument: Partial<Omit<InstrumentDTO, 'id' | 'slug'>>,
+): Promise<InstrumentDTO> {
   return window.electron.ipcRenderer.invokeMessage(
     'update-instrument',
     id,

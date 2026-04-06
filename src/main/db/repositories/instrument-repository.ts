@@ -1,26 +1,37 @@
 import { toSnakeCase } from '../../../renderer/utils/util';
-import { InstrumentDB } from '../../../shared/models/instrument-db';
+import { InstrumentDTO } from '../../../shared/models/instrument-dto';
 import getDatabase from '../database';
 
-export function getAllInstruments(): InstrumentDB[] {
+export function getAllInstruments(): InstrumentDTO[] {
   const db = getDatabase();
   return db
     .prepare('SELECT id, slug, symbol, name, filepath FROM instruments')
-    .all() as InstrumentDB[];
+    .all() as InstrumentDTO[];
 }
 
-export function getInstrumentById(id: number): InstrumentDB | undefined {
+export function getInstrumentById(id: number): InstrumentDTO | undefined {
   const db = getDatabase();
   return db
     .prepare(
       'SELECT id, slug, symbol, name, filepath FROM instruments WHERE id = ?',
     )
-    .get(id) as InstrumentDB | undefined;
+    .get(id) as InstrumentDTO | undefined;
+}
+
+export function getInstrumentsByIds(ids: number[]): InstrumentDTO[] {
+  if (ids.length === 0) return [];
+  const db = getDatabase();
+  const placeholders = ids.map(() => '?').join(',');
+  return db
+    .prepare(
+      `SELECT id, slug, symbol, name, filepath FROM instruments WHERE id IN (${placeholders})`,
+    )
+    .all(...ids) as InstrumentDTO[];
 }
 
 export function createInstrument(
-  instrument: Omit<InstrumentDB, 'id' | 'slug'>,
-): InstrumentDB {
+  instrument: Omit<InstrumentDTO, 'id' | 'slug'>,
+): InstrumentDTO {
   if (!instrument.symbol?.trim()) throw new Error('Le symbole est requis.');
   if (!instrument.name?.trim()) throw new Error('Le nom est requis.');
   if (!instrument.filepath?.trim())
@@ -54,8 +65,8 @@ export function createInstrument(
 
 export function updateInstrument(
   id: number,
-  instrument: Partial<Omit<InstrumentDB, 'id'>>,
-): InstrumentDB {
+  instrument: Partial<Omit<InstrumentDTO, 'id'>>,
+): InstrumentDTO {
   if (instrument.symbol !== undefined && !instrument.symbol?.trim())
     throw new Error('Le symbole est requis.');
   if (instrument.name !== undefined && !instrument.name?.trim())

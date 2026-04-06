@@ -1,32 +1,32 @@
 import InstrumentEngine from '../engine/instrument-engine';
-import { InstrumentDB } from '../../../../shared/models/instrument-db';
+import { InstrumentDTO } from '../../../../shared/models/instrument-dto';
 import * as instrumentService from '../services/instrument-service';
 
-const instrumentDBOne: InstrumentDB = {
+const instrumentDTOOne: InstrumentDTO = {
   id: 1,
   slug: 'Kickdrum',
   symbol: 'P',
   filepath: './assets/audio/kickdrum.mp3',
   name: 'kickdrum',
 };
-const instrumentDBTwo: InstrumentDB = {
+const instrumentDTOTwo: InstrumentDTO = {
   id: 2,
   slug: 'Hi Hat',
   symbol: 'Ts',
   filepath: './assets/audio/hihat.mp3',
   name: 'hihat',
 };
-const instrumentDBThree: InstrumentDB = {
+const instrumentDTOThree: InstrumentDTO = {
   id: 3,
   slug: 'Silence',
   symbol: '.',
   filepath: null,
   name: null,
 };
-const instrumentsDB: InstrumentDB[] = [
-  instrumentDBOne,
-  instrumentDBTwo,
-  instrumentDBThree,
+const instrumentsDTO: InstrumentDTO[] = [
+  instrumentDTOOne,
+  instrumentDTOTwo,
+  instrumentDTOThree,
 ];
 
 let instrumentEngine: InstrumentEngine;
@@ -35,7 +35,7 @@ describe('#getInstrumentNameFromSymbol', () => {
   beforeAll(async () => {
     jest
       .spyOn(instrumentService, 'getAllInstruments')
-      .mockResolvedValue(instrumentsDB);
+      .mockResolvedValue(instrumentsDTO);
     instrumentEngine = await InstrumentEngine.getInstance();
   });
   it('should throw an error because the symbol does not match any instrument', async () => {
@@ -52,7 +52,7 @@ describe('#getInstrumentFilePathsFromSymbol', () => {
   beforeAll(async () => {
     jest
       .spyOn(instrumentService, 'getAllInstruments')
-      .mockResolvedValue(instrumentsDB);
+      .mockResolvedValue(instrumentsDTO);
     instrumentEngine = await InstrumentEngine.getInstance();
   });
   it('should throw an error because the symbol does not match any instrument', async () => {

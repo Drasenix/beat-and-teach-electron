@@ -1,7 +1,7 @@
-import { PatternDB } from '../../../../shared/models/pattern-db';
+import { PatternDTO } from '../../../../shared/models/pattern-dto';
 import { Pattern } from '../models/pattern-model';
 
-export function adaptPattern(pattern: PatternDB): Pattern {
+export function adaptPattern(pattern: PatternDTO): Pattern {
   const { id, slug, name, sentences, highlights } = pattern;
   return {
     id,
@@ -12,6 +12,6 @@ export function adaptPattern(pattern: PatternDB): Pattern {
   };
 }
 
-export function adaptPatterns(patterns: PatternDB[]): Pattern[] {
+export function adaptPatterns(patterns: PatternDTO[]): Pattern[] {
   return patterns.map(adaptPattern);
 }
