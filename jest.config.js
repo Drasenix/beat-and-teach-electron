@@ -13,6 +13,11 @@ module.exports = {
   },
   testPathIgnorePatterns: ['release/app/dist', '.erb/dll'],
   transform: {
-    '\\.(ts|tsx|js|jsx)$': 'ts-jest',
+    '\\.(ts|tsx|js|jsx)$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.renderer.json',
+      },
+    ],
   },
 };
