@@ -36,6 +36,33 @@ export default function SentenceInput({
     setIsFocused,
   } = useAutocomplete({ instruments, value: sentence, onChange });
 
+  const handleWrapSelection = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
+  ): void => {
+    if (e.key !== '(' && e.key !== ')') return;
+
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    if (start === end) return;
+
+    e.preventDefault();
+
+    const selected = sentence.slice(start, end);
+    const wrapped = `(${selected})`;
+    const newValue = sentence.slice(0, start) + wrapped + sentence.slice(end);
+
+    onChange(newValue);
+
+    requestAnimationFrame(() => {
+      textarea.selectionStart = start + wrapped.length;
+      textarea.selectionEnd = start + wrapped.length;
+    });
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
     setCaretPos(getPosition());
@@ -63,7 +90,12 @@ export default function SentenceInput({
           setDismissed(true);
           onBlur();
         }}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => {
+          handleWrapSelection(e);
+          if (!e.defaultPrevented) {
+            handleKeyDown(e);
+          }
+        }}
         placeholder="P Ts K . P (Ts P) K"
         className="input-field w-full text-xl p-4 resize-none h-24"
       />
