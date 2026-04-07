@@ -5,7 +5,7 @@ import {
   preparePattern,
 } from '../../sequence/facade/sequence-facade';
 import { SequenceNotes } from '../../sequence/types/sequence-note';
-import AudioEngine from '../engine/audio-engine';
+import AudioEngine, { StepCallback } from '../engine/audio-engine';
 import getAudioBuffers from '../services/audio-service';
 
 async function createAudioBuffers(
@@ -20,6 +20,7 @@ async function createAudioBuffers(
 async function prepareAudioEngine(
   sentences: string[],
   bpm: number,
+  onStep?: StepCallback,
 ): Promise<AudioEngine> {
   const audioEngine: AudioEngine = AudioEngine.getInstance();
   try {
@@ -28,6 +29,9 @@ async function prepareAudioEngine(
     const allNotes: SequenceNotes[][] = await Promise.all(
       sentences.map((sentence) => preparePattern(sentence)),
     );
+    if (onStep) {
+      audioEngine.setStepCallback(onStep);
+    }
     audioEngine.createSequence(allNotes);
   } catch (error: any) {
     throw new Error(`Erreur : ${error}`);
@@ -38,9 +42,14 @@ async function prepareAudioEngine(
 export async function playPattern(
   sentences: string[],
   bpm: number,
+  onStep?: StepCallback,
 ): Promise<void> {
   if (!sentences.length) throw new Error('Aucun pattern fourni');
-  const audioEngine: AudioEngine = await prepareAudioEngine(sentences, bpm);
+  const audioEngine: AudioEngine = await prepareAudioEngine(
+    sentences,
+    bpm,
+    onStep,
+  );
   await audioEngine.play();
 }
 

@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode, useMemo } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
 import {
   playPattern,
   stopPattern,
@@ -8,6 +15,7 @@ import {
 
 type AudioContextType = {
   playing: boolean;
+  activeStep: number | null;
   playTrack: (sentences: string[], bpm: number) => Promise<void>;
   stopTrack: () => void;
   changeBpm: (bpm: number) => void;
@@ -18,13 +26,19 @@ const AudioContext = createContext<AudioContextType | null>(null);
 
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [playing, setPlaying] = useState(false);
+  const [activeStep, setActiveStep] = useState<number | null>(null);
+
+  const handleStep = useCallback((stepIndex: number) => {
+    setActiveStep(stepIndex);
+  }, []);
 
   const value = useMemo<AudioContextType>(
     () => ({
       playing,
+      activeStep,
       playTrack: async (sentences: string[], bpm: number): Promise<void> => {
         try {
-          await playPattern(sentences, bpm);
+          await playPattern(sentences, bpm, handleStep);
           setPlaying(true);
         } catch (error) {
           // eslint-disable-next-line no-alert
@@ -34,6 +48,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       stopTrack: (): void => {
         stopPattern();
         setPlaying(false);
+        setActiveStep(null);
       },
       changeBpm: (bpm: number): void => {
         changeTempo(bpm);
@@ -47,7 +62,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         }
       },
     }),
-    [playing],
+    [playing, activeStep, handleStep],
   );
 
   return (

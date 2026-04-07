@@ -1,9 +1,8 @@
 import * as Tone from 'tone';
 import AudioFileBuffer from '../../../../shared/types/audio-file-buffer';
-import {
-  SequenceNote,
-  SequenceNotes,
-} from '../../sequence/types/sequence-note';
+import { SequenceNotes } from '../../sequence/types/sequence-note';
+
+export type StepCallback = (stepIndex: number) => void;
 
 export default class AudioEngine {
   // eslint-disable-next-line no-use-before-define
@@ -12,6 +11,10 @@ export default class AudioEngine {
   private players?: Tone.Players;
 
   private sequences: Tone.Sequence[] = [];
+
+  private stepLoop?: Tone.Loop;
+
+  private onStep?: StepCallback;
 
   public static getInstance(): AudioEngine {
     if (!AudioEngine.#instance) {
@@ -48,12 +51,12 @@ export default class AudioEngine {
     this.players.toDestination();
   }
 
-  public createSequence(tracks: SequenceNotes[][]) {
-    this.clearSequences();
+  public createSequence(tracks: SequenceNotes[][]): void {
+    this.clearAll();
 
     tracks.forEach((notes) => {
       const seq = new Tone.Sequence(
-        (time: Tone.Unit.Time, note: SequenceNote) => {
+        (time, note) => {
           if (this.players && note) {
             this.players.player(note).start(time);
           }
@@ -65,11 +68,38 @@ export default class AudioEngine {
       seq.start(0);
       this.sequences.push(seq);
     });
+
+    this.createStepLoop(tracks[0].length);
+  }
+
+  private createStepLoop(columnCount: number): void {
+    if (!this.onStep) return;
+
+    let stepIndex = 0;
+    this.stepLoop = new Tone.Loop((time) => {
+      const current = stepIndex % columnCount;
+      Tone.Draw.schedule(() => {
+        this.onStep!(current);
+      }, time);
+      stepIndex += 1;
+    }, '8n').start(0);
   }
 
   private clearSequences(): void {
     this.sequences.forEach((seq) => seq.dispose());
     this.sequences = [];
+  }
+
+  private clearStepLoop(): void {
+    if (this.stepLoop) {
+      this.stepLoop.dispose();
+      this.stepLoop = undefined;
+    }
+  }
+
+  private clearAll(): void {
+    this.clearSequences();
+    this.clearStepLoop();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -82,10 +112,19 @@ export default class AudioEngine {
   public stop(): void {
     Tone.getTransport().stop();
     Tone.getTransport().cancel(0);
+    this.clearStepLoop();
   }
 
   public async playInstrument(name: string): Promise<void> {
     await Tone.start();
     this.players?.player(name).start();
+  }
+
+  public setStepCallback(callback: StepCallback): void {
+    this.onStep = callback;
+  }
+
+  public clearStepCallback(): void {
+    this.onStep = undefined;
   }
 }

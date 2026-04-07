@@ -28,6 +28,7 @@ type PatternStepsProps = {
     tokenIndex: number,
     color: string | null,
   ) => void;
+  activeColumnIndex?: number | null;
 };
 
 function getColorClass(highlight: string | null, valid: boolean): string {
@@ -174,6 +175,7 @@ function Column({
   column,
   highlights,
   onChangeHighlight,
+  isActive,
 }: {
   column: TrackColumn;
   highlights: (string | null)[][];
@@ -182,9 +184,10 @@ function Column({
     tokenIndex: number,
     color: string | null,
   ) => void;
+  isActive: boolean;
 }) {
   return (
-    <div className="step-column">
+    <div className={`step-column${isActive ? ' step-column-active' : ''}`}>
       {column.steps.map((trackStep) => (
         <StepCell
           key={`${trackStep.sentenceIndex}-${trackStep.tokenIndex}`}
@@ -201,6 +204,7 @@ export default function PatternSteps({
   sentences,
   highlights,
   onChangeHighlight,
+  activeColumnIndex,
 }: PatternStepsProps) {
   const { instruments } = useInstruments();
   const symbols = useMemo(
@@ -220,12 +224,13 @@ export default function PatternSteps({
       <h2 className="section-title">Pattern</h2>
       <div className="section-background">
         <div className="flex flex-wrap gap-2">
-          {columns.map((column) => (
+          {columns.map((column, index) => (
             <Column
               key={column.id}
               column={column}
               highlights={highlights}
               onChangeHighlight={onChangeHighlight}
+              isActive={activeColumnIndex === index}
             />
           ))}
         </div>
