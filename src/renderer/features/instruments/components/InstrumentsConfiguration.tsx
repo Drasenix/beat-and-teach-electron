@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import useInstruments from '../hooks/useInstruments';
+import useAudio from '../../audio/hooks/useAudio';
 import AddInstrumentForm from './form/AddInstrumentForm';
 import EditInstrumentForm from './form/EditInstrumentForm';
 import { InstrumentFormValues } from '../types/instrument-types';
@@ -19,6 +20,7 @@ export default function InstrumentConfiguration() {
   } = useInstruments();
 
   const { openFileDialog } = useFileDialog();
+  const { playInstrument, playing } = useAudio();
 
   const handleDelete = async (id: number): Promise<void> => {
     await removeInstrument(id);
@@ -46,6 +48,18 @@ export default function InstrumentConfiguration() {
             .map((instrument) => (
               <li key={instrument.id} className="flex flex-col">
                 <div className="item-row">
+                  <button
+                    type="button"
+                    className="instrument-play-btn"
+                    disabled={playing}
+                    onClick={() => {
+                      if (instrument.filepath && instrument.name) {
+                        playInstrument(instrument.filepath, instrument.name);
+                      }
+                    }}
+                  >
+                    ▶
+                  </button>
                   <span className="text-primary font-mono font-bold w-8">
                     {instrument.symbol}
                   </span>
