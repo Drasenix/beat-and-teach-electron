@@ -1,15 +1,15 @@
-import fs from 'fs';
+import fs, { WriteStream } from 'fs';
 import path from 'path';
 import archiver from 'archiver';
 import {
   LibraryManifest,
   LibraryInstrument,
   LibraryPattern,
-} from '../../shared/models/library-dto';
-import { PatternDTO } from '../../shared/models/pattern-dto';
-import { InstrumentDTO } from '../../shared/models/instrument-dto';
-import { getPatternsByIds } from '../db/repositories/pattern-repository';
-import { getInstrumentsByIds } from '../db/repositories/instrument-repository';
+} from '../../../shared/models/library-dto';
+import { PatternDTO } from '../../../shared/models/pattern-dto';
+import { InstrumentDTO } from '../../../shared/models/instrument-dto';
+import { getPatternsByIds } from '../../db/repositories/pattern-repository';
+import { getInstrumentsByIds } from '../../db/repositories/instrument-repository';
 
 function toLibraryPattern(db: PatternDTO): LibraryPattern {
   return {
@@ -37,10 +37,10 @@ export default async function exportLibrary(
   instrumentIds: number[],
   outputPath: string,
 ): Promise<string> {
-  const patterns = getPatternsByIds(patternIds);
-  const instruments = getInstrumentsByIds(instrumentIds);
+  const patterns: PatternDTO[] = getPatternsByIds(patternIds);
+  const instruments: InstrumentDTO[] = getInstrumentsByIds(instrumentIds);
 
-  const libraryPatterns = patterns.map(toLibraryPattern);
+  const libraryPatterns: LibraryPattern[] = patterns.map(toLibraryPattern);
 
   const libraryInstruments: LibraryInstrument[] = [];
   const audioFiles: { filepath: string; archiveName: string }[] = [];
@@ -48,8 +48,8 @@ export default async function exportLibrary(
   instruments.forEach((inst) => {
     if (!inst.filepath || !fs.existsSync(inst.filepath)) return;
 
-    const ext = path.extname(inst.filepath);
-    const archiveName = `${inst.slug}${ext}`;
+    const ext: string = path.extname(inst.filepath);
+    const archiveName: string = `${inst.slug}${ext}`;
     libraryInstruments.push(toLibraryInstrument(inst, archiveName));
     audioFiles.push({ filepath: inst.filepath, archiveName });
   });
@@ -62,8 +62,8 @@ export default async function exportLibrary(
   };
 
   return new Promise((resolve, reject) => {
-    const output = fs.createWriteStream(outputPath);
-    const archive = archiver('zip', { zlib: { level: 0 } });
+    const output: WriteStream = fs.createWriteStream(outputPath);
+    const archive: archiver.Archiver = archiver('zip', { zlib: { level: 0 } });
 
     output.on('close', () => resolve(outputPath));
     archive.on('error', (err) => reject(err));

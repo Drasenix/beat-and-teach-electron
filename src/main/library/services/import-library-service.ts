@@ -1,26 +1,28 @@
 import fs from 'fs';
 import path from 'path';
-import AdmZip from 'adm-zip';
-import { toSnakeCase } from '../../renderer/utils/util';
+import AdmZip, { IZipEntry } from 'adm-zip';
+import { toSnakeCase } from '../../../renderer/utils/util';
 import {
   LibraryManifest,
   ConflictResolution,
   ImportResult,
-} from '../../shared/models/library-dto';
+} from '../../../shared/models/library-dto';
 import {
   createPattern,
   deletePattern,
-} from '../db/repositories/pattern-repository';
+} from '../../db/repositories/pattern-repository';
 import {
   createInstrument,
   deleteInstrument,
-} from '../db/repositories/instrument-repository';
-import fetchAllPatterns from '../db/services/fetch-patterns';
-import fetchAllInstruments from '../db/services/fetch-instruments';
+} from '../../db/repositories/instrument-repository';
+import fetchAllPatterns from '../../db/services/fetch-patterns';
+import fetchAllInstruments from '../../db/services/fetch-instruments';
+import { PatternDTO } from '../../../shared/models/pattern-dto';
+import { InstrumentDTO } from '../../../shared/models/instrument-dto';
 
 export function parseLibraryFile(zipPath: string): LibraryManifest {
-  const zip = new AdmZip(zipPath);
-  const manifestEntry = zip.getEntry('manifest.json');
+  const zip: AdmZip = new AdmZip(zipPath);
+  const manifestEntry: IZipEntry | null = zip.getEntry('manifest.json');
   if (!manifestEntry) {
     throw new Error('Fichier manifest.json introuvable dans le .beatpack');
   }
@@ -38,8 +40,8 @@ export async function importLibrary(
   conflictResolutions: ConflictResolution[],
   audioDestPath: string,
 ): Promise<ImportResult> {
-  const manifest = parseLibraryFile(zipPath);
-  const zip = new AdmZip(zipPath);
+  const manifest: LibraryManifest = parseLibraryFile(zipPath);
+  const zip: AdmZip = new AdmZip(zipPath);
 
   const result: ImportResult = {
     importedPatterns: 0,
@@ -53,11 +55,17 @@ export async function importLibrary(
     fs.mkdirSync(audioDestPath, { recursive: true });
   }
 
-  const existingPatterns = fetchAllPatterns();
-  const existingInstruments = fetchAllInstruments();
+  const existingPatterns: PatternDTO[] = fetchAllPatterns();
+  const existingInstruments: InstrumentDTO[] = fetchAllInstruments();
 
-  const patternResolutionMap = new Map<string, ConflictResolution>();
-  const instrumentResolutionMap = new Map<string, ConflictResolution>();
+  const patternResolutionMap: Map<string, ConflictResolution> = new Map<
+    string,
+    ConflictResolution
+  >();
+  const instrumentResolutionMap: Map<string, ConflictResolution> = new Map<
+    string,
+    ConflictResolution
+  >();
   conflictResolutions.forEach((res) => {
     if (res.type === 'pattern') {
       patternResolutionMap.set(res.slug, res);
@@ -67,7 +75,9 @@ export async function importLibrary(
   });
 
   manifest.patterns.forEach((pat) => {
-    const resolution = patternResolutionMap.get(pat.slug);
+    const resolution: ConflictResolution | undefined = patternResolutionMap.get(
+      pat.slug,
+    );
     if (!resolution || resolution.action === 'skip') {
       result.skippedPatterns += 1;
       return;
@@ -78,7 +88,9 @@ export async function importLibrary(
       pat.slug = toSnakeCase(resolution.newName);
     }
 
-    const existing = existingPatterns.find((p) => p.slug === pat.slug);
+    const existing: PatternDTO | undefined = existingPatterns.find(
+      (p) => p.slug === pat.slug,
+    );
     if (existing) {
       deletePattern(existing.id);
     }
@@ -98,7 +110,8 @@ export async function importLibrary(
   });
 
   manifest.instruments.forEach((inst) => {
-    const resolution = instrumentResolutionMap.get(inst.slug);
+    const resolution: ConflictResolution | undefined =
+      instrumentResolutionMap.get(inst.slug);
     if (!resolution || resolution.action === 'skip') {
       result.skippedInstruments += 1;
       return;
@@ -112,12 +125,11 @@ export async function importLibrary(
       finalSlug = toSnakeCase(resolution.newName);
     }
 
-    const existingBySlug = existingInstruments.find(
+    const existingBySlug: InstrumentDTO | undefined = existingInstruments.find(
       (i) => i.slug === finalSlug,
     );
-    const existingBySymbol = existingInstruments.find(
-      (i) => i.symbol === inst.symbol,
-    );
+    const existingBySymbol: InstrumentDTO | undefined =
+      existingInstruments.find((i) => i.symbol === inst.symbol);
 
     if (existingBySlug) {
       deleteInstrument(existingBySlug.id);
@@ -129,11 +141,11 @@ export async function importLibrary(
       deleteInstrument(existingBySymbol.id);
     }
 
-    const audioFileName = path.basename(inst.audioFile);
-    const destPath = path.join(audioDestPath, audioFileName);
+    const audioFileName: string = path.basename(inst.audioFile);
+    const destPath: string = path.join(audioDestPath, audioFileName);
 
     try {
-      const audioEntry = zip.getEntry(inst.audioFile);
+      const audioEntry: IZipEntry | null = zip.getEntry(inst.audioFile);
       if (audioEntry) {
         fs.writeFileSync(destPath, audioEntry.getData());
       }

@@ -17,8 +17,11 @@ import {
   deletePattern,
 } from './db/repositories/pattern-repository';
 import { InstrumentFilePath } from '../shared/types/instrument';
-import exportLibrary from './library/export-library';
-import { parseLibraryFile, importLibrary } from './library/import-library';
+import exportLibrary from './library/services/export-library-service';
+import {
+  parseLibraryFile,
+  importLibrary,
+} from './library/services/import-library-service';
 import {
   ExportLibraryRequest,
   ImportLibraryRequest,
