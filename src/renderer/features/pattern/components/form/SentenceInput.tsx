@@ -41,19 +41,20 @@ export default function SentenceInput({
   ): void => {
     if (e.key !== '(' && e.key !== ')') return;
 
-    const textarea = textareaRef.current;
+    const textarea: HTMLTextAreaElement | null = textareaRef.current;
     if (!textarea) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
+    const start: number = textarea.selectionStart;
+    const end: number = textarea.selectionEnd;
 
     if (start === end) return;
 
     e.preventDefault();
 
-    const selected = sentence.slice(start, end);
-    const wrapped = `(${selected})`;
-    const newValue = sentence.slice(0, start) + wrapped + sentence.slice(end);
+    const selected: string = sentence.slice(start, end);
+    const wrapped: string = `(${selected})`;
+    const newValue: string =
+      sentence.slice(0, start) + wrapped + sentence.slice(end);
 
     onChange(newValue);
 
