@@ -76,11 +76,9 @@ export default class AudioEngine {
     if (!this.onStep) return;
 
     let stepIndex = 0;
-    this.stepLoop = new Tone.Loop((time) => {
+    this.stepLoop = new Tone.Loop(() => {
       const current = stepIndex % columnCount;
-      Tone.Draw.schedule(() => {
-        this.onStep!(current);
-      }, time);
+      this.onStep!(current);
       stepIndex += 1;
     }, '8n').start(0);
   }
