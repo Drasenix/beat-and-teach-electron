@@ -12,7 +12,7 @@
     "allowJs": true,
     "outDir": ".erb/dll",
     "moduleResolution": "node",
-    "types": ["jest"]
+    "types": ["jest", "node"]
   },
   "exclude": ["node_modules", "release", "assets"]
 }
