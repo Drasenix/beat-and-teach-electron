@@ -1,16 +1,14 @@
-import { useState } from 'react';
 import useInstruments from '../hooks/useInstruments';
 import useAudio from '../../audio/hooks/useAudio';
 import AddInstrumentForm from './form/AddInstrumentForm';
 import EditInstrumentForm from './form/EditInstrumentForm';
-import { InstrumentFormValues } from '../types/instrument-types';
 import useFileDialog from '../../../hooks/useFileDialog';
+import useConfigurationActions from '../../../hooks/useConfigurationActions';
+import ConfigurationItem from '../../../components/ConfigurationItem';
+import ItemActions from '../../../components/ItemActions';
+import ConfigurationFooter from '../../../components/ConfigurationFooter';
 
 export default function InstrumentConfiguration() {
-  const [addingInstrument, setAddingInstrument] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
-
   const {
     instruments,
     addNewInstrument,
@@ -18,134 +16,98 @@ export default function InstrumentConfiguration() {
     removeInstrument,
     error,
   } = useInstruments();
-
   const { openFileDialog } = useFileDialog();
   const { playInstrument, playing } = useAudio();
 
-  const handleDelete = async (id: number): Promise<void> => {
-    await removeInstrument(id);
-    setConfirmDeleteId(null);
-  };
-
-  const handleEdit = async (
-    id: number,
-    data: InstrumentFormValues,
-  ): Promise<void> => {
-    await editInstrument(id, data);
-    setEditingId(null);
-  };
+  const {
+    adding,
+    onStartAdding,
+    onCancelAdding,
+    editingId,
+    setEditingId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    handleConfirm,
+    handleEdit,
+  } = useConfigurationActions(removeInstrument, editInstrument);
 
   return (
     <div className="content-page">
       <div className="workspace-section-content">
         <h2 className="section-title">Instruments</h2>
-
         {error && <div className="w-full error-message">{error}</div>}
 
         <ul className="config-liste">
           {instruments
-            .filter((instrument) => instrument.symbol !== '.')
+            .filter((i) => i.symbol !== '.')
             .map((instrument) => (
-              <li key={instrument.id} className="flex flex-col">
-                <div className="item-row">
-                  <button
-                    type="button"
-                    className="instrument-play-btn"
-                    disabled={playing}
-                    onClick={() => {
-                      if (instrument.filepath && instrument.name) {
-                        playInstrument(instrument.filepath, instrument.name);
-                      }
-                    }}
-                  >
-                    ▶
-                  </button>
-                  <span className="text-primary font-mono font-bold w-8">
-                    {instrument.symbol}
-                  </span>
-                  <span className="text-text-primary font-mono flex-1">
-                    {instrument.name}
-                  </span>
-                  <span className="text-text-secondary text-xs font-mono break-all max-w-xs flex-1">
-                    {instrument.filepath ?? ''}
-                  </span>
-
-                  {confirmDeleteId === instrument.id ? (
-                    <div className="flex items-center gap-3">
-                      <span className="text-text-secondary text-xs font-mono">
-                        Confirmer ?
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(instrument.id)}
-                        className="btn-confirm-delete"
-                      >
-                        Oui
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setConfirmDeleteId(null)}
-                        className="btn-secondary px-3 py-1 text-xs"
-                      >
-                        Non
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingId(
-                            editingId === instrument.id ? null : instrument.id,
-                          );
-                          setAddingInstrument(false);
-                        }}
-                        className="btn-edit"
-                      >
-                        ✎
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setConfirmDeleteId(instrument.id)}
-                        className="btn-delete"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {editingId === instrument.id && (
+              <ConfigurationItem
+                key={instrument.id}
+                id={instrument.id}
+                editingId={editingId}
+                leftContent={
+                  <>
+                    <button
+                      type="button"
+                      className="instrument-play-btn"
+                      disabled={playing}
+                      onClick={() => {
+                        if (instrument.filepath && instrument.name) {
+                          playInstrument(instrument.filepath, instrument.name);
+                        }
+                      }}
+                    >
+                      ▶
+                    </button>
+                    <span className="text-primary font-mono font-bold w-8">
+                      {instrument.symbol}
+                    </span>
+                    <span className="text-text-primary font-mono flex-1">
+                      {instrument.name}
+                    </span>
+                  </>
+                }
+                rightContent={
+                  <>
+                    <span className="text-text-secondary text-xs font-mono flex-1">
+                      {instrument.filepath ?? ''}
+                    </span>
+                    <ItemActions
+                      onEdit={() => {
+                        setEditingId(instrument.id);
+                        onCancelAdding();
+                      }}
+                      onDelete={() => setConfirmDeleteId(instrument.id)}
+                      onCancelDelete={() => setConfirmDeleteId(null)}
+                      onConfirm={() => handleConfirm(instrument.id)}
+                      isConfirming={confirmDeleteId === instrument.id}
+                    />
+                  </>
+                }
+                editForm={
                   <EditInstrumentForm
-                    key={instrument.id}
                     instrument={instrument}
                     onUpdate={(data) => handleEdit(instrument.id, data)}
                     onCancel={() => setEditingId(null)}
                     onOpenFileDialog={openFileDialog}
                   />
-                )}
-              </li>
+                }
+              />
             ))}
         </ul>
 
-        {addingInstrument ? (
-          <AddInstrumentForm
-            onAdd={addNewInstrument}
-            onCancel={() => setAddingInstrument(false)}
-            onOpenFileDialog={openFileDialog}
-          />
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              setAddingInstrument(true);
-              setEditingId(null);
-            }}
-            className="btn-add self-start"
-          >
-            + Ajouter un instrument
-          </button>
-        )}
+        <ConfigurationFooter
+          adding={adding}
+          onStartAdding={onStartAdding}
+          buttonText="+ Ajouter un instrument"
+          addForm={
+            <AddInstrumentForm
+              onAdd={addNewInstrument}
+              onCancel={onCancelAdding}
+              onOpenFileDialog={openFileDialog}
+            />
+          }
+        />
       </div>
     </div>
   );

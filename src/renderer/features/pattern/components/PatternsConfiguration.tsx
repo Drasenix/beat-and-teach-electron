@@ -1,129 +1,87 @@
-import { useState } from 'react';
 import usePatterns from '../hooks/usePatterns';
 import AddPatternForm from './form/AddPatternForm';
 import EditPatternForm from './form/EditPatternForm';
-import { PatternFormValues } from '../types/pattern-types';
+import useConfigurationActions from '../../../hooks/useConfigurationActions';
+import ConfigurationItem from '../../../components/ConfigurationItem';
+import ItemActions from '../../../components/ItemActions';
+import ConfigurationFooter from '../../../components/ConfigurationFooter';
 
 export default function PatternsConfiguration() {
-  const [addingPattern, setAddingPattern] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
-
   const { patterns, addPattern, editPattern, removePattern, error } =
     usePatterns();
 
-  const handleDelete = async (id: number): Promise<void> => {
-    await removePattern(id);
-    setConfirmDeleteId(null);
-  };
-
-  const handleEdit = async (
-    id: number,
-    data: PatternFormValues,
-  ): Promise<void> => {
-    await editPattern(id, data);
-    setEditingId(null);
-  };
+  const {
+    adding,
+    onStartAdding,
+    onCancelAdding,
+    editingId,
+    setEditingId,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    handleConfirm,
+    handleEdit,
+  } = useConfigurationActions(removePattern, editPattern);
 
   return (
     <div className="content-page">
       <div className="workspace-section-content">
         <h2 className="section-title">Patterns</h2>
-
         {error && <div className="w-full error-message">{error}</div>}
 
         <ul className="config-liste">
           {patterns.map((pattern) => (
-            <li key={pattern.id} className="flex flex-col">
-              <div className="item-row">
+            <ConfigurationItem
+              key={pattern.id}
+              id={pattern.id}
+              editingId={editingId}
+              leftContent={
                 <span className="text-text-primary font-mono flex-1">
                   {pattern.name}
                 </span>
-                <div className="flex flex-col gap-1 flex-1">
-                  {pattern.sentences.map((sentence) => (
-                    <span
-                      key={sentence}
-                      className="text-text-secondary text-xs font-mono truncate max-w-xs"
-                    >
-                      {sentence}
-                    </span>
-                  ))}
-                </div>
-
-                {confirmDeleteId === pattern.id ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-text-secondary text-xs font-mono">
-                      Confirmer ?
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(pattern.id)}
-                      className="btn-confirm-delete"
-                    >
-                      Oui
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setConfirmDeleteId(null)}
-                      className="btn-secondary px-3 py-1 text-xs"
-                    >
-                      Non
-                    </button>
+              }
+              rightContent={
+                <>
+                  <div className="flex flex-col gap-1 flex-1">
+                    {pattern.sentences.map((sentence) => (
+                      <span
+                        key={sentence}
+                        className="text-text-secondary text-xs font-mono flex-1"
+                      >
+                        {sentence}
+                      </span>
+                    ))}
                   </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditingId(
-                          editingId === pattern.id ? null : pattern.id,
-                        );
-                        setAddingPattern(false);
-                      }}
-                      className="btn-edit"
-                    >
-                      ✎
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setConfirmDeleteId(pattern.id)}
-                      className="btn-delete"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {editingId === pattern.id && (
+                  <ItemActions
+                    onEdit={() => {
+                      setEditingId(pattern.id);
+                      onCancelAdding();
+                    }}
+                    onDelete={() => setConfirmDeleteId(pattern.id)}
+                    onCancelDelete={() => setConfirmDeleteId(null)}
+                    onConfirm={() => handleConfirm(pattern.id)}
+                    isConfirming={confirmDeleteId === pattern.id}
+                  />
+                </>
+              }
+              editForm={
                 <EditPatternForm
-                  key={pattern.id}
                   pattern={pattern}
                   onUpdate={(data) => handleEdit(pattern.id, data)}
                   onCancel={() => setEditingId(null)}
                 />
-              )}
-            </li>
+              }
+            />
           ))}
         </ul>
 
-        {addingPattern ? (
-          <AddPatternForm
-            onAdd={addPattern}
-            onCancel={() => setAddingPattern(false)}
-          />
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              setAddingPattern(true);
-              setEditingId(null);
-            }}
-            className="btn-add self-start"
-          >
-            + Ajouter un pattern
-          </button>
-        )}
+        <ConfigurationFooter
+          adding={adding}
+          onStartAdding={onStartAdding}
+          buttonText="+ Ajouter un pattern"
+          addForm={
+            <AddPatternForm onAdd={addPattern} onCancel={onCancelAdding} />
+          }
+        />
       </div>
     </div>
   );

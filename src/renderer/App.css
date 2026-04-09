@@ -187,7 +187,21 @@
 
   /* Listes */
   .item-row {
-    @apply flex items-center gap-4 bg-surface border border-border rounded-lg px-4 py-3;
+    @apply flex flex-row bg-surface border border-border rounded-lg px-4 py-3;
+  }
+
+  .item-row-column {
+    @apply flex items-center gap-4 w-1/2;
+  }
+
+  .item-row-column-left {
+    @apply item-row-column;
+    @apply w-1/4;
+  }
+
+  .item-row-column-right {
+    @apply item-row-column;
+    @apply w-3/4;
   }
 
   .config-liste {
