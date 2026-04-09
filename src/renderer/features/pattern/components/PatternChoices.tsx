@@ -11,7 +11,7 @@ type PatternChoicesProps = {
 export default function PatternChoices(props: PatternChoicesProps) {
   const { patterns, selectPattern, onSave, canSave } = props;
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const handleSelect = (pat: Pattern): void => {
     setSelectedId(pat.id);

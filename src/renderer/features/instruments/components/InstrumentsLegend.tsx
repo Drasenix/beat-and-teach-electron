@@ -5,7 +5,7 @@ import useAudio from '../../audio/hooks/useAudio';
 export default function InstrumentsLegend() {
   const { instruments } = useInstruments();
   const { playInstrument, playing } = useAudio();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <>
