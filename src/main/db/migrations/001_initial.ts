@@ -67,6 +67,13 @@ function seedPatterns(db: Database.Database): void {
       name: 'drop it like its hot',
       sentences: JSON.stringify(['P (Lo P) (Pf Lo) P Lo (P Lo) Pf .']),
     },
+    {
+      slug: 'alexinho-drum-and-bass',
+      name: 'alexinho drum and bass',
+      sentences: JSON.stringify([
+        'Bwr . Pf (Ts P) (K Kch) (Ts Kch) Pf (Ts P) (K Kch) (Ts Kch) Pf (Ts P) (K Kch) (Ts Kch) Pf Ts',
+      ]),
+    },
   ];
   const { count } = db
     .prepare('SELECT COUNT(*) as count FROM patterns')
