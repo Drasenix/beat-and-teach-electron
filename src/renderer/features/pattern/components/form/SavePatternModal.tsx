@@ -109,37 +109,28 @@ export default function SavePatternModal({
   return (
     <Modal onClose={onClose}>
       <h2 className="section-title mb-4">Sauvegarder le pattern</h2>
-      {selectedPattern ? (
-        <div className="flex flex-col gap-3">
-          {error && <span className="error-message">{error}</span>}
-          <button
-            type="button"
-            onClick={onSaveExisting}
-            disabled={!allSentencesValid}
-            className="btn-primary"
-          >
-            Sauvegarder
-          </button>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {error && <span className="error-message">{error}</span>}
+      <div className="flex flex-col gap-3">
+        {error && <span className="error-message">{error}</span>}
+        {!selectedPattern && (
           <input
             placeholder="Nom du pattern"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="input-field w-full"
           />
-          <button
-            type="button"
-            onClick={onSaveNew}
-            disabled={!name.trim() || !allSentencesValid}
-            className="btn-primary"
-          >
-            Sauvegarder
-          </button>
-        </div>
-      )}
+        )}
+        <button
+          type="button"
+          onClick={selectedPattern ? onSaveExisting : onSaveNew}
+          disabled={!allSentencesValid || (!selectedPattern && !name.trim())}
+          className="btn-primary"
+        >
+          Sauvegarder
+        </button>
+        <button type="button" onClick={onClose} className="btn-secondary">
+          Annuler
+        </button>
+      </div>
     </Modal>
   );
 }
