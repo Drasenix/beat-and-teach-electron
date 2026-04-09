@@ -4,7 +4,7 @@ import Home from './components/Home';
 import PatternWorkspace from './features/pattern/components/PatternWorkspace';
 import Header from './components/Header';
 import InstrumentConfiguration from './features/instruments/components/InstrumentsConfiguration';
-import PatternConfiguration from './features/pattern/components/PatternConfiguration';
+import PatternsConfiguration from './features/pattern/components/PatternsConfiguration';
 import LibraryScreen from './features/library/components/LibraryScreen';
 import { InstrumentsProvider } from './features/instruments/contexts/InstrumentsContext';
 import { PatternsProvider } from './features/pattern/contexts/PatternsContext';
@@ -28,7 +28,7 @@ export default function App() {
                   />
                   <Route
                     path="/configuration/patterns"
-                    element={<PatternConfiguration />}
+                    element={<PatternsConfiguration />}
                   />
                   <Route path="/library" element={<LibraryScreen />} />
                 </Routes>

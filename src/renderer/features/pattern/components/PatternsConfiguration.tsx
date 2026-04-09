@@ -4,7 +4,7 @@ import AddPatternForm from './form/AddPatternForm';
 import EditPatternForm from './form/EditPatternForm';
 import { PatternFormValues } from '../types/pattern-types';
 
-export default function PatternConfiguration() {
+export default function PatternsConfiguration() {
   const [addingPattern, setAddingPattern] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
