@@ -374,6 +374,11 @@
     color: theme('colors.primary');
   }
 
+  .sidebar-item:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
   .sidebar-footer {
     @apply flex gap-1.5 p-2 border-t border-border flex-shrink-0;
   }
@@ -385,8 +390,13 @@
     color: theme('colors.primary');
   }
 
-  .sidebar-btn-new:hover {
+  .sidebar-btn-new:hover:not(:disabled) {
     @apply btn-hover;
+  }
+
+  .sidebar-btn-new:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 
   .sidebar-btn-save {

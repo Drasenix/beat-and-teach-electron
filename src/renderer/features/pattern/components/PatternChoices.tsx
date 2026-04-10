@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Pattern } from '../models/pattern-model';
+import useAudio from '../../audio/hooks/useAudio';
 
 type PatternChoicesProps = {
   patterns: Pattern[];
@@ -10,6 +11,7 @@ type PatternChoicesProps = {
 
 export default function PatternChoices(props: PatternChoicesProps) {
   const { patterns, selectPattern, onSave, canSave } = props;
+  const { playing } = useAudio();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -35,14 +37,19 @@ export default function PatternChoices(props: PatternChoicesProps) {
       </button>
       {open && (
         <div className="sidebar-footer">
-          <button type="button" onClick={handleNew} className="sidebar-btn-new">
+          <button
+            type="button"
+            onClick={handleNew}
+            className="sidebar-btn-new"
+            disabled={playing}
+          >
             +
           </button>
           <button
             type="button"
             onClick={onSave}
             className="sidebar-btn-save"
-            disabled={!canSave}
+            disabled={!canSave || playing}
           >
             Sauvegarder
           </button>
@@ -57,6 +64,7 @@ export default function PatternChoices(props: PatternChoicesProps) {
                 key={pat.id}
                 type="button"
                 onClick={() => handleSelect(pat)}
+                disabled={playing}
                 className={`sidebar-item ${
                   selectedId === pat.id ? 'selected' : ''
                 }`}
