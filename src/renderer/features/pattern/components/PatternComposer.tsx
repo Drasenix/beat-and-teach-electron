@@ -27,7 +27,7 @@ export default function PatternComposer({
   const { activeStep } = useAudio();
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 w-full">
       <div className="workspace-section-content">
         <SentencesForm
           sentences={pattern.sentences}

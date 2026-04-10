@@ -217,7 +217,7 @@
   }
 
   .workspace-section-content {
-    @apply flex flex-col gap-3 w-full md:max-w-4xl lg:max-w-6xl;
+    @apply flex flex-col gap-3 w-full max-w-full;
   }
 
   .pattern-section-content {
@@ -338,7 +338,7 @@
   }
 
   .daw-main {
-    @apply flex-1 overflow-y-auto p-6;
+    @apply flex-1 overflow-y-auto p-6 flex items-start justify-center;
   }
 
   .sidebar-header {
