@@ -5,6 +5,7 @@ type LibrarySectionProps<T> = {
   items: T[];
   onSelectionChange: (ids: Set<number>) => void;
   getId: (item: T) => number;
+  className?: string;
   children: (
     item: T,
     isSelected: boolean,
@@ -17,6 +18,7 @@ export default function LibrarySection<T>({
   items,
   onSelectionChange,
   getId,
+  className,
   children,
 }: LibrarySectionProps<T>) {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -59,7 +61,7 @@ export default function LibrarySection<T>({
   };
 
   return (
-    <div className="library-section">
+    <div className={`library-section ${className ?? ''}`}>
       <div className="library-section-header">
         <label className="library-section-title" htmlFor={masterId}>
           <input

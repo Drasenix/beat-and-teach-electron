@@ -111,55 +111,59 @@ export default function LibraryScreen() {
           </div>
         )}
 
-        <LibrarySection
-          title="Patterns"
-          items={patterns}
-          getId={(pattern) => pattern.id}
-          onSelectionChange={setSelectedPatternIds}
-        >
-          {(pattern, isSelected, toggle) => (
-            <label
-              key={pattern.id}
-              className="library-item"
-              htmlFor={`pattern-${pattern.id}`}
-            >
-              <input
-                id={`pattern-${pattern.id}`}
-                type="checkbox"
-                checked={isSelected}
-                onChange={toggle}
-              />
-              <span className="library-item-name">{pattern.name}</span>
-              <span className="library-item-slug">{pattern.slug}</span>
-            </label>
-          )}
-        </LibrarySection>
+        <div className="flex gap-4 w-full">
+          <LibrarySection
+            title="Patterns"
+            items={patterns}
+            getId={(pattern) => pattern.id}
+            onSelectionChange={setSelectedPatternIds}
+            className="w-1/2"
+          >
+            {(pattern, isSelected, toggle) => (
+              <label
+                key={pattern.id}
+                className="library-item"
+                htmlFor={`pattern-${pattern.id}`}
+              >
+                <input
+                  id={`pattern-${pattern.id}`}
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={toggle}
+                />
+                <span className="library-item-name">{pattern.name}</span>
+                <span className="library-item-slug">{pattern.slug}</span>
+              </label>
+            )}
+          </LibrarySection>
 
-        <LibrarySection
-          title="Instruments"
-          items={instruments.filter((i) => i.symbol !== '.')}
-          getId={(instrument) => instrument.id}
-          onSelectionChange={setSelectedInstrumentIds}
-        >
-          {(instrument, isSelected, toggle) => (
-            <label
-              key={instrument.id}
-              className="library-item"
-              htmlFor={`instrument-${instrument.id}`}
-            >
-              <input
-                id={`instrument-${instrument.id}`}
-                type="checkbox"
-                checked={isSelected}
-                onChange={toggle}
-              />
-              <span className="instrument-symbol">{instrument.symbol}</span>
-              <span className="library-item-name">
-                {instrument.name ?? '(sans nom)'}
-              </span>
-            </label>
-          )}
-        </LibrarySection>
+          <LibrarySection
+            title="Instruments"
+            items={instruments.filter((i) => i.symbol !== '.')}
+            getId={(instrument) => instrument.id}
+            onSelectionChange={setSelectedInstrumentIds}
+            className="w-1/2"
+          >
+            {(instrument, isSelected, toggle) => (
+              <label
+                key={instrument.id}
+                className="library-item"
+                htmlFor={`instrument-${instrument.id}`}
+              >
+                <input
+                  id={`instrument-${instrument.id}`}
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={toggle}
+                />
+                <span className="instrument-symbol">{instrument.symbol}</span>
+                <span className="library-item-name">
+                  {instrument.name ?? '(sans nom)'}
+                </span>
+              </label>
+            )}
+          </LibrarySection>
+        </div>
 
         <div className="library-actions">
           <button
