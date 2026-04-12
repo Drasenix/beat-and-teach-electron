@@ -67,6 +67,7 @@ src/
 - **`DTO` suffix** for types that travel between main and renderer (e.g. `PatternDTO`, `InstrumentDTO`)
 - **No `DTO` suffix** for self-descriptive types (e.g. `LibraryManifest`, `ConflictResolution`)
 - **Master checkbox pattern** for select all/deselect all (like Gmail)
+- **No ESLint disable** — never use `eslint-disable` or `// eslint-disable-next-line` comments
 
 ### NAMING
 

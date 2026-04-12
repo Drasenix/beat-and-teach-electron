@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { Pattern } from '../models/pattern-model';
 import useAudio from '../../audio/hooks/useAudio';
+import usePatterns from '../hooks/usePatterns';
 
 type PatternChoicesProps = {
-  patterns: Pattern[];
   selectPattern: (pattern: Pattern | null) => void;
   onSave: () => void;
   canSave: boolean;
 };
 
 export default function PatternChoices(props: PatternChoicesProps) {
-  const { patterns, selectPattern, onSave, canSave } = props;
+  const { selectPattern, onSave, canSave } = props;
+  const { patterns } = usePatterns();
   const { playing } = useAudio();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);

@@ -1,7 +1,6 @@
 import { Pattern } from '../models/pattern-model';
 import SentencesForm from './form/SentencesForm';
 import PatternSteps from './PatternSteps';
-import useAudio from '../../audio/hooks/useAudio';
 
 type PatternComposerProps = {
   pattern: Pattern;
@@ -14,6 +13,9 @@ type PatternComposerProps = {
     tokenIndex: number,
     color: string | null,
   ) => void;
+  activeColumnIndex?: number | null;
+  mutedSteps: Set<string>;
+  toggleMute: (sentenceIndex: number, tokenIndex: number) => void;
 };
 
 export default function PatternComposer({
@@ -23,9 +25,10 @@ export default function PatternComposer({
   removeSentence,
   normalizeAllSentences,
   changeHighlight,
+  activeColumnIndex,
+  mutedSteps,
+  toggleMute,
 }: PatternComposerProps) {
-  const { activeStep } = useAudio();
-
   return (
     <div className="flex flex-col gap-3 w-full">
       <div className="workspace-section-content">
@@ -41,7 +44,9 @@ export default function PatternComposer({
           sentences={pattern.sentences}
           highlights={pattern.highlights}
           onChangeHighlight={changeHighlight}
-          activeColumnIndex={activeStep}
+          activeColumnIndex={activeColumnIndex}
+          mutedSteps={mutedSteps}
+          toggleMute={toggleMute}
         />
       </div>
     </div>

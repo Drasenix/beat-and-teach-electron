@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import usePattern from '../hooks/usePattern';
-import usePatterns from '../hooks/usePatterns';
+import usePatternSession from '../hooks/usePatternSession';
+import useAudio from '../../audio/hooks/useAudio';
 import { Pattern } from '../models/pattern-model';
 import AudioControls from '../../audio/components/AudioControls';
 import InstrumentsLegend from '../../instruments/components/InstrumentsLegend';
@@ -19,8 +19,11 @@ export default function PatternWorkspace() {
     normalizeAllSentences,
     changeHighlight,
     resetPattern,
-  } = usePattern();
-  const { patterns } = usePatterns();
+    sentencesForPlayback,
+    mutedSteps,
+    toggleMute,
+  } = usePatternSession();
+  const { activeStep } = useAudio();
   const [selectedPattern, setSelectedPattern] = useState<Pattern | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
 
@@ -36,12 +39,11 @@ export default function PatternWorkspace() {
   return (
     <div className="daw-layout">
       <div className="transport-bar">
-        <AudioControls sentences={pattern.sentences} />
+        <AudioControls sentences={sentencesForPlayback} />
       </div>
       <div className="daw-columns">
         <SideBar>
           <PatternChoices
-            patterns={patterns}
             selectPattern={selectPattern}
             onSave={() => setShowSaveModal(true)}
             canSave={
@@ -59,6 +61,9 @@ export default function PatternWorkspace() {
             removeSentence={removeSentence}
             normalizeAllSentences={normalizeAllSentences}
             changeHighlight={changeHighlight}
+            activeColumnIndex={activeStep}
+            mutedSteps={mutedSteps}
+            toggleMute={toggleMute}
           />
         </div>
       </div>
