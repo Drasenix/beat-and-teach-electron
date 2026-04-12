@@ -81,11 +81,13 @@ export default function LibrarySection<T>({
           </span>
         )}
       </div>
-      {items.map((item) => {
-        const id: number = getId(item);
-        const isSelected: boolean = selectedIds.has(id);
-        return children(item, isSelected, () => toggle(id));
-      })}
+      <div className="library-section-items">
+        {items.map((item) => {
+          const id: number = getId(item);
+          const isSelected: boolean = selectedIds.has(id);
+          return children(item, isSelected, () => toggle(id));
+        })}
+      </div>
     </div>
   );
 }

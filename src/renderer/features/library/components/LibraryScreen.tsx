@@ -111,13 +111,13 @@ export default function LibraryScreen() {
           </div>
         )}
 
-        <div className="flex gap-4 w-full">
+        <div className="flex gap-4 w-full overflow-x-auto">
           <LibrarySection
             title="Patterns"
             items={patterns}
             getId={(pattern) => pattern.id}
             onSelectionChange={setSelectedPatternIds}
-            className="w-1/2"
+            className="w-1/2 min-w-[200px]"
           >
             {(pattern, isSelected, toggle) => (
               <label
@@ -132,7 +132,6 @@ export default function LibraryScreen() {
                   onChange={toggle}
                 />
                 <span className="library-item-name">{pattern.name}</span>
-                <span className="library-item-slug">{pattern.slug}</span>
               </label>
             )}
           </LibrarySection>
@@ -142,7 +141,7 @@ export default function LibraryScreen() {
             items={instruments.filter((i) => i.symbol !== '.')}
             getId={(instrument) => instrument.id}
             onSelectionChange={setSelectedInstrumentIds}
-            className="w-1/2"
+            className="w-1/2 min-w-[200px]"
           >
             {(instrument, isSelected, toggle) => (
               <label

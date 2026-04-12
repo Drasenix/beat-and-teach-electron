@@ -502,6 +502,14 @@
   @apply text-xs font-mono text-text-secondary;
 }
 
+.library-section-items {
+  display: grid;
+  grid-template-rows: repeat(5, auto);
+  grid-auto-flow: column;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
 .library-item {
   @apply flex items-center gap-3 px-3 py-2 rounded-md border border-transparent transition-colors duration-100;
   font-size: 13px;
@@ -567,6 +575,7 @@
 /* (no @apply or theme()) */
 ::-webkit-scrollbar {
   width: 3px;
+  height: 3px;
 }
 
 ::-webkit-scrollbar-track {
