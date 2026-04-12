@@ -32,7 +32,10 @@ export function InstrumentsProvider({
     const fetchInstruments = async () => {
       try {
         const data = await getInstruments();
-        setInstruments(data);
+        const sorted = [...data].sort((a, b) =>
+          a.symbol.localeCompare(b.symbol),
+        );
+        setInstruments(sorted);
       } catch {
         setError('Impossible de charger les instruments.');
       }

@@ -57,21 +57,19 @@ export default function PatternChoices(props: PatternChoicesProps) {
       )}
       <div className={`section-collapsible ${open ? 'open' : ''}`}>
         <div className="sidebar-list">
-          {[...patterns]
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map((pat) => (
-              <button
-                key={pat.id}
-                type="button"
-                onClick={() => handleSelect(pat)}
-                disabled={playing}
-                className={`sidebar-item ${
-                  selectedId === pat.id ? 'selected' : ''
-                }`}
-              >
-                {pat.name}
-              </button>
-            ))}
+          {patterns.map((pat) => (
+            <button
+              key={pat.id}
+              type="button"
+              onClick={() => handleSelect(pat)}
+              disabled={playing}
+              className={`sidebar-item ${
+                selectedId === pat.id ? 'selected' : ''
+              }`}
+            >
+              {pat.name}
+            </button>
+          ))}
         </div>
       </div>
     </>

@@ -28,7 +28,8 @@ export function PatternsProvider({ children }: { children: React.ReactNode }) {
     const fetch = async () => {
       try {
         const data = await getPatterns();
-        setPatterns(data);
+        const sorted = [...data].sort((a, b) => a.name.localeCompare(b.name));
+        setPatterns(sorted);
       } catch {
         setError('Impossible de charger les patterns.');
       }

@@ -19,28 +19,26 @@ export default function InstrumentsLegend() {
       </button>
       <div className={`section-collapsible ${open ? 'open' : ''}`}>
         <div className="sidebar-list">
-          {[...instruments]
-            .sort((a, b) => a.symbol.localeCompare(b.symbol))
-            .map((instrument) => (
-              <div key={instrument.id} className="sidebar-item">
-                <span className="instrument-symbol">{instrument.symbol}</span>
-                <span className="instrument-name">
-                  {instrument.slug ?? 'error: no slug defined'}
-                </span>
-                <button
-                  type="button"
-                  className="instrument-play-btn"
-                  disabled={playing}
-                  onClick={() => {
-                    if (instrument.filepath && instrument.name) {
-                      playInstrument(instrument.filepath, instrument.name);
-                    }
-                  }}
-                >
-                  ▶
-                </button>
-              </div>
-            ))}
+          {instruments.map((instrument) => (
+            <div key={instrument.id} className="sidebar-item">
+              <span className="instrument-symbol">{instrument.symbol}</span>
+              <span className="instrument-name">
+                {instrument.slug ?? 'error: no slug defined'}
+              </span>
+              <button
+                type="button"
+                className="instrument-play-btn"
+                disabled={playing}
+                onClick={() => {
+                  if (instrument.filepath && instrument.name) {
+                    playInstrument(instrument.filepath, instrument.name);
+                  }
+                }}
+              >
+                ▶
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </>
