@@ -15,7 +15,7 @@ export default function ItemActions({
 }: ItemActionsProps) {
   if (isConfirming) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="edit-delete">
         <span className="text-text-secondary text-xs font-mono">
           Confirmer ?
         </span>

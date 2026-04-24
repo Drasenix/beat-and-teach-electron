@@ -276,13 +276,20 @@
   }
 
   .instrument-symbol {
-    @apply text-primary font-mono font-bold;
+    @apply text-primary font-mono font-bold w-8;
+  }
+
+  .instrument-filepath {
+    @apply text-text-secondary text-xs font-mono flex-1;
   }
 
   .instrument-name {
-    @apply text-text-secondary text-xs;
+    @apply text-text-primary font-mono flex-1;
   }
 
+  .edit-delete {
+    @apply flex items-center gap-2;
+  }
   /* Instruments legend collapsible */
   .instruments-legend-section {
   }
