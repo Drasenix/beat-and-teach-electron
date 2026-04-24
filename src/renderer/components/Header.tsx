@@ -6,6 +6,7 @@ export default function Header() {
   const { playing, stopTrack } = useAudio();
 
   const navItems = [
+    { to: '/guide', label: '🗝', title: 'Guide' },
     { to: '/workspace', label: '🎘', title: 'Studio' },
     { to: '/configuration/instruments', label: '🎙', title: 'Instruments' },
     { to: '/configuration/patterns', label: '🕮', title: 'Patterns' },

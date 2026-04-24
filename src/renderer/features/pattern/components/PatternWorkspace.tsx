@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import usePatternSession from '../hooks/usePatternSession';
 import useAudio from '../../audio/hooks/useAudio';
-import { Pattern } from '../models/pattern-model';
+import { Pattern, DEFAULT_PATTERN } from '../models/pattern-model';
 import AudioControls from '../../audio/components/AudioControls';
 import InstrumentsLegend from '../../instruments/components/InstrumentsLegend';
 import SideBar from '../../../components/SideBar';
@@ -26,6 +27,29 @@ export default function PatternWorkspace() {
   const { activeStep } = useAudio();
   const [selectedPattern, setSelectedPattern] = useState<Pattern | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const setPatternRef = useRef(setPattern);
+  setPatternRef.current = setPattern;
+
+  useEffect(() => {
+    const exampleParam = searchParams.get('example');
+    if (exampleParam) {
+      setPatternRef.current({
+        ...DEFAULT_PATTERN,
+        name: 'Exemple',
+        sentences: [exampleParam],
+        highlights: [
+          Array(
+            exampleParam
+              .trim()
+              .split(/\s+/)
+              .filter((t) => t.length > 0).length,
+          ).fill(null),
+        ],
+      });
+      setSearchParams({});
+    }
+  }, [searchParams, setSearchParams]);
 
   const selectPattern = (selected: Pattern | null): void => {
     setSelectedPattern(selected);

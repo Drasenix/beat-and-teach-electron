@@ -11,6 +11,12 @@ export default function Home() {
       </div>
       <div className="flex flex-col gap-4 w-full max-w-sm">
         <div className="div-animated-wrapper">
+          <Link to="/guide" className="link-animated-inner group">
+            <p className="home-button-icon">🗝</p>
+            <p className="text-primary">guide</p>
+          </Link>
+        </div>
+        <div className="div-animated-wrapper">
           <Link to="/workspace" className="link-animated-inner group">
             <p className="home-button-icon">🎘</p>
             <p className="text-primary">studio</p>

@@ -6,6 +6,7 @@ import Header from './components/Header';
 import InstrumentConfiguration from './features/instruments/components/InstrumentsConfiguration';
 import PatternsConfiguration from './features/pattern/components/PatternsConfiguration';
 import LibraryScreen from './features/library/components/LibraryScreen';
+import GuideScreen from './features/guide/components/GuideScreen';
 import { InstrumentsProvider } from './features/instruments/contexts/InstrumentsContext';
 import { PatternsProvider } from './features/pattern/contexts/PatternsContext';
 import { AudioProvider } from './features/audio/contexts/AudioContext';
@@ -31,6 +32,7 @@ export default function App() {
                     element={<PatternsConfiguration />}
                   />
                   <Route path="/library" element={<LibraryScreen />} />
+                  <Route path="/guide" element={<GuideScreen />} />
                 </Routes>
               </div>
             </div>
