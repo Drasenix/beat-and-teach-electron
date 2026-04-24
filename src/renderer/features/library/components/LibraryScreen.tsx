@@ -8,6 +8,7 @@ import {
 } from '../services/library-service';
 import ImportPreviewModal from './ImportPreviewModal';
 import LibrarySection from './LibrarySection';
+import OnboardingDriver from '../../onboarding/components/OnboardingDriver';
 import {
   ConflictResolution,
   ImportResult,
@@ -81,120 +82,125 @@ export default function LibraryScreen() {
   };
 
   return (
-    <div className="content-page">
-      <div className="workspace-section-content">
-        <h2 className="section-title">Bibliothèque</h2>
+    <OnboardingDriver tourKey="library">
+      <div className="content-page">
+        <div className="workspace-section-content">
+          <h2 className="section-title">Bibliothèque</h2>
 
-        {error && <div className="w-full error-message">{error}</div>}
+          {error && <div className="w-full error-message">{error}</div>}
 
-        {importResult && (
-          <div
-            className="w-full section-background"
-            style={{ marginBottom: '1rem' }}
-          >
-            <h3 className="section-title">Import terminé</h3>
-            <p>
-              Patterns importés : {importResult.importedPatterns} | Ignorés :{' '}
-              {importResult.skippedPatterns}
-            </p>
-            <p>
-              Instruments importés : {importResult.importedInstruments} |
-              Ignorés : {importResult.skippedInstruments}
-            </p>
-            {importResult.errors.length > 0 && (
-              <div className="error-message">
-                {importResult.errors.map((err: string) => (
-                  <p key={err}>{err}</p>
-                ))}
-              </div>
-            )}
+          {importResult && (
+            <div
+              className="w-full section-background"
+              style={{ marginBottom: '1rem' }}
+            >
+              <h3 className="section-title">Import terminé</h3>
+              <p>
+                Patterns importés : {importResult.importedPatterns} | Ignorés :{' '}
+                {importResult.skippedPatterns}
+              </p>
+              <p>
+                Instruments importés : {importResult.importedInstruments} |
+                Ignorés : {importResult.skippedInstruments}
+              </p>
+              {importResult.errors.length > 0 && (
+                <div className="error-message">
+                  {importResult.errors.map((err: string) => (
+                    <p key={err}>{err}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex gap-4 w-full overflow-x-auto">
+            <LibrarySection
+              title="Patterns"
+              items={patterns}
+              getId={(pattern) => pattern.id}
+              onSelectionChange={setSelectedPatternIds}
+              className="w-1/2 min-w-[200px]"
+            >
+              {(pattern, isSelected, toggle) => (
+                <label
+                  key={pattern.id}
+                  className="library-item"
+                  htmlFor={`pattern-${pattern.id}`}
+                >
+                  <input
+                    id={`pattern-${pattern.id}`}
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={toggle}
+                  />
+                  <span className="library-item-name">{pattern.name}</span>
+                </label>
+              )}
+            </LibrarySection>
+
+            <LibrarySection
+              title="Instruments"
+              items={instruments.filter((i) => i.symbol !== '.')}
+              getId={(instrument) => instrument.id}
+              onSelectionChange={setSelectedInstrumentIds}
+              className="w-1/2 min-w-[200px]"
+            >
+              {(instrument, isSelected, toggle) => (
+                <label
+                  key={instrument.id}
+                  className="library-item"
+                  htmlFor={`instrument-${instrument.id}`}
+                >
+                  <input
+                    id={`instrument-${instrument.id}`}
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={toggle}
+                  />
+                  <span className="instrument-symbol">{instrument.symbol}</span>
+                  <span className="library-item-name">
+                    {instrument.name ?? '(sans nom)'}
+                  </span>
+                </label>
+              )}
+            </LibrarySection>
           </div>
+
+          <div className="library-actions">
+            <button
+              id="export"
+              type="button"
+              className="btn-primary"
+              onClick={handleExport}
+              disabled={
+                selectedPatternIds.size === 0 &&
+                selectedInstrumentIds.size === 0
+              }
+            >
+              Exporter ({selectedPatternIds.size + selectedInstrumentIds.size})
+            </button>
+            <button
+              id="import"
+              type="button"
+              className="btn-secondary"
+              onClick={handleImportClick}
+            >
+              Importer
+            </button>
+          </div>
+        </div>
+
+        {importModal && (
+          <ImportPreviewModal
+            manifest={importModal.manifest}
+            onConfirm={handleImportConfirm}
+            onCancel={handleImportCancel}
+            existingPatternSlugs={patterns.map((p) => p.slug)}
+            existingInstrumentSlugs={instruments.map((i) => i.slug)}
+            existingInstrumentSymbols={instruments.map((i) => i.symbol)}
+          />
         )}
-
-        <div className="flex gap-4 w-full overflow-x-auto">
-          <LibrarySection
-            title="Patterns"
-            items={patterns}
-            getId={(pattern) => pattern.id}
-            onSelectionChange={setSelectedPatternIds}
-            className="w-1/2 min-w-[200px]"
-          >
-            {(pattern, isSelected, toggle) => (
-              <label
-                key={pattern.id}
-                className="library-item"
-                htmlFor={`pattern-${pattern.id}`}
-              >
-                <input
-                  id={`pattern-${pattern.id}`}
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={toggle}
-                />
-                <span className="library-item-name">{pattern.name}</span>
-              </label>
-            )}
-          </LibrarySection>
-
-          <LibrarySection
-            title="Instruments"
-            items={instruments.filter((i) => i.symbol !== '.')}
-            getId={(instrument) => instrument.id}
-            onSelectionChange={setSelectedInstrumentIds}
-            className="w-1/2 min-w-[200px]"
-          >
-            {(instrument, isSelected, toggle) => (
-              <label
-                key={instrument.id}
-                className="library-item"
-                htmlFor={`instrument-${instrument.id}`}
-              >
-                <input
-                  id={`instrument-${instrument.id}`}
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={toggle}
-                />
-                <span className="instrument-symbol">{instrument.symbol}</span>
-                <span className="library-item-name">
-                  {instrument.name ?? '(sans nom)'}
-                </span>
-              </label>
-            )}
-          </LibrarySection>
-        </div>
-
-        <div className="library-actions">
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={handleExport}
-            disabled={
-              selectedPatternIds.size === 0 && selectedInstrumentIds.size === 0
-            }
-          >
-            Exporter ({selectedPatternIds.size + selectedInstrumentIds.size})
-          </button>
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={handleImportClick}
-          >
-            Importer
-          </button>
-        </div>
       </div>
-
-      {importModal && (
-        <ImportPreviewModal
-          manifest={importModal.manifest}
-          onConfirm={handleImportConfirm}
-          onCancel={handleImportCancel}
-          existingPatternSlugs={patterns.map((p) => p.slug)}
-          existingInstrumentSlugs={instruments.map((i) => i.slug)}
-          existingInstrumentSymbols={instruments.map((i) => i.symbol)}
-        />
-      )}
-    </div>
+    </OnboardingDriver>
   );
 }

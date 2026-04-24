@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { runInstrumentTour } from '../data/instrument-steps';
 import { runPatternTour } from '../data/pattern-steps';
+import { runLibraryTour } from '../data/library-steps';
 import 'driver.js/dist/driver.css';
 
 type OnboardingDriverProps = {
@@ -11,6 +12,7 @@ type OnboardingDriverProps = {
 const tourFunctions: Record<string, () => void> = {
   instruments: runInstrumentTour,
   patterns: runPatternTour,
+  library: runLibraryTour,
 };
 
 export default function OnboardingDriver({
@@ -38,4 +40,4 @@ export default function OnboardingDriver({
   return children;
 }
 
-export { runInstrumentTour, runPatternTour };
+export { runInstrumentTour, runPatternTour, runLibraryTour };

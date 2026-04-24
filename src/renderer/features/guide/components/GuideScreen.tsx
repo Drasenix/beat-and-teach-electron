@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   runInstrumentTour,
   runPatternTour,
+  runLibraryTour,
 } from '../../onboarding/components/OnboardingDriver';
 
 export default function GuideScreen() {
@@ -20,6 +21,14 @@ export default function GuideScreen() {
     navigate('/configuration/patterns');
     setTimeout(() => {
       runPatternTour();
+    }, 500);
+  };
+
+  const handleLibraryTour = () => {
+    localStorage.removeItem('library_tour_seen');
+    navigate('/library');
+    setTimeout(() => {
+      runLibraryTour();
     }, 500);
   };
 
@@ -45,14 +54,21 @@ export default function GuideScreen() {
                   onClick={handleInstrumentTour}
                   className="btn-secondary w-fit"
                 >
-                  🎙 Tour des instruments
+                  Tour des instruments
                 </button>
                 <button
                   type="button"
                   onClick={handlePatternTour}
                   className="btn-secondary w-fit"
                 >
-                  🕮 Tour des patterns
+                  Tour des patterns
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLibraryTour}
+                  className="btn-secondary w-fit"
+                >
+                  Tour de la bibliothèque
                 </button>
               </div>
 
