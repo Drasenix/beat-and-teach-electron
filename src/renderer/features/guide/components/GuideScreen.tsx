@@ -1,14 +1,25 @@
 import { useNavigate } from 'react-router-dom';
-import { runInstrumentTour } from '../../onboarding/components/OnboardingDriver';
+import {
+  runInstrumentTour,
+  runPatternTour,
+} from '../../onboarding/components/OnboardingDriver';
 
 export default function GuideScreen() {
   const navigate = useNavigate();
 
-  const handleStartTour = () => {
+  const handleInstrumentTour = () => {
     localStorage.removeItem('instruments_tour_seen');
     navigate('/configuration/instruments');
     setTimeout(() => {
       runInstrumentTour();
+    }, 500);
+  };
+
+  const handlePatternTour = () => {
+    localStorage.removeItem('patterns_tour_seen');
+    navigate('/configuration/patterns');
+    setTimeout(() => {
+      runPatternTour();
     }, 500);
   };
 
@@ -31,10 +42,17 @@ export default function GuideScreen() {
                 <h3 className="text-primary font-bold">Tours guidés</h3>
                 <button
                   type="button"
-                  onClick={handleStartTour}
+                  onClick={handleInstrumentTour}
                   className="btn-secondary w-fit"
                 >
                   🎙 Tour des instruments
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePatternTour}
+                  className="btn-secondary w-fit"
+                >
+                  🕮 Tour des patterns
                 </button>
               </div>
 

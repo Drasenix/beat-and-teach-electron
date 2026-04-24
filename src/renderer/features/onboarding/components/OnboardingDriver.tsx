@@ -1,9 +1,16 @@
 import React, { useEffect } from 'react';
-import { runInstrumentTour, markTourSeen } from '../data/instrument-steps';
+import { runInstrumentTour } from '../data/instrument-steps';
+import { runPatternTour } from '../data/pattern-steps';
+import 'driver.js/dist/driver.css';
 
 type OnboardingDriverProps = {
   children: React.ReactNode;
   tourKey: string;
+};
+
+const tourFunctions: Record<string, () => void> = {
+  instruments: runInstrumentTour,
+  patterns: runPatternTour,
 };
 
 export default function OnboardingDriver({
@@ -14,10 +21,12 @@ export default function OnboardingDriver({
     const key = `${tourKey}_tour_seen`;
     const seen = localStorage.getItem(key);
 
-    if (!seen) {
+    const tourFn = tourFunctions[tourKey];
+
+    if (!seen && tourFn) {
       const timer = setTimeout(() => {
-        runInstrumentTour();
-        markTourSeen();
+        tourFn();
+        localStorage.setItem(key, 'true');
       }, 500);
 
       return () => clearTimeout(timer);
@@ -29,4 +38,4 @@ export default function OnboardingDriver({
   return children;
 }
 
-export { runInstrumentTour, markTourSeen };
+export { runInstrumentTour, runPatternTour };

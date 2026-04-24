@@ -224,6 +224,18 @@
     @apply flex flex-col gap-3;
   }
 
+  .pattern-name {
+    @apply text-text-primary font-mono flex-1;
+  }
+
+  .pattern-tracks {
+    @apply flex flex-col gap-1 flex-1;
+  }
+
+  .pattern-track {
+    @apply text-text-secondary text-xs font-mono flex-1;
+  }
+
   /* Typographie */
   .section-title {
     @apply text-xs font-mono text-primary uppercase tracking-widest font-bold;

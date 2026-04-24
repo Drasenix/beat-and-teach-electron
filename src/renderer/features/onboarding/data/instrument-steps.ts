@@ -1,11 +1,10 @@
 import { driver } from 'driver.js';
-import 'driver.js/dist/driver.css';
 
 export const instrumentSteps = [
   {
     element: '.content-page',
     popover: {
-      title: '🎙 Instruments',
+      title: 'Instruments',
       description: 'Voici la liste de tous tes instruments.',
     },
   },
@@ -21,7 +20,7 @@ export const instrumentSteps = [
     popover: {
       title: 'Symboles',
       description:
-        'Chaque instrument est identifié par un symbole unique. Utilise ces symboles pour composer.',
+        'Chaque instrument est identifié par un symbole unique. Utilise le pour composer.',
     },
   },
   {
@@ -35,22 +34,22 @@ export const instrumentSteps = [
     element: '.instrument-filepath',
     popover: {
       title: 'Fichier',
-      description: 'Le fichier son (wav, mp3...) qui lui est associé.',
+      description: 'Le fichier audio qui lui est associé.',
     },
   },
   {
     element: '.actions',
     popover: {
       title: 'Actions',
-      description: 'Chaque instrument peut-être édité et supprimé',
+      description: 'Chaque instrument peut-être édité ✎ et supprimé ✕',
     },
   },
   {
     element: '.btn-add',
     popover: {
-      title: '➕ Ajouter',
+      title: 'Ajouter',
       description:
-        'Ajoute tes propres instruments en sélectionner un fichier audio (mp3, wav, ogg).',
+        'Ajoute tes propres instruments en sélectionner un fichier audio.',
     },
   },
 ];
