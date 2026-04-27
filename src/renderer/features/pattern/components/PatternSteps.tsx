@@ -52,11 +52,14 @@ export default function PatternSteps({
   return (
     <div className="pattern-section-content">
       <h2 className="section-title">Pattern</h2>
-      <div className="section-background">
-        <span className="text-xs font-mono text-text-secondary bg-surface px-2 py-1 rounded border border-border">
+      <div id="pattern-preview" className="section-background">
+        <span
+          id="time"
+          className="text-xs font-mono text-text-secondary bg-surface px-2 py-1 rounded border border-border"
+        >
           {columns.length} temps
         </span>
-        <div className="flex flex-wrap gap-2">
+        <div id="steps" className="flex flex-wrap gap-2">
           {columns.map((column, index) => (
             <Column
               key={column.id}

@@ -1,4 +1,4 @@
-import { driver } from 'driver.js';
+import { driver, Driver } from 'driver.js';
 
 export const librarySteps = [
   {
@@ -39,19 +39,19 @@ export const librarySteps = [
     },
   },
 ];
+let driverInstance: Driver | null = null;
 
-export const driverConfig = {
-  animate: true,
-  showProgress: true,
-  steps: librarySteps,
-};
-
-let driverInstance: ReturnType<typeof driver> | null = null;
-
-export function runLibraryTour(): void {
+export function runLibraryTour(navigateTo?: (path: string) => void): void {
   if (driverInstance) {
     driverInstance.destroy();
   }
-  driverInstance = driver(driverConfig);
+  driverInstance = driver({
+    animate: true,
+    showProgress: true,
+    steps: librarySteps,
+    onDestroyed: () => {
+      navigateTo?.('/guide');
+    },
+  });
   driverInstance.drive();
 }

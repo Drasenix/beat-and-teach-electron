@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useInstruments from '../../instruments/hooks/useInstruments';
 import usePatterns from '../../pattern/hooks/usePatterns';
 import { exportLibrary, importLibrary } from '../facade/library-facade';
@@ -16,6 +17,7 @@ import {
 } from '../../../../shared/models/library-dto';
 
 export default function LibraryScreen() {
+  const navigate = useNavigate();
   const { instruments } = useInstruments();
   const { patterns } = usePatterns();
   const [selectedPatternIds, setSelectedPatternIds] = useState<Set<number>>(
@@ -82,7 +84,7 @@ export default function LibraryScreen() {
   };
 
   return (
-    <OnboardingDriver tourKey="library">
+    <OnboardingDriver tourKey="library" navigate={navigate}>
       <div className="content-page">
         <div className="workspace-section-content">
           <h2 className="section-title">Bibliothèque</h2>

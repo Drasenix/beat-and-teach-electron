@@ -3,16 +3,25 @@ import {
   runInstrumentTour,
   runPatternTour,
   runLibraryTour,
+  runStudioTour,
 } from '../../onboarding/components/OnboardingDriver';
 
 export default function GuideScreen() {
   const navigate = useNavigate();
 
+  const handleStudioTour = () => {
+    localStorage.removeItem('studio_tour_seen');
+    navigate('/workspace');
+    setTimeout(() => {
+      runStudioTour(navigate);
+    }, 500);
+  };
+
   const handleInstrumentTour = () => {
     localStorage.removeItem('instruments_tour_seen');
     navigate('/configuration/instruments');
     setTimeout(() => {
-      runInstrumentTour();
+      runInstrumentTour(navigate);
     }, 500);
   };
 
@@ -20,7 +29,7 @@ export default function GuideScreen() {
     localStorage.removeItem('patterns_tour_seen');
     navigate('/configuration/patterns');
     setTimeout(() => {
-      runPatternTour();
+      runPatternTour(navigate);
     }, 500);
   };
 
@@ -28,7 +37,7 @@ export default function GuideScreen() {
     localStorage.removeItem('library_tour_seen');
     navigate('/library');
     setTimeout(() => {
-      runLibraryTour();
+      runLibraryTour(navigate);
     }, 500);
   };
 
@@ -49,6 +58,13 @@ export default function GuideScreen() {
 
               <div className="flex flex-col gap-3 pt-4">
                 <h3 className="text-primary font-bold">Tours guidés</h3>
+                <button
+                  type="button"
+                  onClick={handleStudioTour}
+                  className="btn-secondary w-fit"
+                >
+                  Tour du studio
+                </button>
                 <button
                   type="button"
                   onClick={handleInstrumentTour}

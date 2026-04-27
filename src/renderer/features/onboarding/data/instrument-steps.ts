@@ -1,4 +1,4 @@
-import { driver } from 'driver.js';
+import { driver, Driver } from 'driver.js';
 
 export const instrumentSteps = [
   {
@@ -54,26 +54,19 @@ export const instrumentSteps = [
   },
 ];
 
-export const driverConfig = {
-  animate: true,
-  showProgress: true,
-  steps: instrumentSteps,
-};
+let driverInstance: Driver | null = null;
 
-let driverInstance: ReturnType<typeof driver> | null = null;
-
-export function runInstrumentTour(): void {
+export function runInstrumentTour(navigateTo?: (path: string) => void): void {
   if (driverInstance) {
     driverInstance.destroy();
   }
-  driverInstance = driver(driverConfig);
+  driverInstance = driver({
+    animate: true,
+    showProgress: true,
+    steps: instrumentSteps,
+    onDestroyed: () => {
+      navigateTo?.('/guide');
+    },
+  });
   driverInstance.drive();
-}
-
-export function hasSeenTour(): boolean {
-  return localStorage.getItem('instrument_tour_seen') === 'true';
-}
-
-export function markTourSeen(): void {
-  localStorage.setItem('instrument_tour_seen', 'true');
 }

@@ -8,7 +8,7 @@ export default function InstrumentsLegend() {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
+    <span id="instrument-choices">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -41,6 +41,6 @@ export default function InstrumentsLegend() {
           ))}
         </div>
       </div>
-    </>
+    </span>
   );
 }

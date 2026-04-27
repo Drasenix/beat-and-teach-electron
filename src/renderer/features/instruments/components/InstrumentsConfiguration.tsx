@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import useInstruments from '../hooks/useInstruments';
 import useAudio from '../../audio/hooks/useAudio';
 import AddInstrumentForm from './form/AddInstrumentForm';
@@ -10,6 +11,7 @@ import ConfigurationFooter from '../../../components/ConfigurationFooter';
 import OnboardingDriver from '../../onboarding/components/OnboardingDriver';
 
 export default function InstrumentConfiguration() {
+  const navigate = useNavigate();
   const {
     instruments,
     addNewInstrument,
@@ -33,7 +35,7 @@ export default function InstrumentConfiguration() {
   } = useConfigurationActions(removeInstrument, editInstrument);
 
   return (
-    <OnboardingDriver tourKey="instruments">
+    <OnboardingDriver tourKey="instruments" navigate={navigate}>
       <div className="content-page">
         <div className="workspace-section-content">
           <h2 className="section-title">Instruments</h2>

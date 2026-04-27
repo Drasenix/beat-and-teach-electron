@@ -1,4 +1,4 @@
-import { driver } from 'driver.js';
+import { driver, Driver } from 'driver.js';
 
 export const patternSteps = [
   {
@@ -39,18 +39,19 @@ export const patternSteps = [
   },
 ];
 
-export const driverConfig = {
-  animate: true,
-  showProgress: true,
-  steps: patternSteps,
-};
+let driverInstance: Driver | null = null;
 
-let driverInstance: ReturnType<typeof driver> | null = null;
-
-export function runPatternTour(): void {
+export function runPatternTour(navigateTo?: (path: string) => void): void {
   if (driverInstance) {
     driverInstance.destroy();
   }
-  driverInstance = driver(driverConfig);
+  driverInstance = driver({
+    animate: true,
+    showProgress: true,
+    steps: patternSteps,
+    onDestroyed: () => {
+      navigateTo?.('/guide');
+    },
+  });
   driverInstance.drive();
 }
