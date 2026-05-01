@@ -302,9 +302,6 @@
   .edit-delete {
     @apply flex items-center gap-2;
   }
-  /* Instruments legend collapsible */
-  .instruments-legend-section {
-  }
 
   .section-header-toggle {
     @apply w-full flex items-center justify-between px-0 py-2 bg-transparent cursor-pointer;
