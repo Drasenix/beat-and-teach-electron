@@ -102,12 +102,36 @@ export default function GuideScreen() {
                     BPM +/-
                   </li>
                   <li>
-                    <code className="text-primary font-bold">( symboles )</code>{' '}
-                    diviser un temps en succession de notes
+                    <code className="text-primary font-bold">⟵ / ⟶</code>{' '}
+                    Déplacer le curseur à gauche / droite
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">Maj + ⟵ / ⟶</code>{' '}
+                    Retirer / Ajouter un caractère à la sélection
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">Ctrl + ⟵ / ⟶</code>{' '}
+                    Déplacer le curseur vers le symbole de gauche / droite
                   </li>
                   <li>
                     <code className="text-primary font-bold">
-                      Selection de texte + ( ou )
+                      Maj + Ctrl + ⟵ / ⟶
+                    </code>{' '}
+                    Ajouter le symbole de gauche / droite à la sélection
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">
+                      Maj + Clic droit
+                    </code>{' '}
+                    Sélectionner le texte depuis la position du curseur
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">( symboles )</code>{' '}
+                    Diviser un temps en succession de notes
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">
+                      Selection de texte + ( / )
                     </code>{' '}
                     Entourer toute la sélection par <code>()</code>
                   </li>
@@ -117,6 +141,12 @@ export default function GuideScreen() {
                     </code>{' '}
                     La liste des instruments commençant par cette lettre est
                     suggérée
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">
+                      Autocomplétion + Espace / Entrée
+                    </code>{' '}
+                    Valide la selection
                   </li>
                 </ul>
               </div>
