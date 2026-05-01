@@ -56,47 +56,58 @@ export default function GuideScreen() {
                 les rythmes.
               </p>
 
-              <div className="flex flex-col gap-3 pt-4">
+              <div className="flex flex-col gap-3 ">
                 <h3 className="section-title">Tours guidés</h3>
-                <button
-                  type="button"
-                  onClick={handleStudioTour}
-                  className="btn-secondary w-fit"
-                >
-                  Studio
-                </button>
-                <button
-                  type="button"
-                  onClick={handleInstrumentTour}
-                  className="btn-secondary w-fit"
-                >
-                  Instruments
-                </button>
-                <button
-                  type="button"
-                  onClick={handlePatternTour}
-                  className="btn-secondary w-fit"
-                >
-                  Patterns
-                </button>
-                <button
-                  type="button"
-                  onClick={handleLibraryTour}
-                  className="btn-secondary w-fit"
-                >
-                  Bibliothèque
-                </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={handleStudioTour}
+                    className="btn-secondary w-fit"
+                  >
+                    Studio
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleInstrumentTour}
+                    className="btn-secondary w-fit"
+                  >
+                    Instruments
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePatternTour}
+                    className="btn-secondary w-fit"
+                  >
+                    Patterns
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLibraryTour}
+                    className="btn-secondary w-fit"
+                  >
+                    Bibliothèque
+                  </button>
+                </div>
               </div>
 
-              <div className="flex flex-col gap-3 pt-4">
+              <div className="flex flex-col gap-3">
                 <h3 className="section-title">Syntaxe</h3>
+                <span className="text-xs text-text-secondary">
+                  Écris les symboles séparés par des espaces.
+                </span>
+                <code className="text-primary font-mono bg-field px-4 py-3 rounded-lg">
+                  P Ts K P Ts K P .
+                </code>
+                <span className="text-xs text-text-secondary">
+                  Ici le pattern mesure 8 temps.
+                </span>
+
                 <code className="text-primary font-mono bg-field px-4 py-3 rounded-lg">
                   P Ts (K . P) Ts K .
                 </code>
                 <span className="text-xs text-text-secondary">
-                  Écris les symboles séparés par des espaces. Ici le pattern
-                  mesure 6 temps et le 3ème temps est divisé en 3 notes dont 1
-                  silence.
+                  Ici le pattern mesure 6 temps et le 3ème temps est divisé en 3
+                  notes dont 1 silence.
                 </span>
                 <ul className="space-y-2 text-sm text-text-secondary">
                   <li>
@@ -125,7 +136,7 @@ export default function GuideScreen() {
                 </ul>
               </div>
 
-              <div className="flex flex-col gap-3 pt-4">
+              <div className="flex flex-col gap-3">
                 <h3 className="section-title">Contrôles</h3>
                 <ul className="space-y-2 text-sm text-text-secondary">
                   <li>
@@ -141,7 +152,7 @@ export default function GuideScreen() {
                 </ul>
               </div>
 
-              <div className="flex flex-col gap-3 pt-4">
+              <div className="flex flex-col gap-3">
                 <h3 className="section-title">Raccourcis clavier</h3>
                 <ul className="space-y-2 text-sm text-text-secondary">
                   <li>
