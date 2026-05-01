@@ -18,11 +18,7 @@ export default function Modal({ children, onClose }: ModalProps) {
         onClick={onClose}
         aria-label="Fermer"
       />
-      <div className="div-animated-wrapper">
-        <div className="relative bg-surface border border-border rounded-lg p-6 max-w-md ">
-          {children}
-        </div>
-      </div>
+      <div className="div-animated-wrapper">{children}</div>
     </div>
   );
 }

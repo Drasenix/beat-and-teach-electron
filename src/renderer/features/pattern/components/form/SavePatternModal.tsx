@@ -97,39 +97,43 @@ export default function SavePatternModal({
   if (confirmOverwrite) {
     return (
       <Modal onClose={onClose}>
-        <PatternOverwrite
-          name={confirmOverwrite.name}
-          onConfirm={onConfirmOverwrite}
-          onCancel={resetFields}
-        />
+        <div className="relative bg-surface border border-border rounded-lg p-6 max-w-md ">
+          <PatternOverwrite
+            name={confirmOverwrite.name}
+            onConfirm={onConfirmOverwrite}
+            onCancel={resetFields}
+          />
+        </div>
       </Modal>
     );
   }
 
   return (
     <Modal onClose={onClose}>
-      <h2 className="section-title mb-4">Sauvegarder le pattern</h2>
-      <div className="flex flex-col gap-3">
-        {error && <span className="error-message">{error}</span>}
-        {!selectedPattern && (
-          <input
-            placeholder="Nom du pattern"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="input-field w-full"
-          />
-        )}
-        <button
-          type="button"
-          onClick={selectedPattern ? onSaveExisting : onSaveNew}
-          disabled={!allSentencesValid || (!selectedPattern && !name.trim())}
-          className="btn-primary"
-        >
-          Sauvegarder
-        </button>
-        <button type="button" onClick={onClose} className="btn-secondary">
-          Annuler
-        </button>
+      <div className="relative bg-surface border border-border rounded-lg p-6 max-w-md ">
+        <h2 className="section-title mb-4">Sauvegarder le pattern</h2>
+        <div className="flex flex-col gap-3">
+          {error && <span className="error-message">{error}</span>}
+          {!selectedPattern && (
+            <input
+              placeholder="Nom du pattern"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="input-field w-full"
+            />
+          )}
+          <button
+            type="button"
+            onClick={selectedPattern ? onSaveExisting : onSaveNew}
+            disabled={!allSentencesValid || (!selectedPattern && !name.trim())}
+            className="btn-primary"
+          >
+            Sauvegarder
+          </button>
+          <button type="button" onClick={onClose} className="btn-secondary">
+            Annuler
+          </button>
+        </div>
       </div>
     </Modal>
   );

@@ -9,8 +9,22 @@ import SideBar from '../../../components/SideBar';
 import PatternChoices from './PatternChoices';
 import PatternComposer from './PatternComposer';
 import SavePatternModal from './form/SavePatternModal';
+import { useGuideModalContext } from '../../guide/components/GuideModalProvider';
 
 export default function PatternWorkspace() {
+  const { showGuideModal } = useGuideModalContext();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F1') {
+        e.preventDefault();
+        showGuideModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showGuideModal]);
+
   const {
     pattern,
     setPattern,
