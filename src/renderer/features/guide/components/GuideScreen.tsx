@@ -57,56 +57,72 @@ export default function GuideScreen() {
               </p>
 
               <div className="flex flex-col gap-3 pt-4">
-                <h3 className="text-primary font-bold">Tours guidés</h3>
+                <h3 className="section-title">Tours guidés</h3>
                 <button
                   type="button"
                   onClick={handleStudioTour}
                   className="btn-secondary w-fit"
                 >
-                  Tour du studio
+                  Studio
                 </button>
                 <button
                   type="button"
                   onClick={handleInstrumentTour}
                   className="btn-secondary w-fit"
                 >
-                  Tour des instruments
+                  Instruments
                 </button>
                 <button
                   type="button"
                   onClick={handlePatternTour}
                   className="btn-secondary w-fit"
                 >
-                  Tour des patterns
+                  Patterns
                 </button>
                 <button
                   type="button"
                   onClick={handleLibraryTour}
                   className="btn-secondary w-fit"
                 >
-                  Tour de la bibliothèque
+                  Bibliothèque
                 </button>
               </div>
 
               <div className="flex flex-col gap-3 pt-4">
-                <h3 className="text-primary font-bold">Raccourcis clavier</h3>
+                <h3 className="section-title">Raccourcis clavier</h3>
                 <ul className="space-y-2 text-sm text-text-secondary">
                   <li>
-                    <code className="text-primary">Ctrl + Entrée</code> Play /
-                    Stop
+                    <code className="text-primary font-bold">
+                      Ctrl + Entrée
+                    </code>{' '}
+                    Play / Stop
                   </li>
                   <li>
-                    <code className="text-primary">Ctrl + ↑ / ↓</code> BPM +/-
+                    <code className="text-primary font-bold">Ctrl + ↑ / ↓</code>{' '}
+                    BPM +/-
                   </li>
                   <li>
-                    <code className="text-primary">( )</code> avec sélection →
-                    grouper
+                    <code className="text-primary font-bold">( symboles )</code>{' '}
+                    diviser un temps en succession de notes
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">
+                      Selection de texte + ( ou )
+                    </code>{' '}
+                    Entourer toute la sélection par <code>()</code>
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">
+                      Autocomplétion
+                    </code>{' '}
+                    La liste des instruments commençant par cette lettre est
+                    suggérée
                   </li>
                 </ul>
               </div>
 
               <div className="flex flex-col gap-3 pt-4">
-                <h3 className="text-primary font-bold">Syntaxe</h3>
+                <h3 className="section-title">Syntaxe</h3>
                 <code className="text-primary font-mono bg-field px-4 py-3 rounded-lg">
                   P Ts K P Ts K P .
                 </code>
