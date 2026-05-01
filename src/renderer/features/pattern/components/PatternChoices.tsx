@@ -27,7 +27,7 @@ export default function PatternChoices(props: PatternChoicesProps) {
   };
 
   return (
-    <span id="patterns-choices">
+    <div id="patterns-choices" className="flex flex-col min-h-0">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -73,6 +73,6 @@ export default function PatternChoices(props: PatternChoicesProps) {
           ))}
         </div>
       </div>
-    </span>
+    </div>
   );
 }
