@@ -5,13 +5,13 @@ export const instrumentSteps = [
     element: '.content-page',
     popover: {
       title: 'Instruments',
-      description: 'Voici la liste de tous tes instruments.',
+      description: 'Voici la liste de tout tes instruments.',
     },
   },
   {
     element: '.instrument-play-btn',
     popover: {
-      title: '▶ Écouter',
+      title: 'Écouter',
       description: 'Clique sur le bouton play pour écouter un instrument.',
     },
   },

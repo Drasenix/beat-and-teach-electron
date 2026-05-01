@@ -109,7 +109,10 @@ export default function GuideScreen() {
                   Ici le pattern mesure 6 temps et le 3ème temps est divisé en 3
                   notes dont 1 silence.
                 </span>
-                <ul className="space-y-2 text-sm text-text-secondary">
+              </div>
+              <div className="flex flex-col gap-3">
+                <h3 className="section-title">Outils</h3>
+                <ul className="space-y-2 text-sm text-text-secondary bg-field px-4 py-3 rounded-lg">
                   <li>
                     <code className="text-primary font-bold">( symboles )</code>{' '}
                     Diviser un temps en succession de notes.
@@ -137,24 +140,8 @@ export default function GuideScreen() {
               </div>
 
               <div className="flex flex-col gap-3">
-                <h3 className="section-title">Contrôles</h3>
-                <ul className="space-y-2 text-sm text-text-secondary">
-                  <li>
-                    <code className="text-primary font-bold">
-                      Ctrl + Entrée
-                    </code>{' '}
-                    Play / Stop.
-                  </li>
-                  <li>
-                    <code className="text-primary font-bold">Ctrl + ↑ / ↓</code>{' '}
-                    BPM +/-.
-                  </li>
-                </ul>
-              </div>
-
-              <div className="flex flex-col gap-3">
                 <h3 className="section-title">Raccourcis clavier</h3>
-                <ul className="space-y-2 text-sm text-text-secondary">
+                <ul className="space-y-2 text-sm text-text-secondary bg-field px-4 py-3 rounded-lg">
                   <li>
                     <code className="text-primary font-bold">⟵ / ⟶</code>{' '}
                     Déplacer le curseur à gauche / droite.
@@ -178,6 +165,22 @@ export default function GuideScreen() {
                       Maj + Clic droit
                     </code>{' '}
                     Sélectionner le texte depuis la position du curseur.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <h3 className="section-title">Contrôles</h3>
+                <ul className="space-y-2 text-sm text-text-secondary bg-field px-4 py-3 rounded-lg">
+                  <li>
+                    <code className="text-primary font-bold">
+                      Ctrl + Entrée
+                    </code>{' '}
+                    Play / Stop.
+                  </li>
+                  <li>
+                    <code className="text-primary font-bold">Ctrl + ↑ / ↓</code>{' '}
+                    BPM +/-.
                   </li>
                 </ul>
               </div>

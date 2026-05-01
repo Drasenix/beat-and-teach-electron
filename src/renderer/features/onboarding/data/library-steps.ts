@@ -9,17 +9,17 @@ export const librarySteps = [
     },
   },
   {
-    element: '.library-section-title',
-    popover: {
-      title: 'Sélection rapide',
-      description: 'Coche pour sélectionner ou désélectionner tout.',
-    },
-  },
-  {
     element: '.library-item',
     popover: {
       title: 'Items',
       description: 'Sélectionne les patterns et instruments à exporter.',
+    },
+  },
+  {
+    element: '.library-section-title',
+    popover: {
+      title: 'Sélection rapide',
+      description: 'Coche pour tout sélectionner ou désélectionner.',
     },
   },
   {
