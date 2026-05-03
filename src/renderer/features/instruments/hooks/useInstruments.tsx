@@ -13,7 +13,10 @@ const useInstruments = () => {
     instrument: InstrumentFormValues,
   ): Promise<void> => {
     const created = await createInstrument(instrument);
-    setInstruments((prev) => [...prev, created]);
+    const sorted = [...instruments, created].sort((a, b) =>
+      a.symbol.localeCompare(b.symbol),
+    );
+    setInstruments(sorted);
   };
 
   const editInstrument = async (

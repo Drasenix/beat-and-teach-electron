@@ -11,7 +11,10 @@ const usePatterns = () => {
 
   const addPattern = async (pattern: PatternFormValues): Promise<void> => {
     const saved = await savePattern(pattern);
-    setPatterns((prev) => [...prev, saved]);
+    const sorted = [...patterns, saved].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+    setPatterns(sorted);
   };
 
   const editPattern = async (
