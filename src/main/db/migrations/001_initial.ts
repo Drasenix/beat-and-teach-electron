@@ -106,7 +106,9 @@ function seedInstruments(db: Database.Database): void {
 
   if (count > 0) return;
 
-  const soundsPath = path.join(app.getAppPath(), 'assets', 'audio');
+  const soundsPath = app.isPackaged
+    ? path.join(process.resourcesPath, 'audio')
+    : path.join(app.getAppPath(), 'assets', 'audio');
 
   const SEED_INSTRUMENTS = [
     { slug: 'silence', symbol: '.', name: null, filepath: null },
