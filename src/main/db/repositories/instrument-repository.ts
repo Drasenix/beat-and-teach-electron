@@ -1,32 +1,62 @@
+import { app } from 'electron';
+import fs from 'fs';
+import path from 'path';
 import { toSnakeCase } from '../../../renderer/utils/util';
 import { InstrumentDTO } from '../../../shared/models/instrument-dto';
 import getDatabase from '../database';
 
+function getSoundsPath(): string {
+  return app.isPackaged
+    ? path.join(process.resourcesPath, 'assets', 'audio')
+    : path.join(app.getAppPath(), 'assets', 'audio');
+}
+
+function resolveFilepath(filepath: string | null): string | null {
+  if (!filepath) return null;
+  if (path.isAbsolute(filepath) && fs.existsSync(filepath)) return filepath;
+  const resolved = path.join(getSoundsPath(), filepath);
+  return fs.existsSync(resolved) ? resolved : filepath;
+}
+
+function withResolvedFilepaths(instruments: InstrumentDTO[]): InstrumentDTO[] {
+  return instruments.map((inst) => ({
+    ...inst,
+    filepath: resolveFilepath(inst.filepath),
+  }));
+}
+
 export function getAllInstruments(): InstrumentDTO[] {
   const db = getDatabase();
-  return db
-    .prepare('SELECT id, slug, symbol, name, filepath FROM instruments')
-    .all() as InstrumentDTO[];
+  return withResolvedFilepaths(
+    db
+      .prepare('SELECT id, slug, symbol, name, filepath FROM instruments')
+      .all() as InstrumentDTO[],
+  );
 }
 
 export function getInstrumentById(id: number): InstrumentDTO | undefined {
   const db = getDatabase();
-  return db
+  const inst = db
     .prepare(
       'SELECT id, slug, symbol, name, filepath FROM instruments WHERE id = ?',
     )
     .get(id) as InstrumentDTO | undefined;
+  return inst
+    ? { ...inst, filepath: resolveFilepath(inst.filepath) }
+    : undefined;
 }
 
 export function getInstrumentsByIds(ids: number[]): InstrumentDTO[] {
   if (ids.length === 0) return [];
   const db = getDatabase();
   const placeholders = ids.map(() => '?').join(',');
-  return db
-    .prepare(
-      `SELECT id, slug, symbol, name, filepath FROM instruments WHERE id IN (${placeholders})`,
-    )
-    .all(...ids) as InstrumentDTO[];
+  return withResolvedFilepaths(
+    db
+      .prepare(
+        `SELECT id, slug, symbol, name, filepath FROM instruments WHERE id IN (${placeholders})`,
+      )
+      .all(...ids) as InstrumentDTO[],
+  );
 }
 
 export function createInstrument(

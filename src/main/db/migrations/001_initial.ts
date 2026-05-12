@@ -1,5 +1,4 @@
 import Database from 'better-sqlite3';
-import { app } from 'electron';
 import path from 'path';
 
 function seedPatterns(db: Database.Database): void {
@@ -106,125 +105,81 @@ function seedInstruments(db: Database.Database): void {
 
   if (count > 0) return;
 
-  const soundsPath = app.isPackaged
-    ? path.join(process.resourcesPath, 'audio')
-    : path.join(app.getAppPath(), 'assets', 'audio');
-
   const SEED_INSTRUMENTS = [
     { slug: 'silence', symbol: '.', name: null, filepath: null },
     {
       slug: 'kickdrum',
       symbol: 'P',
       name: 'kickdrum',
-      filepath: path.join(soundsPath, 'kickdrum.mp3'),
+      filepath: 'kickdrum.mp3',
     },
-    {
-      slug: 'hihat',
-      symbol: 'Ts',
-      name: 'hihat',
-      filepath: path.join(soundsPath, 'hihat.mp3'),
-    },
-    {
-      slug: 'snare',
-      symbol: 'Pf',
-      name: 'snare',
-      filepath: path.join(soundsPath, 'snare.mp3'),
-    },
-    {
-      slug: 'rimshot',
-      symbol: 'K',
-      name: 'rimshot',
-      filepath: path.join(soundsPath, 'rimshot.mp3'),
-    },
+    { slug: 'hihat', symbol: 'Ts', name: 'hihat', filepath: 'hihat.mp3' },
+    { slug: 'snare', symbol: 'Pf', name: 'snare', filepath: 'snare.mp3' },
+    { slug: 'rimshot', symbol: 'K', name: 'rimshot', filepath: 'rimshot.mp3' },
     {
       slug: 'sonic-boom',
       symbol: 'W',
       name: 'sonic boom',
-      filepath: path.join(soundsPath, 'sonic-boom.mp3'),
+      filepath: 'sonic-boom.mp3',
     },
     {
       slug: 'air-A-inward',
       symbol: 'A<',
       name: 'air-A-inward',
-      filepath: path.join(soundsPath, 'air-A-inward.mp3'),
+      filepath: 'air-A-inward.mp3',
     },
-    {
-      slug: 'air-A',
-      symbol: 'A>',
-      name: 'air-A',
-      filepath: path.join(soundsPath, 'air-A.mp3'),
-    },
+    { slug: 'air-A', symbol: 'A>', name: 'air-A', filepath: 'air-A.mp3' },
     {
       slug: 'air-F-inward',
       symbol: 'F<',
       name: 'air-F-inward',
-      filepath: path.join(soundsPath, 'air-F-inward.mp3'),
+      filepath: 'air-F-inward.mp3',
     },
-    {
-      slug: 'air-F',
-      symbol: 'F>',
-      name: 'air-F',
-      filepath: path.join(soundsPath, 'air-F.mp3'),
-    },
+    { slug: 'air-F', symbol: 'F>', name: 'air-F', filepath: 'air-F.mp3' },
     {
       slug: 'air-S-inward',
       symbol: 'S<',
       name: 'air-S-inward',
-      filepath: path.join(soundsPath, 'air-S-inward.mp3'),
+      filepath: 'air-S-inward.mp3',
     },
-    {
-      slug: 'air-S',
-      symbol: 'S>',
-      name: 'air-S',
-      filepath: path.join(soundsPath, 'air-S.mp3'),
-    },
-    {
-      slug: 'clock',
-      symbol: 'Lo',
-      name: 'clock',
-      filepath: path.join(soundsPath, 'clock.mp3'),
-    },
+    { slug: 'air-S', symbol: 'S>', name: 'air-S', filepath: 'air-S.mp3' },
+    { slug: 'clock', symbol: 'Lo', name: 'clock', filepath: 'clock.mp3' },
     {
       slug: 'cough-snare',
       symbol: 'Eh',
       name: 'cough-snare',
-      filepath: path.join(soundsPath, 'cough-snare.mp3'),
+      filepath: 'cough-snare.mp3',
     },
     {
       slug: 'kch-snare',
       symbol: 'Kch',
       name: 'kch-snare',
-      filepath: path.join(soundsPath, 'kch-snare.mp3'),
+      filepath: 'kch-snare.mp3',
     },
     {
       slug: 'liproll-bass',
       symbol: 'Bwr',
       name: 'liproll-bass',
-      filepath: path.join(soundsPath, 'liproll-bass.mp3'),
+      filepath: 'liproll-bass.mp3',
     },
-    {
-      slug: 'liproll',
-      symbol: 'Bw',
-      name: 'liproll',
-      filepath: path.join(soundsPath, 'liproll.mp3'),
-    },
+    { slug: 'liproll', symbol: 'Bw', name: 'liproll', filepath: 'liproll.mp3' },
     {
       slug: 'throat-bass',
       symbol: 'Rr',
       name: 'throat-bass',
-      filepath: path.join(soundsPath, 'throat-bass.mp3'),
+      filepath: 'throat-bass.mp3',
     },
     {
       slug: 'tom-bass',
       symbol: 'Tum',
       name: 'tom-bass',
-      filepath: path.join(soundsPath, 'tom-bass.mp3'),
+      filepath: 'tom-bass.mp3',
     },
     {
       slug: 'tongue-kick',
       symbol: 'p',
       name: 'tongue-kick',
-      filepath: path.join(soundsPath, 'tongue-kick.mp3'),
+      filepath: 'tongue-kick.mp3',
     },
   ];
 
@@ -264,6 +219,63 @@ export default function runMigrations(db: Database.Database): void {
       sentences TEXT
     );
   `);
+
+  // Rename legacy column 'sentence' (singular) → 'sentences' (plural)
+  try {
+    db.exec('ALTER TABLE patterns RENAME COLUMN sentence TO sentences;');
+  } catch {
+    // déjà renommée ou n'existait pas
+  }
+
+  // Convert legacy raw string sentences to JSON arrays
+  const rowsToMigrate = db
+    .prepare('SELECT id, sentences FROM patterns')
+    .all() as { id: number; sentences: string }[];
+  const migrateSentence = db.prepare(
+    'UPDATE patterns SET sentences = @sentences WHERE id = @id',
+  );
+  rowsToMigrate.forEach(({ id, sentences }) => {
+    try {
+      JSON.parse(sentences);
+    } catch {
+      migrateSentence.run({ id, sentences: JSON.stringify([sentences]) });
+    }
+  });
+
+  // Convert legacy absolute instrument filepaths to relative filenames
+  const seedSlugs = new Set([
+    'silence',
+    'kickdrum',
+    'hihat',
+    'snare',
+    'rimshot',
+    'sonic-boom',
+    'air-A-inward',
+    'air-A',
+    'air-F-inward',
+    'air-F',
+    'air-S-inward',
+    'air-S',
+    'clock',
+    'cough-snare',
+    'kch-snare',
+    'liproll-bass',
+    'liproll',
+    'throat-bass',
+    'tom-bass',
+    'tongue-kick',
+  ]);
+  const instrumentsToFix = db
+    .prepare('SELECT id, slug, filepath FROM instruments')
+    .all() as { id: number; slug: string; filepath: string | null }[];
+  const fixFilepath = db.prepare(
+    'UPDATE instruments SET filepath = @filepath WHERE id = @id',
+  );
+  instrumentsToFix.forEach(({ id, slug, filepath }) => {
+    if (filepath && seedSlugs.has(slug) && path.isAbsolute(filepath)) {
+      fixFilepath.run({ id, filepath: path.basename(filepath) });
+    }
+  });
 
   seedPatterns(db);
   seedInstruments(db);
