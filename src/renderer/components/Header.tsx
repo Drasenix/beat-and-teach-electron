@@ -9,6 +9,7 @@ export default function Header() {
     { to: '/guide', label: '🗝', title: 'Guide' },
     { to: '/workspace', label: '🎘', title: 'Studio' },
     { to: '/configuration/instruments', label: '🎙', title: 'Instruments' },
+    { to: '/recorder', label: '⏺', title: 'Enregistreur' },
     { to: '/configuration/patterns', label: '🕮', title: 'Patterns' },
     { to: '/library', label: '🗁', title: 'Bibliothèque' },
   ];

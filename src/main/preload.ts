@@ -18,7 +18,8 @@ export type Channels =
   | 'import-library'
   | 'save-library-file'
   | 'open-library-file'
-  | 'get-imported-audio-path';
+  | 'get-imported-audio-path'
+  | 'save-recorded-audio';
 
 const electronHandler = {
   ipcRenderer: {

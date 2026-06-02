@@ -1,4 +1,5 @@
 import { app, dialog, ipcMain } from 'electron';
+import fs from 'fs';
 import path from 'path';
 import { getAudioBuffersFromFiles } from './audio/services/audio-service';
 import { PatternDTO } from '../shared/models/pattern-dto';
@@ -39,6 +40,23 @@ export default function createIcpEvents() {
       return getAudioBuffersFromFiles(filepaths);
     },
   );
+  ipcMain.handle(
+    'save-recorded-audio',
+    async (event, data: Uint8Array): Promise<string> => {
+      const recordingsDir = path.join(
+        app.getPath('userData'),
+        'recorded-audio',
+      );
+      if (!fs.existsSync(recordingsDir)) {
+        fs.mkdirSync(recordingsDir, { recursive: true });
+      }
+      const filename = `recorded-${Date.now()}.wav`;
+      const filePath = path.join(recordingsDir, filename);
+      fs.writeFileSync(filePath, Buffer.from(data));
+      return filePath;
+    },
+  );
+
   ipcMain.handle('open-file-dialog', async (): Promise<string | null> => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],

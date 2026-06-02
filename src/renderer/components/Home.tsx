@@ -32,6 +32,12 @@ export default function Home() {
           </Link>
         </div>
         <div className="div-animated-wrapper">
+          <Link to="/recorder" className="link-animated-inner group">
+            <p className="home-button-icon">⏺</p>
+            <p className="text-primary">enregistreur</p>
+          </Link>
+        </div>
+        <div className="div-animated-wrapper">
           <Link
             to="/configuration/patterns"
             className="link-animated-inner group"

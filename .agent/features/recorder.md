@@ -47,7 +47,8 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 
 ## Avancement
 - [x] Specs validées
-
+- [ ] Tests wav-encoder
+GO
 
 ## Notes / décisions
 - Encodage WAV plutôt que MP3 (pas de dépendance lamejs)
