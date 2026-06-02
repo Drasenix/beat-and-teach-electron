@@ -36,6 +36,7 @@
 - **Singleton pour la logique métier** : `AudioEngine`, `InstrumentEngine`
 - **Validation des données** : toujours valider côté main ET côté renderer
 - **État global réservé aux données partagées** (listes patterns/instruments, session audio). Tout le reste en état local (`useState` dans le composant)
+- **⚠️ Feature-sliced, pas hexagonal** : les `engine/` contiennent la logique métier pure, les `facade/` servent d'API publique, mais UI et métier cohabitent dans le même slice. Pas d'interface entre facade et service — l'appel IPC est direct. Pas de ports, pas d'inversion de dépendance formelle.
 
 ## 5. Conventions par domaine
 

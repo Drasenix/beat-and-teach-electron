@@ -13,21 +13,22 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 ### Stack technique
 - Capture : `getUserMedia` → `AudioContext` → `MediaStreamSource` → `ScriptProcessorNode`
 - Format : WAV (PCM 16-bit mono), encodé côté rendu sans dépendance
-- Sauvegarde : IPC `save-recorded-audio` → main écrit dans `userData/recorded-audio/<slug>.wav`
-- Création instrument : réutilisation du channel IPC `create-instrument` existant
+- Sauvegarde : IPC `save-recorded-audio` → main écrit dans `userData/recorded-audio/<timestamp>.wav`
+- Création instrument : **non gérée par le recorder** — l'utilisateur passe par l'écran Instruments
+  (`/configuration/instruments`) via le formulaire existant + `open-file-dialog` (filtre déjà `.wav`)
 
 ### Flux utilisateur
 1. Page `/recorder` → état `idle` → bouton "⏺ Enregistrer"
 2. Clic → demande permission micro → état `recording` (cercle rouge + timer)
 3. Clic "⏹ Arrêter" → arrêt micro, encodage WAV → état `recorded`
-4. Pré-écoute avec "▶ Écouter"
-5. Saisie symbole + nom → clic "💾 Enregistrer l'instrument"
-6. Sauvegarde fichier + création instrument → redirection vers `/configuration/instruments`
+4. Pré-écoute avec le player natif `<audio controls />`
+5. Clic "🗑 Effacer" ou "⏺ Nouvel enregistrement" pour recommencer
+6. L'utilisateur va dans Instruments → "Ajouter un instrument" → sélectionne le fichier `.wav`
+   dans `userData/recorded-audio/` via le dialogue natif
 
 ### UI
 - Layout : `content-page` + `workspace-section-content` (conforme au style existant)
 - Boutons : `btn-primary`, `btn-secondary`
-- Champs : `input-field`
 - Animation : pulse rouge custom `@keyframes record-pulse`
 
 ### Fichiers à créer
