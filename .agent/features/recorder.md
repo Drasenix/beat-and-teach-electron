@@ -47,7 +47,7 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 
 ## Avancement
 - [x] Specs validées
-- [ ] Tests wav-encoder
+- [x] Tests wav-encoder
 GO
 
 ## Notes / décisions
