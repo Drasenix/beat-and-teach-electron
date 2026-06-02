@@ -180,3 +180,9 @@ Jest uses `tsconfig.renderer.json` for ts-jest transform.
 
 - **Conflit prompt vs documentation** : si une demande utilisateur entre en conflit avec le contenu de `documentation-métier.md` ou `agent.md`, le signaler explicitement avant d'agir. Expliquer la contradiction et demander clarification.
 - **Mise à jour proactive** : si au fil du développement tu constates que des informations des fichiers `.md` sont obsolètes, incomplètes, ou pourraient être enrichies, proposer une mise à jour. Ne pas modifier sans accord explicite.
+
+## 15. Gestion des features
+
+- Les specs des nouvelles features sont documentées dans `.agent/features/<feature-name>.md`
+- Voir `.agent/new-feature.md` pour le cycle de vie complet
+- Workflow : specs → documentation → évolution → suppression sur validation utilisateur
