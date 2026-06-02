@@ -20,7 +20,7 @@
 
 ## 3. Développement
 
-- **TDD pour le code métier** : parser, validator, mute, adapters, engine, service — écrire le test avant l'implémentation
+- **TDD pour le code métier** : parser, validator, mute, adapters, engine, service, **utils** (fonctions pures) — écrire le test avant l'implémentation
 - **Pas de TDD pour le frontend** : composants React, hooks UI, contexts — tests après ou pas de tests
 - **Refactoring systématique** : extraire les fonctions pures, réduire la duplication, simplifier la logique
 - **Respecter le style de code existant** : conventions de nommage, patterns, structure de fichiers
@@ -92,6 +92,7 @@
 - **Mocks** : `electron`, `better-sqlite3` pour les tests main process
 - **Structure** : Given / When / Then dans les blocs `describe('#methodName')`
 - **TDD** : écrire le test avant l'implémentation pour toute la logique métier (parser, validateur, adapters, engine, services)
+- **Vérification systématique** : après toute création/modification de tests ou de code métier, lancer `npm run test` pour confirmer que rien n'est cassé
 
 ## 8. Commandes de développement
 
