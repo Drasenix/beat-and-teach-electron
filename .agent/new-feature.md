@@ -32,7 +32,8 @@ Chaque nouvelle feature est documentée dans un fichier dédié sous `.agent/fea
 ## Règles d'intervention (GO)
 - **Sans `GO`** → je ne modifie que des fichiers `.md` (documentation).
   Si du code doit changer, je le propose et attends `GO`.
-- **Avec `GO`** → j'ajoute `GO` au fichier feature → j'implémente normalement.
+- **Avec `GO`** → j'ajoute `GO` au fichier feature → je coche `[x] Specs validées` → j'implémente normalement.
+- **`stop dev`** → je retire `GO` ET je décoche `[ ] Specs validées` dans le fichier feature.
 - **Dérogation** → si tu veux outrepaser l'absence de `GO`, tu le demandes
   explicitement dans ton prompt → je réponds par une question **OUI/NON**
   → si tu confirmes, j'exécute pour cette fois. Je ne propose pas d'ajouter

@@ -45,7 +45,8 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - `src/renderer/components/Home.tsx` : lien home
 
 ## Avancement
-- [ ] Specs validées
+- [x] Specs validées
+
 
 ## Notes / décisions
 - Encodage WAV plutôt que MP3 (pas de dépendance lamejs)
