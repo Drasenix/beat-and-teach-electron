@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import useRecorder from '../hooks/useRecorder';
 import saveRecordedAudio from '../services/recorder-service';
+import WaveformEditor from './WaveformEditor';
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -14,14 +15,18 @@ export default function RecorderScreen() {
     audioUrl,
     duration,
     wavBuffer,
+    rawSamples,
     startRecording,
     stopRecording,
+    applyTrim,
     cleanup,
   } = useRecorder();
 
   const [saving, setSaving] = useState(false);
   const [savedPath, setSavedPath] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showEditor, setShowEditor] = useState(true);
+  const audioKeyRef = useRef(0);
 
   const handleSave = useCallback(async () => {
     if (wavBuffer === null) return;
@@ -44,8 +49,17 @@ export default function RecorderScreen() {
   const handleNew = useCallback(() => {
     setSavedPath(null);
     setError(null);
+    setShowEditor(true);
     cleanup();
   }, [cleanup]);
+
+  const handleTrim = useCallback(
+    (trimmed: Float32Array) => {
+      applyTrim(trimmed);
+      audioKeyRef.current += 1;
+    },
+    [applyTrim],
+  );
 
   return (
     <div className="content-page">
@@ -95,11 +109,24 @@ export default function RecorderScreen() {
                   Durée : {formatTime(duration)}
                 </span>
                 {audioUrl !== null && (
-                  <audio src={audioUrl} controls className="h-8">
+                  <audio
+                    key={audioKeyRef.current}
+                    src={audioUrl}
+                    controls
+                    className="h-8"
+                  >
                     <track kind="captions" src="" />
                   </audio>
                 )}
               </div>
+
+              {rawSamples.length > 0 && showEditor && (
+                <WaveformEditor
+                  samples={rawSamples}
+                  duration={duration}
+                  onTrim={handleTrim}
+                />
+              )}
 
               <div className="flex gap-3 mt-2">
                 <button

@@ -63,12 +63,12 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 ## Avancement
 - [ ] Specs validées
 - [x] Tests wav-encoder
-- [ ] Tests waveform-renderer
-- [ ] Tests useWaveformEditor
-- [ ] Écran RecorderScreen + states
-- [ ] WaveformEditor component
-- [ ] IPC save-recorded-audio
-- [ ] Navigation et route
+- [x] waveform-renderer.ts (downsample + renderWaveform + trimSamples)
+- [x] useWaveformEditor hook (canvas ref + drag trim)
+- [x] RecorderScreen + states (idle/recording/recorded/saving/saved)
+- [x] WaveformEditor component (canvas + curseurs + Rogner)
+- [x] IPC save-recorded-audio (déjà existant)
+- [x] Navigation et route (déjà existant)
 
 ## Notes / décisions
 - Encodage WAV plutôt que MP3 (pas de dépendance lamejs)

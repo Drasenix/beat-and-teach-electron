@@ -16,12 +16,26 @@ function concatenateSamples(chunks: Float32Array[]): Float32Array {
   return result;
 }
 
+function buildAudio(
+  samples: Float32Array,
+  sampleRate: number,
+): { buffer: ArrayBuffer; url: string } {
+  const buffer = encodeWav(samples, sampleRate);
+  const blob = new Blob([buffer], { type: 'audio/wav' });
+  const url = URL.createObjectURL(blob);
+  return { buffer, url };
+}
+
 export default function useRecorder() {
   const [state, setState] = useState<RecordingState>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
   const [wavBuffer, setWavBuffer] = useState<ArrayBuffer | null>(null);
+  const [rawSamples, setRawSamples] = useState<Float32Array>(
+    new Float32Array(0),
+  );
 
+  const sampleRateRef = useRef(44100);
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
@@ -84,16 +98,16 @@ export default function useRecorder() {
     }
 
     const sampleRate = audioContextRef.current?.sampleRate ?? 44100;
+    sampleRateRef.current = sampleRate;
 
     if (audioContextRef.current !== null) {
       audioContextRef.current.close();
     }
 
     const allSamples = concatenateSamples(samplesRef.current);
-    const buffer = encodeWav(allSamples, sampleRate);
-    const blob = new Blob([buffer], { type: 'audio/wav' });
-    const url = URL.createObjectURL(blob);
+    const { buffer, url } = buildAudio(allSamples, sampleRate);
 
+    setRawSamples(allSamples);
     setWavBuffer(buffer);
     setAudioUrl(url);
     setState('recorded');
@@ -104,12 +118,27 @@ export default function useRecorder() {
     audioContextRef.current = null;
   }, []);
 
+  const applyTrim = useCallback(
+    (trimmedSamples: Float32Array) => {
+      if (audioUrl !== null) {
+        URL.revokeObjectURL(audioUrl);
+      }
+
+      const { buffer, url } = buildAudio(trimmedSamples, sampleRateRef.current);
+      setRawSamples(trimmedSamples);
+      setWavBuffer(buffer);
+      setAudioUrl(url);
+    },
+    [audioUrl],
+  );
+
   const cleanup = useCallback(() => {
     if (audioUrl !== null) {
       URL.revokeObjectURL(audioUrl);
     }
     setAudioUrl(null);
     setWavBuffer(null);
+    setRawSamples(new Float32Array(0));
     setState('idle');
     setDuration(0);
   }, [audioUrl]);
@@ -119,8 +148,10 @@ export default function useRecorder() {
     audioUrl,
     duration,
     wavBuffer,
+    rawSamples,
     startRecording,
     stopRecording,
+    applyTrim,
     cleanup,
   };
 }
