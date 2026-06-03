@@ -13,7 +13,7 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 ### Stack technique
 - Capture : `getUserMedia` → `AudioContext` → `MediaStreamSource` → `ScriptProcessorNode`
 - Format : WAV (PCM 16-bit mono), encodé côté rendu sans dépendance
-- Sauvegarde : IPC `save-recorded-audio` → main écrit dans `userData/recorded-audio/<timestamp>.wav`
+- Sauvegarde : dialogue natif `open-audio-save-dialog` → l'utilisateur choisit emplacement + nom → IPC `save-recorded-audio` → main écrit au chemin choisi
 - Création instrument : **non gérée par le recorder** — l'utilisateur passe par l'écran Instruments
   (`/configuration/instruments`) via le formulaire existant + `open-file-dialog` (filtre déjà `.wav`)
 
@@ -24,10 +24,10 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 4. **Waveform editor** apparaît : rendu canvas du signal audio avec deux curseurs de trim
 5. L'utilisateur déplace les curseurs début/fin pour sélectionner la zone à conserver
 6. Clic "Rogner" → génère un nouveau `Float32Array` avec la portion sélectionnée → pré-écoute
-7. Clic "Sauvegarder" → encodage WAV du signal rogné → IPC `save-recorded-audio` → état `saved`
+7. Clic "Sauvegarder" → dialogue natif `open-audio-save-dialog` (choix emplacement + nom) → IPC `save-recorded-audio` → état `saved`
 8. Clic "🗑 Effacer" ou "⏺ Nouvel enregistrement" pour recommencer
 9. L'utilisateur va dans Instruments → "Ajouter un instrument" → sélectionne le fichier `.wav`
-   dans `userData/recorded-audio/` via le dialogue natif
+   sauvegardé via le dialogue natif
 
 ### Waveform editor
 - **Rendu** : `<canvas>` remplissant la largeur du conteneur, hauteur fixe (ex: 160px)
@@ -54,14 +54,15 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - `src/renderer/features/recorder/components/WaveformEditor.tsx` — composant canvas + curseurs
 
 ### Fichiers à modifier
-- `src/main/preload.ts` : ajout channel `save-recorded-audio`
-- `src/main/icpEvents.ts` : handler `save-recorded-audio`
+- `src/main/preload.ts` : ajout channels `save-recorded-audio` + `open-audio-save-dialog`
+- `src/main/icpEvents.ts` : handler `save-recorded-audio` + `open-audio-save-dialog`
+- `src/renderer/features/recorder/services/recorder-service.ts` : appelle `open-audio-save-dialog` avant `save-recorded-audio`
 - `src/renderer/App.tsx` : route `/recorder`
 - `src/renderer/components/Header.tsx` : nav item position 3
 - `src/renderer/components/Home.tsx` : lien home
 
 ## Avancement
-- [ ] Specs validées
+- [x] Specs validées
 - [x] Tests wav-encoder
 - [x] waveform-renderer.ts (downsample + renderWaveform + trimSamples)
 - [x] useWaveformEditor hook (canvas ref + drag trim)
@@ -75,3 +76,5 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - ScriptProcessorNode (déprécié mais fonctionnel) plutôt qu'AudioWorklet (trop complexe pour ce besoin)
 - Trim manuel uniquement (pas d'auto-détection des silences) — l'utilisateur règle visuellement
 - Pas de découpe multiple, pas de zoom — basique et efficace
+- Sauvegarde via dialogue natif (emplacement + nom libre) plutôt que chemin automatique
+GO
