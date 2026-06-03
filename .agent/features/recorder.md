@@ -62,7 +62,7 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - `src/renderer/components/Home.tsx` : lien home
 
 ## Avancement
-- [x] Specs validées
+- [ ] Specs validées
 - [x] Tests wav-encoder
 - [x] waveform-renderer.ts (downsample + renderWaveform + trimSamples)
 - [x] useWaveformEditor hook (canvas ref + drag trim)
@@ -77,4 +77,3 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - Trim manuel uniquement (pas d'auto-détection des silences) — l'utilisateur règle visuellement
 - Pas de découpe multiple, pas de zoom — basique et efficace
 - Sauvegarde via dialogue natif (emplacement + nom libre) plutôt que chemin automatique
-GO

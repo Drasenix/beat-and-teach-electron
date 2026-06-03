@@ -31,12 +31,14 @@ export default function RecorderScreen() {
   const handleSave = useCallback(async () => {
     if (wavBuffer === null) return;
 
-    setSaving(true);
     setError(null);
+    setSaving(true);
 
     try {
       const filepath = await saveRecordedAudio(wavBuffer);
-      setSavedPath(filepath);
+      if (filepath !== null) {
+        setSavedPath(filepath);
+      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Erreur lors de la sauvegarde.';

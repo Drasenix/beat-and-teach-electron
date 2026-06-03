@@ -40,20 +40,27 @@ export default function createIcpEvents() {
       return getAudioBuffersFromFiles(filepaths);
     },
   );
+  ipcMain.handle('open-audio-save-dialog', async (): Promise<string | null> => {
+    const result = await dialog.showSaveDialog({
+      title: "Sauvegarder l'enregistrement",
+      defaultPath: 'enregistrement.wav',
+      filters: [{ name: 'Audio', extensions: ['wav'] }],
+    });
+    return result.canceled ? null : result.filePath;
+  });
+
   ipcMain.handle(
     'save-recorded-audio',
-    async (event, data: Uint8Array): Promise<string> => {
-      const recordingsDir = path.join(
-        app.getPath('userData'),
-        'recorded-audio',
-      );
-      if (!fs.existsSync(recordingsDir)) {
-        fs.mkdirSync(recordingsDir, { recursive: true });
+    async (
+      event,
+      request: { data: Uint8Array; filePath: string },
+    ): Promise<string> => {
+      const dir = path.dirname(request.filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
       }
-      const filename = `recorded-${Date.now()}.wav`;
-      const filePath = path.join(recordingsDir, filename);
-      fs.writeFileSync(filePath, Buffer.from(data));
-      return filePath;
+      fs.writeFileSync(request.filePath, Buffer.from(request.data));
+      return request.filePath;
     },
   );
 
