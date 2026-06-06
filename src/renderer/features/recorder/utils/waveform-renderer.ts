@@ -3,6 +3,7 @@ export interface WaveformRenderOptions {
   samples: Float32Array;
   trimStart: number;
   trimEnd: number;
+  playbackPosition?: number | null;
   primaryColor?: string;
   surfaceColor?: string;
 }
@@ -43,6 +44,7 @@ export function renderWaveform(options: WaveformRenderOptions): void {
     samples,
     trimStart,
     trimEnd,
+    playbackPosition = null,
     primaryColor = '#679ff9',
     surfaceColor = '#111827',
   } = options;
@@ -102,6 +104,22 @@ export function renderWaveform(options: WaveformRenderOptions): void {
   ctx.moveTo(trimEndPixel, 0);
   ctx.lineTo(trimEndPixel, height);
   ctx.stroke();
+
+  if (playbackPosition !== null) {
+    const playheadPixel = Math.round(playbackPosition * width);
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = primaryColor;
+    ctx.shadowBlur = 6;
+
+    ctx.beginPath();
+    ctx.moveTo(playheadPixel, 0);
+    ctx.lineTo(playheadPixel, height);
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+  }
 }
 
 export function trimSamples(

@@ -7,7 +7,10 @@ import {
 } from 'react';
 import { renderWaveform, trimSamples } from '../utils/waveform-renderer';
 
-export default function useWaveformEditor(samples: Float32Array) {
+export default function useWaveformEditor(
+  samples: Float32Array,
+  playbackPosition?: number | null,
+) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [trimStart, setTrimStart] = useState(0);
   const [trimEnd, setTrimEnd] = useState(1);
@@ -22,8 +25,9 @@ export default function useWaveformEditor(samples: Float32Array) {
       samples,
       trimStart,
       trimEnd,
+      playbackPosition: playbackPosition ?? null,
     });
-  }, [samples, trimStart, trimEnd]);
+  }, [samples, trimStart, trimEnd, playbackPosition]);
 
   const getCursorFromEvent = useCallback(
     (clientX: number): 'start' | 'end' => {

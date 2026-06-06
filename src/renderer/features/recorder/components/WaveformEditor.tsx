@@ -4,6 +4,7 @@ import useWaveformEditor from '../hooks/useWaveformEditor';
 interface WaveformEditorProps {
   samples: Float32Array;
   duration: number;
+  playbackPosition?: number | null;
   onTrim: (trimmed: Float32Array) => void;
 }
 
@@ -16,10 +17,11 @@ function formatTime(seconds: number): string {
 export default function WaveformEditor({
   samples,
   duration,
+  playbackPosition,
   onTrim,
 }: WaveformEditorProps) {
   const { canvasRef, trimStart, trimEnd, handleMouseDown, applyTrim } =
-    useWaveformEditor(samples);
+    useWaveformEditor(samples, playbackPosition);
 
   const handleTrim = useCallback(() => {
     const trimmed = applyTrim();

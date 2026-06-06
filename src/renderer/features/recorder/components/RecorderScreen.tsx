@@ -26,7 +26,22 @@ export default function RecorderScreen() {
   const [savedPath, setSavedPath] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showEditor, setShowEditor] = useState(true);
+  const [playbackPosition, setPlaybackPosition] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioKeyRef = useRef(0);
+
+  const handleTimeUpdate = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio === null) return;
+
+    if (audio.duration > 0) {
+      setPlaybackPosition(audio.currentTime / audio.duration);
+    }
+  }, []);
+
+  const handleAudioEnded = useCallback(() => {
+    setPlaybackPosition(null);
+  }, []);
 
   const handleSave = useCallback(async () => {
     if (wavBuffer === null) return;
@@ -59,6 +74,7 @@ export default function RecorderScreen() {
     (trimmed: Float32Array) => {
       applyTrim(trimmed);
       audioKeyRef.current += 1;
+      setPlaybackPosition(null);
     },
     [applyTrim],
   );
@@ -113,9 +129,12 @@ export default function RecorderScreen() {
                 {audioUrl !== null && (
                   <audio
                     key={audioKeyRef.current}
+                    ref={audioRef}
                     src={audioUrl}
                     controls
                     className="h-8"
+                    onTimeUpdate={handleTimeUpdate}
+                    onEnded={handleAudioEnded}
                   >
                     <track kind="captions" src="" />
                   </audio>
@@ -126,6 +145,7 @@ export default function RecorderScreen() {
                 <WaveformEditor
                   samples={rawSamples}
                   duration={duration}
+                  playbackPosition={playbackPosition}
                   onTrim={handleTrim}
                 />
               )}
