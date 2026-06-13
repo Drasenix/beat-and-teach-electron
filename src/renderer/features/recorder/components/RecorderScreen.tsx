@@ -1,12 +1,10 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, type ChangeEvent } from 'react';
 import useRecorder from '../hooks/useRecorder';
 import saveRecordedAudio from '../services/recorder-service';
 import WaveformEditor from './WaveformEditor';
 
 function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  return `${seconds.toFixed(2)}s`;
 }
 
 export default function RecorderScreen() {
@@ -26,7 +24,8 @@ export default function RecorderScreen() {
   const [savedPath, setSavedPath] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showEditor, setShowEditor] = useState(true);
-  const [playbackPosition, setPlaybackPosition] = useState<number | null>(null);
+  const [playbackPosition, setPlaybackPosition] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioKeyRef = useRef(0);
   const rafRef = useRef<number | null>(null);
@@ -44,7 +43,6 @@ export default function RecorderScreen() {
     const loop = (): void => {
       const audio = audioRef.current;
       if (audio === null || audio.paused || audio.ended) {
-        setPlaybackPosition(null);
         rafRef.current = null;
         return;
       }
@@ -59,18 +57,34 @@ export default function RecorderScreen() {
     rafRef.current = requestAnimationFrame(loop);
   }, [stopRaf]);
 
-  const handlePlay = useCallback(() => {
-    startRafLoop();
-  }, [startRafLoop]);
+  const togglePlay = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio === null) return;
 
-  const handlePause = useCallback(() => {
-    stopRaf();
-    setPlaybackPosition(null);
-  }, [stopRaf]);
+    if (audio.paused) {
+      audio.play();
+      setIsPlaying(true);
+      startRafLoop();
+    } else {
+      audio.pause();
+      setIsPlaying(false);
+      stopRaf();
+    }
+  }, [startRafLoop, stopRaf]);
+
+  const handleSeek = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const audio = audioRef.current;
+    if (audio === null) return;
+
+    const ratio = Number(e.target.value);
+    audio.currentTime = ratio * audio.duration;
+    setPlaybackPosition(ratio);
+  }, []);
 
   const handleEnded = useCallback(() => {
     stopRaf();
-    setPlaybackPosition(null);
+    setIsPlaying(false);
+    setPlaybackPosition(0);
   }, [stopRaf]);
 
   const handleSave = useCallback(async () => {
@@ -95,7 +109,8 @@ export default function RecorderScreen() {
 
   const handleNew = useCallback(() => {
     stopRaf();
-    setPlaybackPosition(null);
+    setIsPlaying(false);
+    setPlaybackPosition(0);
     setSavedPath(null);
     setError(null);
     setShowEditor(true);
@@ -106,7 +121,8 @@ export default function RecorderScreen() {
     (trimmed: Float32Array) => {
       applyTrim(trimmed);
       audioKeyRef.current += 1;
-      setPlaybackPosition(null);
+      setIsPlaying(false);
+      setPlaybackPosition(0);
     },
     [applyTrim],
   );
@@ -154,25 +170,17 @@ export default function RecorderScreen() {
         {state === 'recorded' && savedPath === null && (
           <div className="form-card">
             <div className="form-content">
-              <div className="flex items-center gap-4">
-                <span className="text-text-secondary text-xs font-mono">
-                  Durée : {formatTime(duration)}
-                </span>
-                {audioUrl !== null && (
-                  <audio
-                    key={audioKeyRef.current}
-                    ref={audioRef}
-                    src={audioUrl}
-                    controls
-                    className="h-8"
-                    onPlay={handlePlay}
-                    onPause={handlePause}
-                    onEnded={handleEnded}
-                  >
-                    <track kind="captions" src="" />
-                  </audio>
-                )}
-              </div>
+              {audioUrl !== null && (
+                <audio
+                  key={audioKeyRef.current}
+                  ref={audioRef}
+                  src={audioUrl}
+                  className="hidden"
+                  onEnded={handleEnded}
+                >
+                  <track kind="captions" src="" />
+                </audio>
+              )}
 
               {rawSamples.length > 0 && showEditor && (
                 <WaveformEditor
@@ -181,6 +189,31 @@ export default function RecorderScreen() {
                   playbackPosition={playbackPosition}
                   onTrim={handleTrim}
                 />
+              )}
+
+              {audioUrl !== null && (
+                <div className="flex items-center gap-3 bg-field rounded-lg px-3 py-2 border border-border">
+                  <button
+                    type="button"
+                    className="text-primary text-lg w-8 h-8 flex items-center justify-center hover:opacity-80 transition-opacity"
+                    onClick={togglePlay}
+                  >
+                    {isPlaying ? '⏸' : '▶'}
+                  </button>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.001}
+                    value={playbackPosition}
+                    className="transport-slider flex-1"
+                    onInput={handleSeek}
+                  />
+                  <span className="text-xs font-mono text-text-secondary min-w-[90px] text-right tabular-nums">
+                    {formatTime(playbackPosition * duration)} /{' '}
+                    {formatTime(duration)}
+                  </span>
+                </div>
               )}
 
               <div className="flex gap-3 mt-2">

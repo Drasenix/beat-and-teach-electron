@@ -35,7 +35,7 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - **Curseurs** : deux poignées verticales draggable (début = position 0, fin = position 100%)
 - **Zone sélectionnée** : fond semi-transparent primary entre les deux curseurs
 - **Bouton "Rogner"** : slice le `Float32Array` entre les indices début/fin, recrée un waveform affiché
-- **Pré-écoute** : `<audio controls />` sur le signal rogné (URL.createObjectURL(Blob))
+- **Pré-écoute** : `<audio>` caché comme moteur, contrôles customs stylés (play/pause + barre progression + temps)
 - **Playhead** : ligne verticale mobile sur le canvas qui suit `currentTime / duration` du `<audio>` en temps réel, visuelle uniquement (pas de seek au clic)
 - **Lissage** : boucle `requestAnimationFrame` (60 FPS) plutôt que `timeupdate` natif (4-20 Hz) pour un mouvement fluide
 - Pas d'auto-détection des silences, pas de découpe milieu, pas de zoom
@@ -81,4 +81,5 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - Sauvegarde via dialogue natif (emplacement + nom libre) plutôt que chemin automatique
 - Playhead visuelle uniquement (pas de seek) — line couleur primary plus lumineuse
 - RAF loop pour playhead fluide (60 FPS) plutôt que `timeupdate` natif (4-20 Hz)
+- Contrôles audio customs (play/pause, barre progression, temps) stylés avec les tokens du thème (primary, field, border, text-secondary) au lieu des contrôles natifs
 GO
