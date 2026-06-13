@@ -36,7 +36,8 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - **Zone sélectionnée** : fond semi-transparent primary entre les deux curseurs
 - **Bouton "Rogner"** : slice le `Float32Array` entre les indices début/fin, recrée un waveform affiché
 - **Pré-écoute** : `<audio controls />` sur le signal rogné (URL.createObjectURL(Blob))
-- **Playhead** : ligne verticale mobile sur le canvas qui suit `currentTime / duration` du `<audio>` en temps réel (via `timeupdate`), visuelle uniquement (pas de seek au clic)
+- **Playhead** : ligne verticale mobile sur le canvas qui suit `currentTime / duration` du `<audio>` en temps réel, visuelle uniquement (pas de seek au clic)
+- **Lissage** : boucle `requestAnimationFrame` (60 FPS) plutôt que `timeupdate` natif (4-20 Hz) pour un mouvement fluide
 - Pas d'auto-détection des silences, pas de découpe milieu, pas de zoom
 
 ### UI
@@ -78,5 +79,6 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - Trim manuel uniquement (pas d'auto-détection des silences) — l'utilisateur règle visuellement
 - Pas de découpe multiple, pas de zoom — basique et efficace
 - Sauvegarde via dialogue natif (emplacement + nom libre) plutôt que chemin automatique
-- Playhead visuelle uniquement (pas de seek) — line couleur primary plus lumineuse, mise à jour via `timeupdate` de l'élément `<audio>`
+- Playhead visuelle uniquement (pas de seek) — line couleur primary plus lumineuse
+- RAF loop pour playhead fluide (60 FPS) plutôt que `timeupdate` natif (4-20 Hz)
 GO

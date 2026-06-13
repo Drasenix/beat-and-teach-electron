@@ -29,19 +29,49 @@ export default function RecorderScreen() {
   const [playbackPosition, setPlaybackPosition] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioKeyRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
 
-  const handleTimeUpdate = useCallback(() => {
-    const audio = audioRef.current;
-    if (audio === null) return;
-
-    if (audio.duration > 0) {
-      setPlaybackPosition(audio.currentTime / audio.duration);
+  const stopRaf = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
     }
   }, []);
 
-  const handleAudioEnded = useCallback(() => {
+  const startRafLoop = useCallback(() => {
+    stopRaf();
+
+    const loop = (): void => {
+      const audio = audioRef.current;
+      if (audio === null || audio.paused || audio.ended) {
+        setPlaybackPosition(null);
+        rafRef.current = null;
+        return;
+      }
+
+      if (audio.duration > 0) {
+        setPlaybackPosition(audio.currentTime / audio.duration);
+      }
+
+      rafRef.current = requestAnimationFrame(loop);
+    };
+
+    rafRef.current = requestAnimationFrame(loop);
+  }, [stopRaf]);
+
+  const handlePlay = useCallback(() => {
+    startRafLoop();
+  }, [startRafLoop]);
+
+  const handlePause = useCallback(() => {
+    stopRaf();
     setPlaybackPosition(null);
-  }, []);
+  }, [stopRaf]);
+
+  const handleEnded = useCallback(() => {
+    stopRaf();
+    setPlaybackPosition(null);
+  }, [stopRaf]);
 
   const handleSave = useCallback(async () => {
     if (wavBuffer === null) return;
@@ -64,11 +94,13 @@ export default function RecorderScreen() {
   }, [wavBuffer]);
 
   const handleNew = useCallback(() => {
+    stopRaf();
+    setPlaybackPosition(null);
     setSavedPath(null);
     setError(null);
     setShowEditor(true);
     cleanup();
-  }, [cleanup]);
+  }, [cleanup, stopRaf]);
 
   const handleTrim = useCallback(
     (trimmed: Float32Array) => {
@@ -133,8 +165,9 @@ export default function RecorderScreen() {
                     src={audioUrl}
                     controls
                     className="h-8"
-                    onTimeUpdate={handleTimeUpdate}
-                    onEnded={handleAudioEnded}
+                    onPlay={handlePlay}
+                    onPause={handlePause}
+                    onEnded={handleEnded}
                   >
                     <track kind="captions" src="" />
                   </audio>
