@@ -3,7 +3,7 @@ import {
   useState,
   useCallback,
   useEffect,
-  type MouseEvent,
+  type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { renderWaveform, trimSamples } from '../utils/waveform-renderer';
 
@@ -45,7 +45,7 @@ export default function useWaveformEditor(
   );
 
   const handleMouseDown = useCallback(
-    (e: MouseEvent<HTMLCanvasElement>) => {
+    (e: ReactMouseEvent<HTMLCanvasElement>) => {
       const cursor = getCursorFromEvent(e.clientX);
       draggingRef.current = cursor;
     },

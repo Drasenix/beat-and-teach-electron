@@ -207,7 +207,7 @@ export default function RecorderScreen() {
                     step={0.001}
                     value={playbackPosition}
                     className="transport-slider flex-1"
-                    onInput={handleSeek}
+                    onChange={handleSeek}
                   />
                   <span className="text-xs font-mono text-text-secondary min-w-[90px] text-right tabular-nums">
                     {formatTime(playbackPosition * duration)} /{' '}
