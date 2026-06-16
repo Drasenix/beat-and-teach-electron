@@ -1,21 +1,21 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
-  BookOpen,
-  FolderArchive,
+  AudioLines,
+  Compass,
+  FileHeadphone,
+  FileSliders,
+  ListMusic,
   Mic,
-  Music,
-  NotebookText,
-  Radio,
 } from 'lucide-react';
 import useAudio from '../features/audio/hooks/useAudio';
 
 const NAV_ICONS = {
-  '/guide': BookOpen,
-  '/workspace': Music,
-  '/configuration/instruments': Mic,
-  '/recorder': Radio,
-  '/configuration/patterns': NotebookText,
-  '/library': FolderArchive,
+  '/guide': Compass,
+  '/workspace': AudioLines,
+  '/configuration/instruments': FileHeadphone,
+  '/recorder': Mic,
+  '/configuration/patterns': ListMusic,
+  '/library': FileSliders,
 } as const;
 
 const NAV_TITLES: Record<string, string> = {

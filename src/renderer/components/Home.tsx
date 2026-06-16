@@ -1,20 +1,24 @@
 import { Link } from 'react-router-dom';
 import {
-  BookOpen,
-  FolderArchive,
+  AudioLines,
+  Compass,
+  FileHeadphone,
+  FileSliders,
+  ListMusic,
   Mic,
-  Music,
-  NotebookText,
-  Radio,
 } from 'lucide-react';
 
 const HOME_ENTRIES = [
-  { to: '/guide', icon: BookOpen, label: 'guide' },
-  { to: '/workspace', icon: Music, label: 'studio' },
-  { to: '/configuration/instruments', icon: Mic, label: 'instruments' },
-  { to: '/recorder', icon: Radio, label: 'enregistreur' },
-  { to: '/configuration/patterns', icon: NotebookText, label: 'patterns' },
-  { to: '/library', icon: FolderArchive, label: 'bibliothèque' },
+  { to: '/guide', icon: Compass, label: 'guide' },
+  { to: '/workspace', icon: AudioLines, label: 'studio' },
+  {
+    to: '/configuration/instruments',
+    icon: FileHeadphone,
+    label: 'instruments',
+  },
+  { to: '/recorder', icon: Mic, label: 'enregistreur' },
+  { to: '/configuration/patterns', icon: ListMusic, label: 'patterns' },
+  { to: '/library', icon: FileSliders, label: 'bibliothèque' },
 ] as const;
 
 export default function Home() {
