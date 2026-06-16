@@ -1,3 +1,5 @@
+import { Pencil, X } from 'lucide-react';
+
 type ItemActionsProps = {
   onEdit: () => void;
   onDelete: () => void;
@@ -40,10 +42,10 @@ export default function ItemActions({
   return (
     <div className="flex items-center gap-3">
       <button type="button" onClick={onEdit} className="btn-edit">
-        ✎
+        <Pencil size={18} />
       </button>
       <button type="button" onClick={onDelete} className="btn-delete">
-        ✕
+        <X size={18} />
       </button>
     </div>
   );

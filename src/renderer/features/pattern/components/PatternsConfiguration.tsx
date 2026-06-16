@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import usePatterns from '../hooks/usePatterns';
 import AddPatternForm from './form/AddPatternForm';
 import EditPatternForm from './form/EditPatternForm';
@@ -78,7 +79,11 @@ export default function PatternsConfiguration() {
           <ConfigurationFooter
             adding={adding}
             onStartAdding={onStartAdding}
-            buttonText="+ Ajouter un pattern"
+            buttonText={
+              <>
+                <Plus size={16} /> Ajouter un pattern
+              </>
+            }
             addForm={
               <AddPatternForm onAdd={addPattern} onCancel={onCancelAdding} />
             }

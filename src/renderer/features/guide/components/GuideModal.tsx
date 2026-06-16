@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { X } from 'lucide-react';
 import { useGuideModalContext } from './GuideModalProvider';
 import GuideShortcuts from './GuideShortcuts';
 import Modal from '../../../components/Modal';
@@ -28,7 +29,7 @@ export default function GuideModal() {
             className="text-text-secondary hover:text-primary"
             aria-label="Fermer"
           >
-            ✕
+            <X size={20} />
           </button>
         </div>
         <div className="flex flex-col gap-3">

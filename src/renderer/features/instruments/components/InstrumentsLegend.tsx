@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Play } from 'lucide-react';
 import useInstruments from '../hooks/useInstruments';
 import useAudio from '../../audio/hooks/useAudio';
 
@@ -35,7 +36,7 @@ export default function InstrumentsLegend() {
                   }
                 }}
               >
-                ▶
+                <Play size={12} />
               </button>
             </div>
           ))}

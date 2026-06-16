@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { Scissors } from 'lucide-react';
 import useWaveformEditor from '../hooks/useWaveformEditor';
 
 interface WaveformEditorProps {
@@ -54,7 +55,7 @@ export default function WaveformEditor({
         className="btn-add self-center"
         onClick={handleTrim}
       >
-        ✂ Rogner
+        <Scissors size={16} /> Rogner
       </button>
     </div>
   );

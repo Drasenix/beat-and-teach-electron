@@ -4,7 +4,7 @@ type ConfigurationFooterProps = {
   adding: boolean;
   onStartAdding: () => void;
   addForm: ReactNode;
-  buttonText: string;
+  buttonText: ReactNode;
 };
 
 export default function ConfigurationFooter({

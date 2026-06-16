@@ -1,3 +1,4 @@
+import { Plus, X } from 'lucide-react';
 import { countSentenceSteps } from '../../utils/pattern-parser';
 import SentenceInput from './SentenceInput';
 
@@ -41,7 +42,7 @@ export default function SentencesForm({
                   onClick={() => onRemoveSentence(index)}
                   className="btn-delete"
                 >
-                  ✕
+                  <X size={16} />
                 </button>
               )}
             </div>
@@ -52,7 +53,7 @@ export default function SentencesForm({
           onClick={onAddSentence}
           className="btn-add self-start"
         >
-          + Ajouter une piste
+          <Plus size={16} /> Ajouter une piste
         </button>
       </div>
     </div>

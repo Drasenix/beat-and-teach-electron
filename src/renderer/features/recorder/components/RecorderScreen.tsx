@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, type ChangeEvent } from 'react';
-import { Radio } from 'lucide-react';
+import { Play, Pause, Radio, Save, Square, Trash2 } from 'lucide-react';
 import useRecorder from '../hooks/useRecorder';
 import saveRecordedAudio from '../services/recorder-service';
 import WaveformEditor from './WaveformEditor';
@@ -142,7 +142,7 @@ export default function RecorderScreen() {
             </p>
             <button
               type="button"
-              className="btn-primary"
+              className="btn-primary inline-flex items-center gap-2"
               onClick={startRecording}
             >
               <Radio size={20} /> Enregistrer
@@ -160,10 +160,10 @@ export default function RecorderScreen() {
             </div>
             <button
               type="button"
-              className="btn-secondary"
+              className="btn-secondary inline-flex items-center gap-2"
               onClick={stopRecording}
             >
-              ⏹ Arrêter
+              <Square size={20} /> Arrêter
             </button>
           </div>
         )}
@@ -199,7 +199,7 @@ export default function RecorderScreen() {
                     className="text-primary text-lg w-8 h-8 flex items-center justify-center hover:opacity-80 transition-opacity"
                     onClick={togglePlay}
                   >
-                    {isPlaying ? '⏸' : '▶'}
+                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                   </button>
                   <input
                     type="range"
@@ -220,18 +220,24 @@ export default function RecorderScreen() {
               <div className="flex gap-3 mt-2">
                 <button
                   type="button"
-                  className="btn-primary"
+                  className="btn-primary inline-flex items-center gap-2"
                   disabled={saving}
                   onClick={handleSave}
                 >
-                  {saving ? 'Sauvegarde...' : '💾 Sauvegarder'}
+                  {saving ? (
+                    'Sauvegarde...'
+                  ) : (
+                    <>
+                      <Save size={20} /> Sauvegarder
+                    </>
+                  )}
                 </button>
                 <button
                   type="button"
-                  className="btn-secondary"
+                  className="btn-secondary inline-flex items-center gap-2"
                   onClick={handleNew}
                 >
-                  🗑 Effacer
+                  <Trash2 size={20} /> Effacer
                 </button>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Plus } from 'lucide-react';
 import { Pattern } from '../models/pattern-model';
 import useAudio from '../../audio/hooks/useAudio';
 import usePatterns from '../hooks/usePatterns';
@@ -44,7 +45,7 @@ export default function PatternChoices(props: PatternChoicesProps) {
             className="sidebar-btn-new"
             disabled={playing}
           >
-            +
+            <Plus size={16} />
           </button>
           <button
             type="button"

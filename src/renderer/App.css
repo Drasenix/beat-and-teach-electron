@@ -70,7 +70,7 @@
   }
 
   .btn-add {
-    @apply px-4 py-2 bg-button-surface border border-primary text-primary
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-button-surface border border-primary text-primary
            font-mono text-sm rounded-lg transition-colors duration-200 uppercase tracking-widest
            disabled:opacity-30 disabled:cursor-not-allowed;
   }
@@ -80,11 +80,11 @@
   }
 
   .btn-edit {
-    @apply font-mono text-xl text-text-secondary transition-colors duration-200 hover:text-button-edit;
+    @apply flex items-center justify-center w-8 h-8 text-text-secondary transition-colors duration-200 hover:text-button-edit;
   }
 
   .btn-delete {
-    @apply font-mono text-xl text-text-secondary transition-colors duration-200 hover:text-button-delete;
+    @apply flex items-center justify-center w-8 h-8 text-text-secondary transition-colors duration-200 hover:text-button-delete;
   }
 
   .btn-confirm-delete {
@@ -396,10 +396,7 @@
   }
 
   .sidebar-btn-new {
-    @apply w-8 h-8 rounded-md border border-primary bg-transparent transition-colors duration-100 flex items-center justify-center;
-    font-family: theme('fontFamily.mono');
-    font-size: 12px;
-    color: theme('colors.primary');
+    @apply w-8 h-8 rounded-md border border-primary bg-transparent transition-colors duration-100 flex items-center justify-center text-primary;
   }
 
   .sidebar-btn-new:hover:not(:disabled) {

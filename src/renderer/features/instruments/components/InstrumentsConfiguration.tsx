@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Play, Plus } from 'lucide-react';
 import useInstruments from '../hooks/useInstruments';
 import useAudio from '../../audio/hooks/useAudio';
 import AddInstrumentForm from './form/AddInstrumentForm';
@@ -64,7 +65,7 @@ export default function InstrumentConfiguration() {
                           }
                         }}
                       >
-                        ▶
+                        <Play size={12} />
                       </button>
                       <span className="instrument-symbol">
                         {instrument.symbol}
@@ -106,7 +107,11 @@ export default function InstrumentConfiguration() {
           <ConfigurationFooter
             adding={adding}
             onStartAdding={onStartAdding}
-            buttonText="+ Ajouter un instrument"
+            buttonText={
+              <>
+                <Plus size={16} /> Ajouter un instrument
+              </>
+            }
             addForm={
               <AddInstrumentForm
                 onAdd={addNewInstrument}

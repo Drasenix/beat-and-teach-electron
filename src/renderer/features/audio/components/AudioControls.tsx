@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Play, Square } from 'lucide-react';
 import useAudio from '../hooks/useAudio';
 import useSlider from '../../../hooks/useSlider';
 
@@ -74,7 +75,7 @@ export default function AudioControls({ sentences }: AudioControlsProps) {
         onClick={() => playTrack(sentences, bpm)}
         className={`transport-btn ${playing ? 'active' : ''}`}
       >
-        ▶ Play
+        <Play size={18} /> Play
       </button>
 
       <button
@@ -83,7 +84,7 @@ export default function AudioControls({ sentences }: AudioControlsProps) {
         onClick={stopTrack}
         className="transport-btn"
       >
-        ■ Stop
+        <Square size={18} /> Stop
       </button>
 
       <div className="transport-separator" />
