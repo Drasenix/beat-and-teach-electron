@@ -186,5 +186,6 @@ Jest uses `tsconfig.renderer.json` for ts-jest transform.
 ## 15. Gestion des features
 
 - Les specs des nouvelles features sont documentées dans `.agent/features/<feature-name>.md`
+- Les features terminées sont déplacées dans `.agent/features/archived/` — ce dossier **ne doit pas être lu** sauf demande explicite de l'utilisateur
 - Voir `.agent/new-feature.md` pour le cycle de vie complet
 - Workflow : specs → documentation → évolution → suppression sur validation utilisateur
