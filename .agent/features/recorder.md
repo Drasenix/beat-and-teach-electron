@@ -64,7 +64,7 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - `src/renderer/components/Home.tsx` : lien home
 
 ## Avancement
-- [x] Specs validées
+- [ ] Specs validées
 - [x] Tests wav-encoder
 - [x] waveform-renderer.ts (downsample + renderWaveform + trimSamples)
 - [x] useWaveformEditor hook (canvas ref + drag trim)
@@ -82,4 +82,4 @@ Nouvel écran permettant d'enregistrer un instrument directement depuis l'applic
 - Playhead visuelle uniquement (pas de seek) — line couleur primary plus lumineuse
 - RAF loop pour playhead fluide (60 FPS) plutôt que `timeupdate` natif (4-20 Hz)
 - Contrôles audio customs (play/pause, barre progression, temps) stylés avec les tokens du thème (primary, field, border, text-secondary) au lieu des contrôles natifs
-GO
+
