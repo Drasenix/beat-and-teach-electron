@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, type ChangeEvent } from 'react';
+import { Radio } from 'lucide-react';
 import useRecorder from '../hooks/useRecorder';
 import saveRecordedAudio from '../services/recorder-service';
 import WaveformEditor from './WaveformEditor';
@@ -144,7 +145,7 @@ export default function RecorderScreen() {
               className="btn-primary"
               onClick={startRecording}
             >
-              ⏺ Enregistrer
+              <Radio size={20} /> Enregistrer
             </button>
           </div>
         )}
@@ -261,7 +262,7 @@ export default function RecorderScreen() {
                 className="btn-secondary mt-2"
                 onClick={handleNew}
               >
-                ⏺ Nouvel enregistrement
+                <Radio size={20} /> Nouvel enregistrement
               </button>
             </div>
           </div>

@@ -1,4 +1,21 @@
 import { Link } from 'react-router-dom';
+import {
+  BookOpen,
+  FolderArchive,
+  Mic,
+  Music,
+  NotebookText,
+  Radio,
+} from 'lucide-react';
+
+const HOME_ENTRIES = [
+  { to: '/guide', icon: BookOpen, label: 'guide' },
+  { to: '/workspace', icon: Music, label: 'studio' },
+  { to: '/configuration/instruments', icon: Mic, label: 'instruments' },
+  { to: '/recorder', icon: Radio, label: 'enregistreur' },
+  { to: '/configuration/patterns', icon: NotebookText, label: 'patterns' },
+  { to: '/library', icon: FolderArchive, label: 'bibliothèque' },
+] as const;
 
 export default function Home() {
   return (
@@ -10,48 +27,16 @@ export default function Home() {
         </p>
       </div>
       <div className="flex flex-col gap-4 w-full max-w-sm">
-        <div className="div-animated-wrapper">
-          <Link to="/guide" className="link-animated-inner group">
-            <p className="home-button-icon">🗝</p>
-            <p className="text-primary">guide</p>
-          </Link>
-        </div>
-        <div className="div-animated-wrapper">
-          <Link to="/workspace" className="link-animated-inner group">
-            <p className="home-button-icon">🎘</p>
-            <p className="text-primary">studio</p>
-          </Link>
-        </div>
-        <div className="div-animated-wrapper">
-          <Link
-            to="/configuration/instruments"
-            className="link-animated-inner group"
-          >
-            <p className="home-button-icon">🎙</p>
-            <p className="text-primary">instruments</p>
-          </Link>
-        </div>
-        <div className="div-animated-wrapper">
-          <Link to="/recorder" className="link-animated-inner group">
-            <p className="home-button-icon">⏺</p>
-            <p className="text-primary">enregistreur</p>
-          </Link>
-        </div>
-        <div className="div-animated-wrapper">
-          <Link
-            to="/configuration/patterns"
-            className="link-animated-inner group"
-          >
-            <p className="home-button-icon">🕮</p>
-            <p className="text-primary">patterns</p>
-          </Link>
-        </div>
-        <div className="div-animated-wrapper">
-          <Link to="/library" className="link-animated-inner group">
-            <p className="home-button-icon">🗁</p>
-            <p className="text-primary">bibliothèque</p>
-          </Link>
-        </div>
+        {HOME_ENTRIES.map(({ to, icon: Icon, label }) => (
+          <div className="div-animated-wrapper" key={to}>
+            <Link to={to} className="link-animated-inner group">
+              <p className="text-primary flex justify-center w-full">
+                <Icon size={36} />
+              </p>
+              <p className="text-primary">{label}</p>
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   );

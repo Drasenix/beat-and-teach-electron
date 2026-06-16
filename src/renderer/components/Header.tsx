@@ -1,18 +1,37 @@
 import { Link, useLocation } from 'react-router-dom';
+import {
+  BookOpen,
+  FolderArchive,
+  Mic,
+  Music,
+  NotebookText,
+  Radio,
+} from 'lucide-react';
 import useAudio from '../features/audio/hooks/useAudio';
+
+const NAV_ICONS = {
+  '/guide': BookOpen,
+  '/workspace': Music,
+  '/configuration/instruments': Mic,
+  '/recorder': Radio,
+  '/configuration/patterns': NotebookText,
+  '/library': FolderArchive,
+} as const;
+
+const NAV_TITLES: Record<string, string> = {
+  '/guide': 'Guide',
+  '/workspace': 'Studio',
+  '/configuration/instruments': 'Instruments',
+  '/recorder': 'Enregistreur',
+  '/configuration/patterns': 'Patterns',
+  '/library': 'Bibliothèque',
+};
+
+const NAV_ROUTES = Object.keys(NAV_ICONS);
 
 export default function Header() {
   const location = useLocation();
   const { playing, stopTrack } = useAudio();
-
-  const navItems = [
-    { to: '/guide', label: '🗝', title: 'Guide' },
-    { to: '/workspace', label: '🎘', title: 'Studio' },
-    { to: '/configuration/instruments', label: '🎙', title: 'Instruments' },
-    { to: '/recorder', label: '⏺', title: 'Enregistreur' },
-    { to: '/configuration/patterns', label: '🕮', title: 'Patterns' },
-    { to: '/library', label: '🗁', title: 'Bibliothèque' },
-  ];
 
   return (
     <aside className="bar-aside">
@@ -29,19 +48,23 @@ export default function Header() {
 
       <div className="w-6 border-t border-primary" />
 
-      {navItems.map(({ to, label, title }) => (
-        <Link
-          key={to}
-          to={to}
-          title={title}
-          onClick={() => {
-            if (playing) stopTrack();
-          }}
-          className={`nav-item ${location.pathname === to ? 'nav-item-active' : ''}`}
-        >
-          {label}
-        </Link>
-      ))}
+      {NAV_ROUTES.map((to) => {
+        const Icon = NAV_ICONS[to];
+
+        return (
+          <Link
+            key={to}
+            to={to}
+            title={NAV_TITLES[to]}
+            onClick={() => {
+              if (playing) stopTrack();
+            }}
+            className={`nav-item ${location.pathname === to ? 'nav-item-active' : ''}`}
+          >
+            <Icon size={24} />
+          </Link>
+        );
+      })}
     </aside>
   );
 }

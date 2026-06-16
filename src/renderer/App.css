@@ -140,10 +140,6 @@
     color: theme('colors.text.primary');
   }
 
-  .home-button-icon {
-    @apply text-primary text-4xl;
-  }
-
   /* Navigation */
   .bar-aside {
     @apply fixed left-0 top-0 h-screen w-16 bg-surface border-r border-border
