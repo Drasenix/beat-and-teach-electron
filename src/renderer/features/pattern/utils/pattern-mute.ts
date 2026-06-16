@@ -1,36 +1,32 @@
+import { tokenizeSentence } from '../../../utils/sentence-tokenizer';
+
 export function transformSentencesWithMute(
   sentences: string[],
   mutedSteps: Set<string>,
 ): string[] {
   if (mutedSteps.size === 0) return sentences;
 
-  const regex = /\(([^)]*)\)|(\S+)/g;
-
   return sentences.map((sentence, sentenceIndex) => {
+    const tokens = tokenizeSentence(sentence);
     const parts: string[] = [];
-    let match = regex.exec(sentence);
     let tokenIndex = 0;
 
-    while (match !== null) {
-      if (match[1] !== undefined) {
-        const symbols = match[1].trim().split(/\s+/);
+    tokens.forEach((token) => {
+      if (token.group !== undefined) {
+        const symbols = token.group.trim().split(/\s+/);
         const transformed: string[] = [];
-        let i = 0;
-        while (i < symbols.length) {
+        symbols.forEach((sym) => {
           const key = `${sentenceIndex}-${tokenIndex}`;
           tokenIndex += 1;
-          transformed.push(mutedSteps.has(key) ? '.' : symbols[i]);
-          i += 1;
-        }
+          transformed.push(mutedSteps.has(key) ? '.' : sym);
+        });
         parts.push(`(${transformed.join(' ')})`);
       } else {
         const key = `${sentenceIndex}-${tokenIndex}`;
         tokenIndex += 1;
-        parts.push(mutedSteps.has(key) ? '.' : match[2]);
+        parts.push(mutedSteps.has(key) ? '.' : (token.symbol ?? ''));
       }
-
-      match = regex.exec(sentence);
-    }
+    });
 
     return parts.join(' ');
   });

@@ -28,6 +28,10 @@ export default class InstrumentEngine {
     this.initialized = true;
   }
 
+  public getAllSymbols(): string[] {
+    return this.instruments.map((i) => i.symbol);
+  }
+
   public getInstrumentFilePathsFromSymbol(
     symbol: string,
   ): InstrumentFilePath[] {

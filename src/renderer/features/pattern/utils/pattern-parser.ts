@@ -1,18 +1,6 @@
 import { PatternStep } from '../types/pattern-types';
 import { TrackColumn } from '../types/track-column';
-
-const SENTENCE_REGEX = /\(([^)]*)\)|(\S+)/g;
-
-function execAll(sentence: string): RegExpExecArray[] {
-  const regex = new RegExp(SENTENCE_REGEX.source, SENTENCE_REGEX.flags);
-  const matches: RegExpExecArray[] = [];
-  let match = regex.exec(sentence);
-  while (match !== null) {
-    matches.push(match);
-    match = regex.exec(sentence);
-  }
-  return matches;
-}
+import { tokenizeSentence } from '../../../utils/sentence-tokenizer';
 
 export function createStep(
   symbol: string,
@@ -49,11 +37,11 @@ export function parseSteps(
   sentence: string,
   validSymbols: string[],
 ): PatternStep[] {
-  return execAll(sentence).map((match, counter) => {
-    if (match[1] !== undefined) {
-      return createGroup(match[1], validSymbols, counter);
+  return tokenizeSentence(sentence).map((token, counter) => {
+    if (token.group !== undefined) {
+      return createGroup(token.group, validSymbols, counter);
     }
-    return createStep(match[2], validSymbols, counter);
+    return createStep(token.symbol ?? '', validSymbols, counter);
   });
 }
 
@@ -100,7 +88,7 @@ export function parseMultiTrackSteps(
 }
 
 export function countSentenceSteps(sentence: string): number {
-  return execAll(sentence).length;
+  return tokenizeSentence(sentence).length;
 }
 
 function tokenize(sentence: string): string[] {

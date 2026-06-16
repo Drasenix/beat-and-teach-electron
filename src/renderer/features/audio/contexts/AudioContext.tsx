@@ -11,6 +11,7 @@ import {
   stopPattern,
   changeTempo,
   playInstrument,
+  updatePattern,
 } from '../facade/audio-facade';
 
 type AudioContextType = {
@@ -20,6 +21,7 @@ type AudioContextType = {
   stopTrack: () => void;
   changeBpm: (bpm: number) => void;
   playInstrument: (filepath: string, name: string) => Promise<void>;
+  updateTrack: (sentences: string[]) => Promise<void>;
 };
 
 const AudioContext = createContext<AudioContextType | null>(null);
@@ -59,6 +61,13 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         } catch (error) {
           // eslint-disable-next-line no-alert
           alert(error);
+        }
+      },
+      updateTrack: async (sentences: string[]): Promise<void> => {
+        try {
+          await updatePattern(sentences);
+        } catch {
+          // Silencieux — l'édition reste réactive
         }
       },
     }),

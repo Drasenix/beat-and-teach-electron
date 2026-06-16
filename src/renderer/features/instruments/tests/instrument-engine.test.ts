@@ -1,4 +1,5 @@
 import InstrumentEngine from '../engine/instrument-engine';
+import { Instrument } from '../models/instrument-model';
 import { InstrumentDTO } from '../../../../shared/models/instrument-dto';
 import * as instrumentService from '../services/instrument-service';
 
@@ -30,6 +31,62 @@ const instrumentsDTO: InstrumentDTO[] = [
 ];
 
 let instrumentEngine: InstrumentEngine;
+
+const sampleInstruments: Instrument[] = [
+  {
+    id: 1,
+    slug: 'kickdrum',
+    symbol: 'P',
+    name: 'kickdrum',
+    filepath: '/path/kickdrum.mp3',
+  },
+  {
+    id: 2,
+    slug: 'hihat',
+    symbol: 'Ts',
+    name: 'hihat',
+    filepath: '/path/hihat.mp3',
+  },
+  { id: 3, slug: 'silence', symbol: '.', name: null, filepath: null },
+];
+
+describe('#getAllSymbols', () => {
+  beforeAll(() => {
+    instrumentEngine = InstrumentEngine.getInstance();
+  });
+
+  it('should return an empty array when no instruments are loaded', () => {
+    const result = instrumentEngine.getAllSymbols();
+    expect(result).toEqual([]);
+  });
+
+  it('should return all symbols from loaded instruments', () => {
+    instrumentEngine.loadInstruments(sampleInstruments);
+    const result = instrumentEngine.getAllSymbols();
+    expect(result).toEqual(['P', 'Ts', '.']);
+  });
+
+  it('should reflect changes after reloading instruments', () => {
+    instrumentEngine.loadInstruments([
+      {
+        id: 1,
+        slug: 'kickdrum',
+        symbol: 'P',
+        name: 'kickdrum',
+        filepath: '/path/kickdrum.mp3',
+      },
+      {
+        id: 2,
+        slug: 'hihat',
+        symbol: 'Ts',
+        name: 'hihat',
+        filepath: '/path/hihat.mp3',
+      },
+    ]);
+    const result = instrumentEngine.getAllSymbols();
+    expect(result).toHaveLength(2);
+  });
+});
 
 describe('#getInstrumentNameFromSymbol', () => {
   beforeAll(async () => {

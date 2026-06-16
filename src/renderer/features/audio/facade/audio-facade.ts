@@ -7,6 +7,8 @@ import {
 import { SequenceNotes } from '../../sequence/types/sequence-note';
 import AudioEngine, { StepCallback } from '../engine/audio-engine';
 import getAudioBuffers from '../services/audio-service';
+import { extractUniqueSymbols } from '../../../utils/sentence-tokenizer';
+import { getInstrumentFilePathsFromSymbol } from '../../instruments/facade/instrument-facade';
 
 async function createAudioBuffers(
   sentences: string[],
@@ -33,6 +35,9 @@ async function prepareAudioEngine(
       audioEngine.setStepCallback(onStep);
     }
     audioEngine.createSequence(allNotes);
+
+    const allSymbols = extractUniqueSymbols(sentences);
+    allSymbols.forEach((s) => audioEngine.registerSymbol(s));
   } catch (error: any) {
     throw new Error(`Erreur : ${error}`);
   }
@@ -56,6 +61,32 @@ export async function playPattern(
 export async function stopPattern(): Promise<void> {
   const audioEngine: AudioEngine = AudioEngine.getInstance();
   audioEngine.stop();
+}
+
+export async function updatePattern(sentences: string[]): Promise<void> {
+  const audioEngine: AudioEngine = AudioEngine.getInstance();
+
+  const uniqueSymbols = extractUniqueSymbols(sentences);
+  const newSymbols = uniqueSymbols.filter(
+    (s) => s !== '.' && !audioEngine.hasSymbol(s),
+  );
+
+  if (newSymbols.length > 0) {
+    const filePaths = (
+      await Promise.all(
+        newSymbols.map((s) => getInstrumentFilePathsFromSymbol(s)),
+      )
+    ).flat();
+    const audioBuffers = await getAudioBuffers(filePaths);
+    await audioEngine.addToPlayers(audioBuffers);
+    newSymbols.forEach((s) => audioEngine.registerSymbol(s));
+  }
+
+  const allNotes: SequenceNotes[][] = await Promise.all(
+    sentences.map((sentence) => preparePattern(sentence)),
+  );
+
+  audioEngine.updateSequences(allNotes);
 }
 
 export async function changeTempo(bpm: number): Promise<void> {

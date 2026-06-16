@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import usePatternSession from '../hooks/usePatternSession';
 import useAudio from '../../audio/hooks/useAudio';
@@ -10,6 +10,8 @@ import PatternChoices from './PatternChoices';
 import PatternComposer from './PatternComposer';
 import SavePatternModal from './form/SavePatternModal';
 import { useGuideModalContext } from '../../guide/components/GuideModalProvider';
+import { useInstrumentsContext } from '../../instruments/contexts/InstrumentsContext';
+import { areAllSymbolsValid } from '../utils/pattern-validator';
 
 export default function PatternWorkspace() {
   const { showGuideModal } = useGuideModalContext();
@@ -38,12 +40,29 @@ export default function PatternWorkspace() {
     mutedSteps,
     toggleMute,
   } = usePatternSession();
-  const { activeStep } = useAudio();
+  const { activeStep, playing, updateTrack } = useAudio();
+  const { instruments } = useInstrumentsContext();
   const [selectedPattern, setSelectedPattern] = useState<Pattern | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const setPatternRef = useRef(setPattern);
   setPatternRef.current = setPattern;
+
+  const validSymbols = useMemo(
+    () => instruments.map((i) => i.symbol),
+    [instruments],
+  );
+
+  const allValid = useMemo(
+    () => areAllSymbolsValid(sentencesForPlayback, validSymbols),
+    [sentencesForPlayback, validSymbols],
+  );
+
+  useEffect(() => {
+    if (playing && allValid) {
+      updateTrack(sentencesForPlayback);
+    }
+  }, [playing, allValid, sentencesForPlayback, updateTrack]);
 
   useEffect(() => {
     const exampleParam = searchParams.get('example');

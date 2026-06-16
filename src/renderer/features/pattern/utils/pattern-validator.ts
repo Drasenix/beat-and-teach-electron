@@ -14,3 +14,16 @@ export default function validatePattern(
   });
   return errors;
 }
+
+export function areAllSymbolsValid(
+  sentences: string[],
+  validSymbols: string[],
+): boolean {
+  const symbols = sentences
+    .join(' ')
+    .replace(/[()]/g, '')
+    .split(/\s+/)
+    .filter((s) => s.length > 0);
+  if (symbols.length === 0) return true;
+  return symbols.every((s) => s === '.' || validSymbols.includes(s));
+}

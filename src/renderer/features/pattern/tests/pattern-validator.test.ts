@@ -1,4 +1,6 @@
-import validatePattern from '../utils/pattern-validator';
+import validatePattern, {
+  areAllSymbolsValid,
+} from '../utils/pattern-validator';
 
 describe('#validatePattern', () => {
   it('retourne une erreur si le nom est vide', () => {
@@ -55,5 +57,59 @@ describe('#validatePattern', () => {
       sentences: ['   '],
     });
     expect(result).toContain('La phrase 1 est requise.');
+  });
+});
+
+describe('#areAllSymbolsValid', () => {
+  const VALID_SYMBOLS = ['P', 'Ts', 'K', 'Bw', 'Pf'];
+
+  it('should return true when all symbols are valid', () => {
+    const result = areAllSymbolsValid(['P (Ts K) .'], VALID_SYMBOLS);
+    expect(result).toBe(true);
+  });
+
+  it('should return false when a symbol is unknown', () => {
+    const result = areAllSymbolsValid(['P X Ts'], VALID_SYMBOLS);
+    expect(result).toBe(false);
+  });
+
+  it('should return false when a symbol inside a group is unknown', () => {
+    const result = areAllSymbolsValid(['P (Ts X) K'], VALID_SYMBOLS);
+    expect(result).toBe(false);
+  });
+
+  it('should treat silence (.) as always valid', () => {
+    const result = areAllSymbolsValid(['. . .'], []);
+    expect(result).toBe(true);
+  });
+
+  it('should return true for an empty sentence', () => {
+    const result = areAllSymbolsValid([''], VALID_SYMBOLS);
+    expect(result).toBe(true);
+  });
+
+  it('should return true for empty sentences array', () => {
+    const result = areAllSymbolsValid([], VALID_SYMBOLS);
+    expect(result).toBe(true);
+  });
+
+  it('should return false if only the first sentence is invalid', () => {
+    const result = areAllSymbolsValid(['X K .', 'P Ts K'], VALID_SYMBOLS);
+    expect(result).toBe(false);
+  });
+
+  it('should return false if only the second sentence is invalid', () => {
+    const result = areAllSymbolsValid(['P Ts K', 'P X K'], VALID_SYMBOLS);
+    expect(result).toBe(false);
+  });
+
+  it('should handle sentences with multiple groups', () => {
+    const result = areAllSymbolsValid(['(P Ts) (K Bw) Pf'], VALID_SYMBOLS);
+    expect(result).toBe(true);
+  });
+
+  it('should handle whitespace-only sentence', () => {
+    const result = areAllSymbolsValid(['   '], VALID_SYMBOLS);
+    expect(result).toBe(true);
   });
 });

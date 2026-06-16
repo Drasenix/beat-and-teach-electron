@@ -1196,14 +1196,735 @@ Lancer `npm run test` après chaque phase.
 
 ---
 
+## Bug — Désynchronisation des animations (step loop) après update dynamique
+
+### Scénarios GWT
+
+1. **Étant donné que** je clique sur Play et qu'un pattern est lu
+   **Alors** chaque symbole de la grille est animé (step-active-pulse) en même temps que l'instrument est lu (audio)
+
+2. **Étant donné que** je clique sur Play et qu'un pattern est lu
+   **Quand** j'ajoute un nouvel instrument valide dans le pattern
+   **Et** que le pattern se met à jour dynamiquement
+   **Alors** les animations doivent être adaptées et se synchroniser avec le séquenceur
+
+### Résumé pour l'implémentation
+
+**Fichiers à modifier** :
+| Fichier | Action |
+|---------|--------|
+| `src/renderer/features/audio/engine/audio-engine.ts` | Modifier `createStepLoop()` + `updateSequences()` |
+| `src/renderer/features/audio/tests/audio-engine.test.ts` | Modifier le mock `Tone.Loop` + ajouter 3 tests |
+
+**Fichiers inchangés** : tous les autres (audio-facade.ts, AudioContext.tsx, PatternWorkspace.tsx)
+
+### Cause racine
+
+`createStepLoop(columnCount)` crée une **closure** qui capture :
+- `let stepIndex = 0` → variable locale réinitialisée à chaque appel
+- `columnCount` → **paramètre capturé**, jamais mis à jour après la création
+
+```typescript
+// LIGNE 80 — ÉTAT ACTUEL (buggé)
+private createStepLoop(columnCount: number): void {
+  if (!this.onStep) return;
+  let stepIndex = 0;                        // ← reset à 0 à chaque appel !
+  this.stepLoop = new Tone.Loop(() => {
+    const current = stepIndex % columnCount; // ← columnCount = paramètre capturé
+    this.onStep!(current);
+    stepIndex += 1;
+  }, '8n').start(0);
+}
+```
+
+Dans `updateSequences`, quand le `columnCount` change (ajout/suppression d'un symbole dans la 1ère phrase) :
+
+```typescript
+// LIGNE 185-190 — ÉTAT ACTUEL (buggé)
+if (newColumnCount !== this.currentColumnCount) {
+  this.clearStepLoop();                  // dispose l'ancien Tone.Loop
+  this.currentColumnCount = newColumnCount;
+  this.createStepLoop(newColumnCount);   // recrée → stepIndex = 0, columnCount capturé
+}
+```
+
+**Trace de l'exécution Tone.js** (basée sur les sources `node_modules/tone/build/esm/event/`) :
+
+D'abord, le `seq.events = newNotes` **ne cause pas de désynchronisation** :
+```
+Sequence.set events(s)
+  → this.clear()                     // Sequence.js:78 → appelle _part.clear()
+  → this._eventsArray = s
+  → this._events = _createSequence(s)
+  → this._eventsUpdated()            // Sequence.js:138
+      → this._part.clear()           // 2e clear, no-op
+      → this._rescheduleSequence()   // Sequence.js:147
+          → forEach(value, index) →
+              startTime = index * '8n' + startOffset  // temps ABSOLU depuis time=0
+              this._part.add(startTime, value)
+```
+Les events sont reprogrammés à des temps **absolus**. Le Transport est à T>0. Les events aux temps <T sont déjà passés. Ceux aux temps ≥T s'exécuteront. **L'audio est correct.**
+
+Ensuite, la recréation du `Tone.Loop` **cause la désynchronisation** :
+```
+createStepLoop(newCount)
+  → let stepIndex = 0                        // compteur réinitialisé
+  → new Tone.Loop(callback, '8n').start(0)
+      → Loop.start(0)
+          → ToneEvent.start(0)               // ToneEvent.js:145
+              → ticks = toTicks(0) = 0
+              → state.add({ time:0, state:"started" })
+              → _rescheduleEvents(0)         // ToneEvent.js:71
+                  → startTick = 0 + startOffset/playbackRate = 0
+                  → transport.scheduleRepeat(_tick, '8n', startTick=0, ∞)
+```
+`transport.scheduleRepeat(callback, interval, startTick=0, duration=∞)` programme un callback répété depuis le **tick 0**. Comme le Transport est déjà à T>0 (ex: T = 5 ticks '8n'), le prochain callback s'exécute à la prochaine frontière '8n' après T. Mais `stepIndex` est à 0 :
+```
+   1er tick : stepIndex=0 → current=0%newCount=0 → onStep(0)
+   2e  tick : stepIndex=1 → current=1%newCount=1 → onStep(1)
+```
+Pendant ce temps, le Transport est à la position T+N, et l'audio joue le step correspondant. **Animation = step 0, Audio = step T+N → désynchronisation permanente avec offset T+N.**
+
+### Correction (2 modifications dans `audio-engine.ts`)
+
+#### Modification 1/2 : `createStepLoop` — lire `this.currentColumnCount` au lieu du paramètre capturé
+
+```typescript
+private createStepLoop(columnCount: number): void {
+  if (!this.onStep) return;
+  let stepIndex = 0;
+  this.currentColumnCount = columnCount;        // stocker sur l'instance
+  this.stepLoop = new Tone.Loop(() => {
+    if (this.currentColumnCount <= 0) return;   // guard NaN (phrase 1 vidée)
+    const current = stepIndex % this.currentColumnCount; // ← lit le champ d'instance
+    this.onStep!(current);
+    stepIndex += 1;
+  }, '8n').start(0);
+}
+```
+
+**Pourquoi `this` dans la closure** : la closure est une arrow function → `this` est lié lexicalement à l'instance d'`AudioEngine`. La closure lit `this.currentColumnCount` à chaque tick. Quand `updateSequences` mute ce champ, la closure voit la nouvelle valeur au prochain tick.
+
+**Pourquoi le guard** : si la phrase 1 est vidée (`columnCount=0`), `stepIndex % 0` donne `NaN`. Le guard `if (this.currentColumnCount <= 0) return` empêche l'appel à `onStep(NaN)`.
+
+**Pourquoi `stepIndex` reste synchrone** : `stepIndex` n'est jamais réinitialisé tant que le `Tone.Loop` vit. Or le loop n'est détruit que par `stop()` ou `clearAll()`, jamais par `updateSequences`. `stepIndex` agit comme un compteur absolu de ticks '8n' depuis `time=0`, calé sur le Transport.
+
+#### Modification 2/2 : `updateSequences` — ne plus recréer le loop
+
+```typescript
+// AVANT (lignes 185-190) — À SUPPRIMER
+const newColumnCount = tracks[0]?.length ?? 0;
+if (newColumnCount !== this.currentColumnCount) {
+  this.clearStepLoop();
+  this.currentColumnCount = newColumnCount;
+  this.createStepLoop(newColumnCount);
+}
+
+// APRÈS — À ÉCRIRE
+const newColumnCount = tracks[0]?.length ?? 0;
+if (newColumnCount !== this.currentColumnCount) {
+  this.currentColumnCount = newColumnCount;
+}
+```
+
+**Pourquoi ça suffit** : la closure du `Tone.Loop` existant lit `this.currentColumnCount` (cf. modif 1). En mettant à jour ce champ sans recréer le loop, le `stepIndex` interne est préservé et seul le modulo change.
+
+Exemple concret de synchronisation préservée :
+```
+État initial : columnCount=3, Transport à stepIndex=7 → 7%3=1 → anim=1, audio=1
+Ajout symbole → columnCount=5 → this.currentColumnCount=5 (pas de recréation)
+Prochain tick : stepIndex=8 → 8%5=3 → anim=3, audio=3 ✅
+```
+
+### Tests GWT (TDD — test d'abord, implémentation ensuite)
+
+#### Prérequis : modifier le mock `Tone.Loop` dans `jest.mock('tone', ...)`
+
+Le mock actuel de `Tone.Loop` ne capture pas le callback. Pour le 3e test, il faut l'enrichir.
+
+**Fichier** : `src/renderer/features/audio/tests/audio-engine.test.ts`
+
+```typescript
+// AVANT — ligne ~9 du jest.mock factory
+Loop: jest.fn(() => ({
+  start: jest.fn(),
+  dispose: jest.fn(),
+})),
+
+// APRÈS
+Loop: jest.fn((callback: () => void) => ({
+  start: jest.fn(),
+  dispose: jest.fn(),
+  _callback: callback,
+})),
+```
+
+Ajouter `_callback` dans le type `mockTone.Loop` (optionnel, utiliser `as Record<string, unknown>` au moment du cast dans le test).
+
+#### Test 1 : `should NOT recreate step loop when column count changes`
+
+Emplacement : dans le `describe('#updateSequences', ...)`, après les tests existants.
+
+```typescript
+it('should NOT recreate step loop when column count changes', () => {
+  engine.createSequence([['kickdrum', 'hihat', 'snare']]);
+  mockTone.Loop.mockClear();
+  engine.updateSequences([['a', 'b', 'c', 'd', 'e']]);
+  expect(mockTone.Loop).not.toHaveBeenCalled();
+});
+```
+
+#### Test 2 : `should dispose extra sequences when track count decreases` (inchangé, déjà présent)
+
+Ce test existe déjà dans la suite. Il reste valide après la correction.
+
+#### Test 3 : `should use updated currentColumnCount in step loop callback`
+
+**Objectif** : vérifier que la closure du `Tone.Loop` lit bien `this.currentColumnCount` (champ d'instance mis à jour) et non le paramètre `columnCount` (capturé à la création).
+
+**Principe** : on crée un pattern avec 2 colonnes, on simule `updateSequences` avec 4 colonnes, puis on appelle manuellement le callback 3 fois. On vérifie que les valeurs passées à `stepCallback` correspondent au **nouveau** `currentColumnCount=4` (0%4=0, 1%4=1, 2%4=2) et non à l'ancien `columnCount=2` (0%2=0, 1%2=1, 2%2=0).
+
+Le mock de `Tone.Loop` ayant été enrichi avec `_callback`, on peut extraire le callback depuis `mockTone.Loop.mock.results[0].value._callback`.
+
+```typescript
+it('should use updated currentColumnCount in step loop callback', () => {
+  const stepCallback = jest.fn();
+  engine.setStepCallback(stepCallback);
+  engine.createSequence([['a', 'b']]);
+  const capturedCallback = (
+    mockTone.Loop.mock.results[0]?.value as Record<string, unknown>
+  )._callback as () => void;
+
+  engine.updateSequences([['x', 'y', 'z', 'w']]);
+
+  capturedCallback();
+  capturedCallback();
+  capturedCallback();
+
+  expect(stepCallback).toHaveBeenCalledTimes(3);
+  expect(stepCallback).toHaveBeenNthCalledWith(1, 0);
+  expect(stepCallback).toHaveBeenNthCalledWith(2, 1);
+  expect(stepCallback).toHaveBeenNthCalledWith(3, 2);
+});
+```
+
+**Interprétation TDD** :
+- **RED** : ce test va échouer avant la correction parce que la closure lit l'ancien `columnCount=2`. `stepIndex` passe de 0→1→2 et avec `columnCount=2` : 0%2=0, 1%2=1, 2%2=0 → `stepCallback` reçoit (0, 1, 0) au lieu de (0, 1, 2). Le test échoue sur `toHaveBeenNthCalledWith(3, 2)`.
+- **GREEN** : après la correction (modif 1 + modif 2), la closure lit `this.currentColumnCount=4`. 0%4=0, 1%4=1, 2%4=2 → `stepCallback` reçoit (0, 1, 2). Le test passe.
+
+### Ordre d'implémentation TDD
+
+1. **Modifier le mock `Tone.Loop`** dans `jest.mock('tone', ...)` pour capturer le callback (`_callback`)
+2. **Ajouter les 3 tests** dans le `describe('#updateSequences', ...)` du fichier de test
+3. **Lancer `npm run test -- --testPathPattern='audio-engine'`** → les nouveaux tests doivent échouer (RED)
+4. **Modifier `createStepLoop`** : lire `this.currentColumnCount` au lieu du paramètre, ajouter le guard NaN
+5. **Modifier `updateSequences`** : supprimer `clearStepLoop()` + `createStepLoop()`, ne garder que `this.currentColumnCount = newColumnCount`
+6. **Lancer `npm run test -- --testPathPattern='audio-engine'`** → tous les tests passent (GREEN)
+7. **Lancer `npm run test`** complet → tous les tests passent (pas de régression)
+8. **Lancer `npm run lint`** → 0 erreurs
+
+### Tableau de correspondance bug → comportement corrigé
+
+| Cas | ColumnCount change ? | Avant (bug) | Après (fix) |
+|-----|---------------------|-------------|-------------|
+| Changer `P` → `Bw` (même nombre de pas) | Non | ✅ Synchro | ✅ Synchro |
+| Ajouter un symbole (1ère phrase) | Oui | ❌ Loop recréé → stepIndex=0 → desync | ✅ Loop conservé → stepIndex préservé → sync |
+| Supprimer un symbole (1ère phrase) | Oui | ❌ Même cause | ✅ Même correction |
+| Ajouter/supprimer une 2e piste | Non (tracks[0] inchangé) | ✅ Synchro | ✅ Synchro |
+| Toggle mute | Non | ✅ Synchro | ✅ Synchro |
+| Play initial | — | ✅ Synchro | ✅ Synchro |
+| Stop → Play | — | ✅ Synchro | ✅ Synchro |
+| Vider la 1ère phrase | Oui (columnCount=0) | ❌ Desync + NaN possible | ✅ Guard : `if (currentColumnCount <= 0) return` |
+
+## Phase 10 — Correction du saut audio pendant le live editing (master Tone.Loop)
+
+### Scénarios GWT
+
+1. **Étant donné que** je clique sur Play et qu'un pattern de 4 colonnes est lu
+   **Quand** j'ajoute un symbole valide (le pattern passe de 4 à 5 colonnes)
+   **Et** que le pattern se met à jour dynamiquement
+   **Alors** le son en cours de lecture ne saute pas (pas de changement brutal d'instrument au même tick)
+
+2. **Étant donné que** je clique sur Play et qu'un pattern de 5 colonnes est lu
+   **Quand** je supprime un symbole (le pattern passe de 5 à 4 colonnes)
+   **Et** que le pattern se met à jour dynamiquement
+   **Alors** le son en cours de lecture ne saute pas
+
+3. **Étant donné que** je clique sur Play et que la lecture est en cours
+   **Quand** j'ajoute/supprime une piste (sans changer le nombre de colonnes)
+   **Alors** le son continue sans saut, les nouvelles pistes sont audibles immédiatement
+
+### Résumé pour l'implémentation
+
+**Fichiers à modifier** :
+| Fichier | Action |
+|---------|--------|
+| `src/renderer/features/audio/engine/audio-engine.ts` | Refactor complet de `createSequence`, `updateSequences`, `stop`, `clearAll` ; supprimer `sequences`, `stepLoop`, `clearSequences`, `clearStepLoop`, `createStepLoop` |
+| `src/renderer/features/audio/tests/audio-engine.test.ts` | Réécrire les 3 tests existants (`#updateSequences`) + ajouter 8 nouveaux tests ; simplifier le mock `Tone.Sequence` |
+
+**Fichiers inchangés** : `audio-facade.ts`, `AudioContext.tsx`, `PatternWorkspace.tsx`, tous les autres
+
+### Cause racine
+
+`seq.events = newNotes` appelle `Sequence._rescheduleSequence()` (Sequence.js:147-158) qui schedule chaque élément à `index * '8n' + startOffset` — des **temps absolus depuis time=0**. Le Transport est à une position absolue T. Après le reschedule :
+
+```
+oldColCount=4, Transport à T=11 → index joué = 11%4 = 3 → oldNotes[3] = "."
+newColCount=5, Transport à T=11 → index joué = 11%5 = 1 → newNotes[1] = "Ts"
+```
+
+Le son passe de `.` (silence) à `Ts` (hihat) **au même tick Transport**. Ce n'est pas une désynchronisation — c'est un **changement de mapping** entre temps absolu et index de tableau. Le contenu à la même position Transport change parce que le modulo a changé.
+
+**L'ajout d'un symbole donne un saut arrière** (index diminue car dénominateur plus grand).
+**La suppression donne un saut avant** (index augmente car dénominateur plus petit).
+
+C'est irrécupérable avec `Tone.Sequence` car le reschedule est atomique et intégral.
+
+### Architecture cible
+
+Remplacer `Tone.Sequence[]` (event-driven, pré-schedulé) + `Tone.Loop` (animation) par un **seul `Tone.Loop` maître** qui lit les données en direct :
+
+```
+AVANT :
+  N× Tone.Sequence  ──pré-schedule──→  Transport  ──→  audio
+  1× Tone.Loop      ──pré-schedule──→  Transport  ──→  animation (activeStep)
+
+APRÈS :
+  1× Tone.Loop      ──pré-schedule──→  Transport  ──→  audio + animation
+       │
+       └── callback lit this.trackNotes et this.players en direct
+```
+
+### Refacto : champs
+
+| Champ | Action |
+|-------|--------|
+| `private sequences: Tone.Sequence[]` | **Supprimer** |
+| `private stepLoop?: Tone.Loop` | **Supprimer** |
+| `private stepIndex: number = 0` | **Ajouter** (promu de variable locale → champ d'instance) |
+| `private masterLoop?: Tone.Loop` | **Ajouter** (remplace `sequences` + `stepLoop`) |
+| `private trackNotes: SequenceNotes[][] = []` | **Ajouter** (données lues en direct par le callback) |
+| `private currentColumnCount: number = 0` | **Conserver** |
+| `private loadedSymbols: Set<string>` | **Conserver** |
+| `private players?: Tone.Players` | **Conserver** |
+| `private onStep?: StepCallback` | **Conserver** |
+
+### Refacto : méthodes supprimées
+
+- `private clearSequences()` — plus de `Tone.Sequence` à disposer
+- `private clearStepLoop()` — remplacée par `clearMasterLoop()`
+- `private createStepLoop(columnCount)` — fusionnée dans `createSequence()`
+
+### Refacto : code complet des méthodes
+
+#### `createSequence(tracks)` — nouvelle version
+
+```typescript
+public createSequence(tracks: SequenceNotes[][]): void {
+  this.clearAll();
+
+  this.trackNotes = tracks;
+  this.currentColumnCount = tracks[0]?.length ?? 0;
+  this.stepIndex = 0;
+
+  if (!this.onStep) return;
+
+  this.masterLoop = new Tone.Loop((time) => {
+    if (this.currentColumnCount <= 0) return;
+    const step = this.stepIndex % this.currentColumnCount;
+
+    this.trackNotes.forEach((trackNotes) => {
+      if (step >= trackNotes.length) return;
+      const note = trackNotes[step];
+      if (typeof note === 'string') {
+        this.players?.player(note).start(time);
+      } else if (Array.isArray(note)) {
+        note.forEach((n) => {
+          if (typeof n === 'string') {
+            this.players?.player(n).start(time);
+          }
+        });
+      }
+    });
+
+    this.onStep!(step);
+    this.stepIndex += 1;
+  }, '8n').start(0);
+}
+```
+
+**Logique du callback** : à chaque tick '8n', on calcule l'étape courante via `stepIndex % currentColumnCount`. Pour chaque piste, on lit la note à cet index. Si la note est `string` → on joue l'instrument. Si c'est `string[]` (groupe) → on joue chaque sous-note (Tone.js dispatche chaque élément à la même position temporelle). Si c'est `null` (silence) → on ne joue rien. S'il n'y a pas assez de notes dans la piste (piste plus courte que la première) → `return`.
+
+#### `updateSequences(tracks)` — nouvelle version
+
+```typescript
+public updateSequences(tracks: SequenceNotes[][]): void {
+  if (!this.masterLoop) return;
+
+  this.trackNotes = tracks;
+  const newColumnCount = tracks[0]?.length ?? 0;
+  if (newColumnCount !== this.currentColumnCount) {
+    const oldPosition = this.stepIndex % this.currentColumnCount;
+    this.currentColumnCount = newColumnCount;
+    this.stepIndex = oldPosition;
+  }
+}
+```
+
+**Recalibration de `stepIndex`** : quand `colCount` change, on préserve la position relative dans le loop. Exemple :
+```
+colCount=4, stepIndex=11 → position = 11%4 = 3
+colCount passe à 5 → stepIndex recalé à 3 → 3%5 = 3 → même position visuelle
+Prochain tick : stepIndex=4 → 4%5=4
+```
+Sans recalibration : `stepIndex=11` resterait 11, `11%5=1` — saut visuel ET audio. Avec recalibration : position 3 préservée, pas de saut.
+
+Problème : le `stepIndex` est maintenant un petit nombre (0-4) plutôt qu'un compteur absolu. Le **prochain** tick repart de cette position, donc la boucle "avance" de 1 depuis la position recalée. Ce n'est pas parfait (on perd le rythme absolu) mais on évite le saut brutal.
+
+#### `stop()` — nouvelle version
+
+```typescript
+public stop(): void {
+  Tone.getTransport().stop();
+  Tone.getTransport().cancel(0);
+  this.clearMasterLoop();
+}
+```
+
+#### `clearAll()` — nouvelle version
+
+```typescript
+private clearAll(): void {
+  this.clearMasterLoop();
+  this.trackNotes = [];
+  this.currentColumnCount = 0;
+  this.stepIndex = 0;
+}
+```
+
+#### `clearMasterLoop()` — nouvelle méthode privée
+
+```typescript
+private clearMasterLoop(): void {
+  if (this.masterLoop) {
+    this.masterLoop.dispose();
+    this.masterLoop = undefined;
+  }
+}
+```
+
+### Design patterns
+
+| Pattern | Justification |
+|---------|---------------|
+| **Pull / Reactive** | Le callback du master loop lit `this.trackNotes` et `this.currentColumnCount` en direct à chaque tick — pas de pré-scheduling. Les changements sont répercutés au tick suivant sans reschedule |
+| **Merge de responsabilités** | Une seule boucle pour audio + animation — supprime la dualité `Tone.Sequence` vs `Tone.Loop` |
+| **Singleton** (inchangé) | `AudioEngine` |
+
+### Complexité
+
+| Opération | Avant | Après | Gain |
+|-----------|-------|-------|------|
+| Play initial | O(N×S) — crée N Tone.Sequence + 1 Tone.Loop | O(1) — crée 1 Tone.Loop | -N×S allocations |
+| Update (live edit) | O(N×S) — `_part.clear()` + `_rescheduleSequence()` par Sequence | **O(1)** — affectation de tableau + champ | Suppression du reschedule Tone.js natif |
+| Par tick '8n' | O(N) — N callbacks Sequence + 1 callback step loop | O(N) — 1 callback qui itère N pistes | Identique |
+| Changement nombre de pistes | Create/dispose Tone.Sequence | O(1) — rien, juste le tableau change | Suppression create/dispose Sequence |
+| Changement colCount | O(1) — MAJ champ (Phase 9) | O(1) — MAJ champ + recalage stepIndex | Identique |
+
+N = nombre de pistes (1-4 typiquement), S = nombre de pas (1-32 typiquement).
+
+### Duplication de code — ménage
+
+| Code supprimé | Lignes | Remplacement |
+|---------------|--------|--------------|
+| `private sequences: Tone.Sequence[]` | 1 | `private trackNotes: SequenceNotes[][]` |
+| `private stepLoop?: Tone.Loop` | 1 | Fusionné dans `masterLoop` |
+| `clearSequences()` | 3 | Supprimé (plus de Sequences) |
+| `clearStepLoop()` | 5 | `clearMasterLoop()` (5 lignes) |
+| `createStepLoop()` | 10 | Fusionné dans `createSequence()` |
+| Boucle while create/dispose dans `updateSequences()` | 16 | Supprimé (plus de Sequences) |
+| `seq.events = notes` | 3 | Supprimé (plus de reschedule) |
+
+**Bilan** : ~40 lignes supprimées, ~25 lignes ajoutées. Code plus court et plus simple.
+
+### Tests GWT (TDD — test d'abord)
+
+#### Prérequis : modifications du mock Tone
+
+Le mock `jest.mock('tone', ...)` doit être simplifié car `Tone.Sequence` n'est plus utilisé par `AudioEngine`. Il reste mocké (pas d'erreur d'import) mais simplifié.
+
+```typescript
+jest.mock('tone', () => {
+  const decodeFn = jest.fn().mockResolvedValue({});
+
+  return {
+    decodeFn,
+    Sequence: jest.fn(),                         // plus utilisé, gardé pour compilation
+    Players: jest.fn(() => ({
+      add: jest.fn(),
+      player: jest.fn(() => ({ start: jest.fn() })),
+      toDestination: jest.fn(),
+      dispose: jest.fn(),
+    })),
+    Loop: jest.fn((loopCallback: () => void) => ({
+      start: jest.fn(),
+      dispose: jest.fn(),
+      cb: loopCallback,                          // callback capturé pour les tests
+    })),
+    getContext: jest.fn(() => ({
+      decodeAudioData: decodeFn,
+    })),
+    getTransport: jest.fn(() => ({
+      bpm: { value: 120 },
+    })),
+  };
+});
+```
+
+Le type `mockTone` est simplifié (plus de `sequences`) :
+
+```typescript
+const mockTone = jest.requireMock('tone') as {
+  decodeFn: jest.Mock;
+  Sequence: jest.Mock;
+  Players: jest.Mock;
+  Loop: jest.Mock;
+  getContext: jest.Mock;
+};
+```
+
+Le `beforeEach` est simplifié aussi :
+
+```typescript
+beforeEach(() => {
+  mockTone.Sequence.mockClear();
+  mockTone.Loop.mockClear();
+  mockTone.decodeFn.mockClear();
+});
+```
+
+#### Tests existants à réécrire (3 tests)
+
+Ces tests dans `describe('#updateSequences')` utilisent `mockTone.sequences` ou `Tone.Sequence` et doivent être réécrits :
+
+**Test 1 — race condition guard** (remplace "should guard against empty sequences")
+
+```typescript
+it('should guard against no master loop (race condition)', () => {
+  engine.updateSequences([['kickdrum']]);
+  // Ne doit pas crasher — guard : if (!this.masterLoop) return
+});
+```
+
+**Test 2 — track count increase** (remplace "should create new sequences when track count increases")
+
+```typescript
+it('should accept more tracks without crashing', () => {
+  engine.createSequence([['kickdrum']]);
+  // Ne doit pas crasher
+  engine.updateSequences([['kickdrum'], ['hihat']]);
+});
+```
+
+**Test 3 — track count decrease** (remplace "should dispose extra sequences when track count decreases")
+
+```typescript
+it('should accept fewer tracks without crashing', () => {
+  engine.createSequence([['kickdrum'], ['hihat']]);
+  engine.updateSequences([['kickdrum']]);
+  // Ne doit pas crasher
+});
+```
+
+#### Nouveaux tests (8 tests)
+
+Ajouter dans `describe('#createSequence', ...)` et `describe('#updateSequences', ...)` :
+
+```typescript
+describe('#createSequence', () => {
+  let engine: AudioEngine;
+
+  beforeAll(() => {
+    engine = AudioEngine.getInstance();
+  });
+
+  it('should create a single master Tone.Loop', () => {
+    engine.setStepCallback(jest.fn());
+    engine.createSequence([['a', 'b']]);
+    expect(mockTone.Loop).toHaveBeenCalledTimes(1);
+    expect(mockTone.Sequence).not.toHaveBeenCalled();
+  });
+
+  it('should not create master loop when onStep is not set', () => {
+    engine.clearStepCallback();
+    mockTone.Loop.mockClear();
+    engine.createSequence([['a', 'b']]);
+    expect(mockTone.Loop).not.toHaveBeenCalled();
+  });
+
+  it('should play a note on each tick', () => {
+    // Given: players initialisés, sequence créée
+    const players = engine.createPlayers({});
+    const stepCb = jest.fn();
+    engine.setStepCallback(stepCb);
+    engine.createSequence([['kickdrum'], ['hihat']]);
+    const capturedCallback = (
+      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
+    ).cb;
+
+    // When: tick 0
+    capturedCallback();
+    // Then: kickdrum joué sur piste 0, hihat sur piste 1, onStep(0)
+    const playerFn = mockTone.Players.mock.results[0]?.value.player;
+    expect(playerFn).toHaveBeenCalledWith('kickdrum');
+    expect(playerFn).toHaveBeenCalledWith('hihat');
+    expect(stepCb).toHaveBeenCalledWith(0);
+  });
+
+  it('should handle groups (string[]) on a tick', () => {
+    const stepCb = jest.fn();
+    engine.setStepCallback(stepCb);
+    engine.createSequence([['kickdrum']]);
+    // Injecter un groupe dans trackNotes
+    (engine as Record<string, unknown>).trackNotes = [[['hihat', 'snare']]];
+    const capturedCallback = (
+      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
+    ).cb;
+
+    capturedCallback();
+
+    const playerFn = mockTone.Players.mock.results[0]?.value.player;
+    expect(playerFn).toHaveBeenCalledWith('hihat');
+    expect(playerFn).toHaveBeenCalledWith('snare');
+    expect(stepCb).toHaveBeenCalledWith(0);
+  });
+
+  it('should skip null notes (silence)', () => {
+    const stepCb = jest.fn();
+    engine.setStepCallback(stepCb);
+    engine.createSequence([['kickdrum']]);
+    (engine as Record<string, unknown>).trackNotes = [[null]];
+    const capturedCallback = (
+      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
+    ).cb;
+
+    capturedCallback();
+
+    const playerFn = mockTone.Players.mock.results[0]?.value.player;
+    // player().start() n'est pas appelé directement, on vérifie que player() n'a pas été appelé
+    // En pratique, si note est null, le callback ne joue rien
+    expect(stepCb).toHaveBeenCalledWith(0);
+  });
+
+  it('should skip tracks shorter than current step', () => {
+    const stepCb = jest.fn();
+    engine.setStepCallback(stepCb);
+    engine.createSequence([['a', 'b'], ['c']]);
+    // Simuler stepIndex=1 : piste 0 a [a,b] → joue b, piste 1 a [c] → step >= length, skip
+    (engine as Record<string, unknown>).trackNotes = [['a', 'b'], ['c']];
+    (engine as Record<string, unknown>).stepIndex = 1;
+    (engine as Record<string, unknown>).currentColumnCount = 2;
+    const capturedCallback = (
+      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
+    ).cb;
+
+    capturedCallback();
+
+    const playerFn = mockTone.Players.mock.results[0]?.value.player;
+    expect(playerFn).toHaveBeenCalledWith('b');
+    // 'c' ne doit pas être appelé car step(=1) >= trackNotes[1].length(=1)
+    expect(stepCb).toHaveBeenCalledWith(1);
+  });
+});
+```
+
+---
+
+```typescript
+describe('#updateSequences', () => {
+  // ... tests existants réécrits ...
+
+  it('should update trackNotes without recreating master loop', () => {
+    engine.setStepCallback(jest.fn());
+    engine.createSequence([['a', 'b']]);
+    mockTone.Loop.mockClear();
+    engine.updateSequences([['x', 'y', 'z']]);
+    expect(mockTone.Loop).not.toHaveBeenCalled();
+  });
+
+  it('should preserve relative position when columnCount changes', () => {
+    engine.setStepCallback(jest.fn());
+    engine.createSequence([['a', 'b', 'c', 'd']]);
+    // Simuler stepIndex à une position connue
+    (engine as Record<string, unknown>).stepIndex = 11; // 11%4=3
+    (engine as Record<string, unknown>).currentColumnCount = 4;
+    const capturedCallback = (
+      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
+    ).cb;
+
+    // Recalibration : 11%4=3, nouveau colCount=5 → stepIndex=3
+    engine.updateSequences([['w', 'x', 'y', 'z', 'a']]);
+    // stepIndex doit être 3 (position relative préservée)
+    capturedCallback(); // step 3 → stepIndex=4
+    capturedCallback(); // step 4 → stepIndex=5
+    capturedCallback(); // step 0 → stepIndex=6
+    // Vérifier que les bonnes notes sont jouées selon le nouveau tableau
+  });
+
+  it('should not change master loop when trackNotes change without columnCount change', () => {
+    engine.setStepCallback(jest.fn());
+    engine.createSequence([['a', 'b', 'c']]);
+    mockTone.Loop.mockClear();
+    engine.updateSequences([['x', 'y', 'z']]);
+    expect(mockTone.Loop).not.toHaveBeenCalled();
+  });
+});
+```
+
+### Ordre d'implémentation TDD
+
+1. **Modifier le mock `jest.mock('tone', ...)`** — simplifier `Sequence`, enlever `sequences`, garder `Loop` enrichi avec `cb`
+2. **Simplifier le type `mockTone` et le `beforeEach`**
+3. **Réécrire les 3 tests existants** dans `describe('#updateSequences')`
+4. **Ajouter le nouveau `describe('#createSequence')`** avec 6 tests
+5. **Ajouter les 3 nouveaux tests** dans `describe('#updateSequences')`
+6. **Lancer `npm run test -- --testPathPattern='audio-engine'`** → TOUS doivent échouer (RED)
+7. **Modifier `audio-engine.ts`** :
+   - Supprimer `private sequences`, `private stepLoop`
+   - Ajouter `private stepIndex = 0`, `private masterLoop`, `private trackNotes`
+   - Réécrire `createSequence()` (code fourni ci-dessus)
+   - Réécrire `updateSequences()` (code fourni ci-dessus)
+   - Réécrire `stop()` (appeler `clearMasterLoop`)
+   - Réécrire `clearAll()` (appeler `clearMasterLoop`)
+   - Ajouter `clearMasterLoop()`
+   - Supprimer `clearSequences()`, `clearStepLoop()`, `createStepLoop()`
+8. **Lancer `npm run test -- --testPathPattern='audio-engine'`** → tous les tests passent (GREEN)
+9. **Lancer `npm run test`** complet → vérifier aucune régression (toutes les suites passent)
+10. **Lancer `npm run lint`** → 0 erreurs
+
+### Tableau de régression
+
+| Test existant | Impact | Résultat attendu |
+|---------------|--------|-----------------|
+| `#hasSymbol` (2 tests) | Aucun | Passent sans modification |
+| `#registerSymbol` (1 test) | Aucun | Passe sans modification |
+| `#addToPlayers` (2 tests) | Aucun | Passent sans modification |
+| `#updateSequences — guard` (1 test) | Réécrit (guard `sequences.length` → `masterLoop`) | Nouvelle version passe |
+| `#updateSequences — track increase` (1 test) | Réécrit (plus de Sequences) | Nouvelle version passe |
+| `#updateSequences — track decrease` (1 test) | Réécrit (plus de Sequences) | Nouvelle version passe |
+| `#updateSequences — no recreate` (1 test, Phase 9) | Adapté (guard `sequences.length` → `masterLoop`) | Passe |
+| `#updateSequences — columnCount callback` (1 test, Phase 9) | Adapté (closure du master loop, pas du step loop) | Passe |
+| `audio-facade.test.ts` (4 tests) | Aucun — la facade ne voit pas les internes | Passent sans modification |
+| Tous les autres tests | Aucun | Passent sans modification |
+
 ## Cas limites et pièges
 
 | Cas | Comportement attendu |
 |-----|---------------------|
-| `updateTrack` appelé avant que `playPattern` ait fini | `updateSequences` fait un early return (`sequences.length === 0`), sans erreur |
+| `updateTrack` appelé avant que `playPattern` ait fini | `updateSequences` fait un early return (`!this.masterLoop`), sans erreur |
 | User supprime un symbole pendant la lecture | La séquence est mise à jour immédiatement (le symbole supprimé disparaît du son) |
-| User ajoute une piste pendant la lecture | `updateSequences` crée un nouveau `Tone.Sequence`, immédiatement actif |
-| User supprime une piste pendant la lecture | `updateSequences` dispose le `Tone.Sequence` en trop |
+| User ajoute une piste pendant la lecture | `this.trackNotes` mis à jour, pas de création/dispose de Sequences |
+| User supprime une piste pendant la lecture | `this.trackNotes` mis à jour, pas de création/dispose de Sequences |
 | User change la 1ère phrase (normalisation) | Toutes les autres pistes sont normalisées → `areAllSymbolsValid` recalculé → update si valide |
 | User toggle un mute pendant la lecture | `sentencesForPlayback` recalcule → `areAllSymbolsValid` (toujours true, car `.` est valide) → update |
 | User ajoute un symbole valide + un invalide en même temps | `allValid` = false, aucun update. Quand l'invalide est corrigé, les DEUX changements sont appliqués |
@@ -1211,7 +1932,9 @@ Lancer `npm run test` après chaque phase.
 | `Tone.getContext().decodeAudioData()` échoue | L'erreur est attrapée dans `updatePattern`, silencieusement (pas d'alert bloquant) |
 | `getInstrumentFilePathsFromSymbol` throw (symbole inconnu) | Ne peut pas arriver — on filtre avec `hasSymbol()` qui est géré en amont, et la validation bloque les symboles invalides avant cet appel |
 | `this.players.add(name, decoded[index])` — Tone.js accepte des ajouts après la création initiale | Confirmé : `Tone.Players.add()` fonctionne dynamiquement |
-| `seq.events = newNotes` pendant un temps très proche de la prochaine note | Tone.js `_part.clear()` + `_rescheduleSequence` sont synchrones dans le même tick JS. Pas de note perdue ou doublée |
+| Master loop callback — groupe `(A B)` en sub-array | `Array.isArray(note)` → `forEach` → chaque sous-note jouée à la même position temporelle |
+| Master loop callback — piste plus courte que la première | `if (step >= trackNotes.length) return` — skip, pas de crash |
+| ColCount change → recalibration `stepIndex` | `oldPosition = stepIndex % oldColCount` puis `stepIndex = oldPosition` — pas de saut audio |
 
 ## Avancement
 
@@ -1219,15 +1942,250 @@ Lancer `npm run test` après chaque phase.
 - [x] Vérification faisabilité Tone.Sequence.events setter — OK
 - [x] Analyse d'architecture et optimisations
 - [x] Plan de tests GWT exhaustif
-- [ ] Phase 0 — Déduplication du tokenizer
-- [ ] Phase 1 — `InstrumentEngine.getAllSymbols()`
-- [ ] Phase 2 — `areAllSymbolsValid()`
-- [ ] Phase 3 — `sentence-tokenizer.test.ts`
-- [ ] Phase 4 — `AudioEngine` nouvelles méthodes
-- [ ] Phase 5 — `audio-facade.updatePattern()`
-- [ ] Phase 6 — `AudioContext.updateTrack()`
-- [ ] Phase 7 — Intégration `PatternWorkspace`
-- [ ] Phase 8 — Enregistrement symboles au Play initial
+- [x] Phase 0 — Déduplication du tokenizer
+- [x] Phase 1 — `InstrumentEngine.getAllSymbols()`
+- [x] Phase 2 — `areAllSymbolsValid()`
+- [x] Phase 3 — `sentence-tokenizer.test.ts`
+- [x] Phase 4 — `AudioEngine` nouvelles méthodes
+- [x] Phase 5 — `audio-facade.updatePattern()`
+- [x] Phase 6 — `AudioContext.updateTrack()`
+- [x] Phase 7 — Intégration `PatternWorkspace`
+- [x] Phase 8 — Enregistrement symboles au Play initial
+- [x] Phase 9 — Correction désynchronisation step loop (animation)
+- [x] Phase 10 — Correction saut audio (master Tone.Loop)
+- [x] Phase 11 — Correction de la subdivision des groupes `(A B C)`
+
+## Phase 11 — Correction de la subdivision des groupes `(A B C)` dans le master Tone.Loop
+
+### Scénarios GWT
+
+1. **Étant donné que** un pattern contient un groupe `(A B C)` et qu'il est lu
+   **Alors** les 3 instruments A, B, C sont joués **successivement** dans la même pulsation (subdivision du temps)
+   **Et non PAS** simultanément
+
+2. **Étant donné que** un pattern contient `(A B)` et qu'il est lu
+   **Alors** A est joué au début du temps, B est joué à mi-temps (intervalle `'8n' / 2`)
+
+### Résumé pour l'implémentation
+
+**Fichiers à modifier** :
+| Fichier | Action |
+|---------|--------|
+| `src/renderer/features/audio/engine/audio-engine.ts` | Ajouter `stepDuration`, modifier `setTempo()` et le callback master loop |
+| `src/renderer/features/audio/tests/audio-engine.test.ts` | Ajouter `Tone.Time` au mock, modifier le test de groupe, ajouter 1 test |
+
+**Fichiers inchangés** : tous les autres
+
+### Cause racine
+
+Avec le master `Tone.Loop`, le callback joue tous les éléments d'un groupe au **même `time`** :
+
+```typescript
+// ÉTAT ACTUEL (buggé)
+} else if (Array.isArray(note)) {
+    note.forEach((n) => {
+        if (typeof n === 'string') {
+            this.players?.player(n).start(time);  // ← même `time`, toutes les sous-notes
+        }
+    });
+}
+```
+
+Avant le refacto, `Tone.Sequence` utilisait `_rescheduleSequence(value, subdivision / value.length, ...)` pour espacer automatiquement les sous-notes (Sequence.js:151). Avec le master loop, ce comportement doit être reproduit manuellement.
+
+### Correction (3 modifications dans `audio-engine.ts`)
+
+#### Modification 1/3 — Nouveau champ `stepDuration`
+
+```typescript
+private stepDuration: number = 0;
+```
+
+Ajouter après `private stepIndex: number = 0;`.
+
+#### Modification 2/3 — `setTempo` calcule `stepDuration`
+
+```typescript
+// eslint-disable-next-line class-methods-use-this
+public setTempo(bpm: number) {
+    Tone.getTransport().bpm.value = bpm;
+    this.stepDuration = Tone.Time('8n').toSeconds();
+}
+```
+
+**Explication** : `Tone.Time('8n').toSeconds()` calcule la durée d'une croche en secondes à partir du BPM courant. Stockée dans le champ, elle sert à espacer les sous-notes proportionnellement.
+
+#### Modification 3/3 — Callback : espacer les sous-notes
+
+```typescript
+// AVANT (lignes 78-83 du callback)
+} else if (Array.isArray(note)) {
+    note.forEach((n) => {
+        if (typeof n === 'string') {
+            this.players?.player(n).start(time);
+        }
+    });
+}
+
+// APRÈS
+} else if (Array.isArray(note)) {
+    const subCount = note.length;
+    note.forEach((n, i) => {
+        if (typeof n === 'string') {
+            const offset = (i * this.stepDuration) / subCount;
+            this.players?.player(n).start(time + offset);
+        }
+    });
+}
+```
+
+**Explication** : chaque sous-note est décalée de `(i * stepDuration) / subCount`. Pour `(A B C)` → indices 0, 1, 2 → offsets 0, stepDuration/3, 2*stepDuration/3. Toutes les sous-notes tiennent dans le temps d'une croche.
+
+### Prérequis : modifier le mock `jest.mock('tone', ...)`
+
+Ajouter `Time` au mock pour que `Tone.Time('8n').toSeconds()` retourne une valeur connue :
+
+```typescript
+// Dans jest.mock('tone', () => {
+return {
+    decodeFn,
+    Sequence: jest.fn(),
+    Players: jest.fn(() => ({...})),
+    Loop: jest.fn((loopCallback: () => void) => ({...})),
+    Time: jest.fn(() => ({ toSeconds: jest.fn(() => 0.2) })),  // ← AJOUTER
+    getContext: jest.fn(() => ({...})),
+    getTransport: jest.fn(() => ({...})),
+};
+```
+
+Ajouter `Time` dans le type `mockTone` :
+
+```typescript
+const mockTone = jest.requireMock('tone') as {
+    decodeFn: jest.Mock;
+    Sequence: jest.Mock;
+    Players: jest.Mock;
+    Loop: jest.Mock;
+    Time: jest.Mock;           // ← AJOUTER
+    getContext: jest.Mock;
+};
+```
+
+Ajouter `mockTone.Time.mockClear();` dans le `beforeEach`.
+
+### Tests GWT (TDD — test d'abord)
+
+#### Test 1 : modifier le test de groupe existant — vérifier les offsets temporels
+
+Remplacer `should handle groups (string[]) on a tick` par :
+
+```typescript
+it('should play sub-notes with time offsets for groups', () => {
+    const stepCb: StepCallback = jest.fn();
+    engine.setStepCallback(stepCb);
+    engine.setTempo(120);
+    engine.createSequence([['kickdrum']]);
+    (engine as unknown as Record<string, unknown>).trackNotes = [
+        [['hihat', 'snare']],
+    ];
+    const capturedCallback = (
+        mockTone.Loop.mock.results[0]?.value as MockLoopInstance
+    ).cb;
+
+    capturedCallback();
+
+    const playerFn = mockTone.Players.mock.results[0]?.value.player;
+    expect(playerFn).toHaveBeenCalledWith('hihat');
+    expect(playerFn).toHaveBeenCalledWith('snare');
+
+    const startHihat = playerFn.mock.results[0]?.value.start;
+    const startSnare = playerFn.mock.results[1]?.value.start;
+    expect(startHihat).toHaveBeenCalledWith(expect.closeTo(0, 0.001));
+    expect(startSnare).toHaveBeenCalledWith(expect.closeTo(0.1, 0.001));
+    expect(stepCb).toHaveBeenCalledWith(0);
+});
+```
+
+**Validation TDD RED** : avant la correction, les deux appels `start` reçoivent le même `time` (0). Le test `closeTo(0.1)` échoue.
+
+**Validation TDD GREEN** : après la correction, `hihat` est à `time + 0`, `snare` à `time + stepDuration / 2 = 0 + 0.1`. Les deux assertions passent.
+
+#### Test 2 : trois sous-notes
+
+```typescript
+it('should spread three sub-notes across the step duration', () => {
+    const stepCb: StepCallback = jest.fn();
+    engine.setStepCallback(stepCb);
+    engine.setTempo(120);
+    engine.createSequence([['kickdrum']]);
+    (engine as unknown as Record<string, unknown>).trackNotes = [
+        [['a', 'b', 'c']],
+    ];
+    const capturedCallback = (
+        mockTone.Loop.mock.results[0]?.value as MockLoopInstance
+    ).cb;
+
+    capturedCallback();
+
+    const playerFn = mockTone.Players.mock.results[0]?.value.player;
+    const startA = playerFn.mock.results[0]?.value.start;
+    const startB = playerFn.mock.results[1]?.value.start;
+    const startC = playerFn.mock.results[2]?.value.start;
+
+    expect(startA).toHaveBeenCalledWith(expect.closeTo(0, 0.001));
+    expect(startB).toHaveBeenCalledWith(expect.closeTo(0.0666, 0.001));
+    expect(startC).toHaveBeenCalledWith(expect.closeTo(0.1333, 0.001));
+});
+```
+
+#### Test 3 : groupe avec une seule sous-note — offset = 0
+
+```typescript
+it('should play a single-element group at time 0', () => {
+    const stepCb: StepCallback = jest.fn();
+    engine.setStepCallback(stepCb);
+    engine.setTempo(120);
+    engine.createSequence([['kickdrum']]);
+    (engine as unknown as Record<string, unknown>).trackNotes = [
+        [['solo']],
+    ];
+    const capturedCallback = (
+        mockTone.Loop.mock.results[0]?.value as MockLoopInstance
+    ).cb;
+
+    capturedCallback();
+
+    const playerFn = mockTone.Players.mock.results[0]?.value.player;
+    const startSolo = playerFn.mock.results[0]?.value.start;
+    expect(startSolo).toHaveBeenCalledWith(expect.closeTo(0, 0.001));
+});
+```
+
+### Ordre d'implémentation TDD
+
+1. **Ajouter `Time` au mock `jest.mock('tone', ...)`** — `Time: jest.fn(() => ({ toSeconds: jest.fn(() => 0.2) }))`
+2. **Ajouter `Time` au type `mockTone` et au `beforeEach`**
+3. **Modifier le test de groupe existant** (vérifier les offsets `start`) + ajouter les 2 nouveaux tests
+4. **Lancer `npm run test -- --testPathPattern='audio-engine'`** → les nouveaux tests échouent (RED)
+5. **Ajouter `private stepDuration: number = 0;`** dans `AudioEngine`
+6. **Modifier `setTempo(bpm)`** pour calculer `this.stepDuration = Tone.Time('8n').toSeconds();`
+7. **Modifier le callback master loop** — espacer les sous-notes avec offset
+8. **Lancer `npm run test -- --testPathPattern='audio-engine'`** → tous les tests passent (GREEN)
+9. **Lancer `npm run test`** complet → vérifier aucune régression
+10. **Lancer `npm run lint`** → 0 erreurs
+
+### Tableau de régression
+
+| Test existant | Impact | Résultat attendu |
+|---------------|--------|-----------------|
+| `#createSequence — should handle groups` | Remplacé par la version vérifiant les offsets | Passe avec la correction |
+| `#createSequence — should play a note on each tick` | Aucun (pistes séparées) | Passe sans modification |
+| `#createSequence — should skip null notes` | Aucun (null, pas de groupe) | Passe sans modification |
+| `#createSequence — should skip tracks shorter than current step` | Aucun | Passe sans modification |
+| `#createSequence — creates single master loop` | Aucun | Passe sans modification |
+| `#createSequence — should not create master loop when onStep not set` | Aucun | Passe sans modification |
+| Tous les `#updateSequences` | Aucun (pas de callback invoqué) | Passent sans modification |
+| Tous les autres tests | Aucun | Passent sans modification |
 
 ## Notes / décisions
 

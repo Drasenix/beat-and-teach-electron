@@ -6,6 +6,10 @@ import {
 import { InstrumentFilePath } from '../../../../shared/types/instrument';
 import { SequenceNotes, SequenceNote } from '../types/sequence-note';
 import toSequenceNote from '../adapters/sequence-adapter';
+import {
+  tokenizeSentence,
+  TokenMatch,
+} from '../../../utils/sentence-tokenizer';
 
 export async function prepareFilePaths(
   sentence: string,
@@ -29,24 +33,16 @@ async function toGroupNotes(group: string): Promise<SequenceNote[]> {
   );
 }
 
-async function toSequenceNotes(match: RegExpExecArray): Promise<SequenceNotes> {
-  if (match[1] !== undefined) {
-    return toGroupNotes(match[1]); // Groupe 1 : plusieurs notes par temps
+async function toSequenceNotes(token: TokenMatch): Promise<SequenceNotes> {
+  if (token.group !== undefined) {
+    return toGroupNotes(token.group);
   }
-  return toSequenceNote(await getInstrumentNameFromSymbol(match[2])); // Groupe 2 : une seule note
+  return toSequenceNote(await getInstrumentNameFromSymbol(token.symbol ?? ''));
 }
 
 export async function preparePattern(
   sentence: string,
 ): Promise<SequenceNotes[]> {
-  const regex = /\(([^)]*)\)|(\S+)/g; // "hello (world foo) bar" --> ["hello", "(world foo)", "bar"]
-  const matches: RegExpExecArray[] = [];
-  let match: RegExpExecArray | null = regex.exec(sentence);
-
-  while (match !== null) {
-    matches.push(match);
-    match = regex.exec(sentence);
-  }
-
-  return Promise.all(matches.map(toSequenceNotes));
+  const tokens = tokenizeSentence(sentence);
+  return Promise.all(tokens.map(toSequenceNotes));
 }
