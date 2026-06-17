@@ -21,6 +21,43 @@ const HOME_ENTRIES = [
   { to: '/library', icon: FileSliders, label: 'bibliothèque' },
 ] as const;
 
+const WAVEFORM_LINES = [
+  { x: 212, y1: 123, y2: 127, sw: 3 },
+  { x: 234, y1: 123, y2: 127, sw: 3 },
+  { x: 256, y1: 122, y2: 128, sw: 3 },
+  { x: 278, y1: 123, y2: 127, sw: 3 },
+  { x: 300, y1: 121, y2: 129, sw: 3 },
+  { x: 322, y1: 122, y2: 128, sw: 3 },
+  { x: 344, y1: 120, y2: 130, sw: 3 },
+  { x: 366, y1: 121, y2: 129, sw: 3 },
+  { x: 388, y1: 119, y2: 131, sw: 3 },
+  { x: 410, y1: 120, y2: 130, sw: 3 },
+  { x: 432, y1: 117, y2: 133, sw: 3 },
+  { x: 454, y1: 119, y2: 131, sw: 3 },
+  { x: 476, y1: 115, y2: 135, sw: 3 },
+  { x: 498, y1: 118, y2: 132, sw: 3 },
+  { x: 520, y1: 113, y2: 137, sw: 3 },
+  { x: 542, y1: 116, y2: 134, sw: 3 },
+  { x: 564, y1: 109, y2: 141, sw: 3 },
+  { x: 586, y1: 113, y2: 137, sw: 3 },
+  { x: 608, y1: 104, y2: 146, sw: 3.5 },
+  { x: 630, y1: 109, y2: 141, sw: 3.5 },
+  { x: 652, y1: 96, y2: 154, sw: 3.5 },
+  { x: 674, y1: 102, y2: 148, sw: 3.5 },
+  { x: 696, y1: 86, y2: 164, sw: 3.5 },
+  { x: 720, y1: 98, y2: 152, sw: 3.5 },
+  { x: 745, y1: 68, y2: 182, sw: 4 },
+  { x: 772, y1: 48, y2: 202, sw: 4 },
+  { x: 799, y1: 78, y2: 172, sw: 4 },
+  { x: 826, y1: 33, y2: 217, sw: 4 },
+  { x: 853, y1: 58, y2: 192, sw: 4 },
+  { x: 880, y1: 25, y2: 225, sw: 4.5 },
+  { x: 907, y1: 63, y2: 187, sw: 4.5 },
+  { x: 934, y1: 40, y2: 210, sw: 4.5 },
+  { x: 961, y1: 70, y2: 180, sw: 4.5 },
+  { x: 988, y1: 95, y2: 155, sw: 4 },
+] as const;
+
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-6">
@@ -30,6 +67,12 @@ export default function Home() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
+          <style>{`
+            @keyframes breathe {
+              0%, 100% { transform: scaleY(0.3); }
+              50% { transform: scaleY(1); }
+            }
+          `}</style>
           <filter id="gW" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="6" result="b" />
             <feMerge>
@@ -45,40 +88,17 @@ export default function Home() {
         <rect width="1012" height="256" fill="#030712" />
 
         <g filter="url(#gW)" stroke="#679ff9" strokeLinecap="round">
-          <line x1="212" y1="123" x2="212" y2="127" strokeWidth="3" />
-          <line x1="234" y1="123" x2="234" y2="127" strokeWidth="3" />
-          <line x1="256" y1="122" x2="256" y2="128" strokeWidth="3" />
-          <line x1="278" y1="123" x2="278" y2="127" strokeWidth="3" />
-          <line x1="300" y1="121" x2="300" y2="129" strokeWidth="3" />
-          <line x1="322" y1="122" x2="322" y2="128" strokeWidth="3" />
-          <line x1="344" y1="120" x2="344" y2="130" strokeWidth="3" />
-          <line x1="366" y1="121" x2="366" y2="129" strokeWidth="3" />
-          <line x1="388" y1="119" x2="388" y2="131" strokeWidth="3" />
-          <line x1="410" y1="120" x2="410" y2="130" strokeWidth="3" />
-          <line x1="432" y1="117" x2="432" y2="133" strokeWidth="3" />
-          <line x1="454" y1="119" x2="454" y2="131" strokeWidth="3" />
-          <line x1="476" y1="115" x2="476" y2="135" strokeWidth="3" />
-          <line x1="498" y1="118" x2="498" y2="132" strokeWidth="3" />
-          <line x1="520" y1="113" x2="520" y2="137" strokeWidth="3" />
-          <line x1="542" y1="116" x2="542" y2="134" strokeWidth="3" />
-          <line x1="564" y1="109" x2="564" y2="141" strokeWidth="3" />
-          <line x1="586" y1="113" x2="586" y2="137" strokeWidth="3" />
-          <line x1="608" y1="104" x2="608" y2="146" strokeWidth="3.5" />
-          <line x1="630" y1="109" x2="630" y2="141" strokeWidth="3.5" />
-          <line x1="652" y1="96" x2="652" y2="154" strokeWidth="3.5" />
-          <line x1="674" y1="102" x2="674" y2="148" strokeWidth="3.5" />
-          <line x1="696" y1="86" x2="696" y2="164" strokeWidth="3.5" />
-          <line x1="720" y1="98" x2="720" y2="152" strokeWidth="3.5" />
-          <line x1="745" y1="68" x2="745" y2="182" strokeWidth="4" />
-          <line x1="772" y1="48" x2="772" y2="202" strokeWidth="4" />
-          <line x1="799" y1="78" x2="799" y2="172" strokeWidth="4" />
-          <line x1="826" y1="33" x2="826" y2="217" strokeWidth="4" />
-          <line x1="853" y1="58" x2="853" y2="192" strokeWidth="4" />
-          <line x1="880" y1="25" x2="880" y2="225" strokeWidth="4.5" />
-          <line x1="907" y1="63" x2="907" y2="187" strokeWidth="4.5" />
-          <line x1="934" y1="40" x2="934" y2="210" strokeWidth="4.5" />
-          <line x1="961" y1="70" x2="961" y2="180" strokeWidth="4.5" />
-          <line x1="988" y1="95" x2="988" y2="155" strokeWidth="4" />
+          {WAVEFORM_LINES.map(({ x, y1, y2, sw }, i) => (
+            <g
+              key={`l-${x}`}
+              style={{
+                transformOrigin: `${x}px ${(y1 + y2) / 2}px`,
+                animation: `breathe 2.4s ease-in-out ${i * 0.06}s infinite`,
+              }}
+            >
+              <line x1={x} y1={y1} x2={x} y2={y2} strokeWidth={sw} />
+            </g>
+          ))}
         </g>
 
         <rect
