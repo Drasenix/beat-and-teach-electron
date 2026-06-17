@@ -58,6 +58,17 @@ const WAVEFORM_LINES = [
   { x: 988, y1: 95, y2: 155, sw: 4 },
 ] as const;
 
+const DURS = [0.6, 0.75, 0.9, 0.65, 0.85, 1.0, 0.7, 0.95];
+const BEGINS = [0, -0.15, -0.3, -0.45, -0.1, -0.25, -0.4, -0.05];
+
+function animateOffset(h: number): number {
+  if (h < 15) return 1;
+  if (h < 30) return Math.round(h * 0.17);
+  if (h < 80) return Math.round(h * 0.12);
+  if (h < 150) return Math.round(h * 0.18);
+  return 12;
+}
+
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-6">
@@ -67,12 +78,6 @@ export default function Home() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <style>{`
-            @keyframes breathe {
-              0%, 100% { transform: scaleY(0.3); }
-              50% { transform: scaleY(1); }
-            }
-          `}</style>
           <filter id="gW" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="6" result="b" />
             <feMerge>
@@ -88,17 +93,38 @@ export default function Home() {
         <rect width="1012" height="256" fill="#030712" />
 
         <g filter="url(#gW)" stroke="#679ff9" strokeLinecap="round">
-          {WAVEFORM_LINES.map(({ x, y1, y2, sw }, i) => (
-            <g
-              key={`l-${x}`}
-              style={{
-                transformOrigin: `${x}px ${(y1 + y2) / 2}px`,
-                animation: `breathe 2.4s ease-in-out ${i * 0.06}s infinite`,
-              }}
-            >
-              <line x1={x} y1={y1} x2={x} y2={y2} strokeWidth={sw} />
-            </g>
-          ))}
+          {WAVEFORM_LINES.map(({ x, y1, y2, sw }, i) => {
+            const h = y2 - y1;
+            const offset = animateOffset(h);
+            const dur = DURS[i % DURS.length];
+            const begin = BEGINS[i % BEGINS.length];
+
+            return (
+              <line
+                key={`l-${x}`}
+                x1={x}
+                x2={x}
+                strokeWidth={sw}
+                y1={y1}
+                y2={y2}
+              >
+                <animate
+                  attributeName="y1"
+                  values={`${y1};${y1 - offset};${y1}`}
+                  dur={dur}
+                  begin={`${begin}s`}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y2"
+                  values={`${y2};${y2 + offset};${y2}`}
+                  dur={dur}
+                  begin={`${begin}s`}
+                  repeatCount="indefinite"
+                />
+              </line>
+            );
+          })}
         </g>
 
         <rect
