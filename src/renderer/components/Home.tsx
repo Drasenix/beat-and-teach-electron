@@ -71,142 +71,146 @@ function animateOffset(h: number): number {
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-6">
-      <svg
-        viewBox="0 0 1012 256"
-        className="max-w-[1012px] w-full"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <filter id="gW" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="b" />
-            <feMerge>
-              <feMergeNode in="b" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          <filter id="glow-b" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="16" />
-          </filter>
-        </defs>
-
-        <rect width="1012" height="256" fill="#030712" />
-
-        <g filter="url(#gW)" stroke="#679ff9" strokeLinecap="round">
-          {WAVEFORM_LINES.map(({ x, y1, y2, sw }, i) => {
-            const h = y2 - y1;
-            const offset = animateOffset(h);
-            const dur = DURS[i % DURS.length];
-            const begin = BEGINS[i % BEGINS.length];
-
-            return (
-              <line
-                key={`l-${x}`}
-                x1={x}
-                x2={x}
-                strokeWidth={sw}
-                y1={y1}
-                y2={y2}
-              >
-                <animate
-                  attributeName="y1"
-                  values={`${y1};${y1 - offset};${y1}`}
-                  dur={dur}
-                  begin={`${begin}s`}
-                  repeatCount="indefinite"
-                />
-                <animate
-                  attributeName="y2"
-                  values={`${y2};${y2 + offset};${y2}`}
-                  dur={dur}
-                  begin={`${begin}s`}
-                  repeatCount="indefinite"
-                />
-              </line>
-            );
-          })}
-        </g>
-
-        <rect
-          x="60"
-          y="58"
-          width="120"
-          height="120"
-          rx="20"
-          fill="#1d273c"
-          stroke="#679ff9"
-          strokeWidth="1.5"
-        />
-        <text
-          x="92"
-          y="148"
-          fontSize="80"
-          fontWeight="bold"
-          fill="#679ff9"
-          fontFamily="Arial, sans-serif"
-          filter="url(#glow-b)"
-          opacity="0.6"
+    <div className="min-h-screen flex flex-col">
+      <header className="flex justify-center px-8 pt-8 pb-6">
+        <svg
+          viewBox="0 0 1012 256"
+          className="max-w-[1012px] w-full"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          B
-        </text>
-        <text
-          x="92"
-          y="148"
-          fontSize="80"
-          fontWeight="bold"
-          fill="#679ff9"
-          fontFamily="Arial, sans-serif"
-        >
-          B
-        </text>
+          <defs>
+            <filter id="gW" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="glow-b" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="16" />
+            </filter>
+          </defs>
 
-        <text
-          x="210"
-          y="105"
-          fontSize="52"
-          fontWeight="300"
-          fill="#f3f4f6"
-          fontFamily="Arial, sans-serif"
-          letterSpacing="3"
-        >
-          EAT &amp; TEACH
-        </text>
+          <rect width="1012" height="256" fill="#030712" />
 
-        <text
-          x="210"
-          y="155"
-          fontSize="14"
-          fill="#6b7280"
-          fontFamily="Arial, sans-serif"
-          letterSpacing="1.5"
-        >
-          écris ton pattern
-        </text>
+          <g filter="url(#gW)" stroke="#679ff9" strokeLinecap="round">
+            {WAVEFORM_LINES.map(({ x, y1, y2, sw }, i) => {
+              const h = y2 - y1;
+              const offset = animateOffset(h);
+              const dur = DURS[i % DURS.length];
+              const begin = BEGINS[i % BEGINS.length];
 
-        <text
-          x="210"
-          y="178"
-          fontSize="14"
-          fill="#6b7280"
-          fontFamily="Arial, sans-serif"
-          letterSpacing="1.5"
-        >
-          écoute · apprends
-        </text>
-      </svg>
+              return (
+                <line
+                  key={`l-${x}`}
+                  x1={x}
+                  x2={x}
+                  strokeWidth={sw}
+                  y1={y1}
+                  y2={y2}
+                >
+                  <animate
+                    attributeName="y1"
+                    values={`${y1};${y1 - offset};${y1}`}
+                    dur={dur}
+                    begin={`${begin}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="y2"
+                    values={`${y2};${y2 + offset};${y2}`}
+                    dur={dur}
+                    begin={`${begin}s`}
+                    repeatCount="indefinite"
+                  />
+                </line>
+              );
+            })}
+          </g>
 
-      <div className="grid grid-cols-3 gap-4 w-full max-w-2xl">
-        {HOME_ENTRIES.map(({ to, icon: Icon, label }) => (
-          <div className="div-animated-wrapper" key={to}>
-            <Link to={to} className="link-animated-inner group">
-              <p className="text-primary flex justify-center w-full">
-                <Icon size={28} />
-              </p>
-              <p className="text-primary">{label}</p>
-            </Link>
-          </div>
-        ))}
-      </div>
+          <rect
+            x="60"
+            y="58"
+            width="120"
+            height="120"
+            rx="20"
+            fill="#1d273c"
+            stroke="#679ff9"
+            strokeWidth="1.5"
+          />
+          <text
+            x="92"
+            y="148"
+            fontSize="80"
+            fontWeight="bold"
+            fill="#679ff9"
+            fontFamily="Arial, sans-serif"
+            filter="url(#glow-b)"
+            opacity="0.6"
+          >
+            B
+          </text>
+          <text
+            x="92"
+            y="148"
+            fontSize="80"
+            fontWeight="bold"
+            fill="#679ff9"
+            fontFamily="Arial, sans-serif"
+          >
+            B
+          </text>
+
+          <text
+            x="210"
+            y="105"
+            fontSize="52"
+            fontWeight="300"
+            fill="#f3f4f6"
+            fontFamily="Arial, sans-serif"
+            letterSpacing="3"
+          >
+            EAT &amp; TEACH
+          </text>
+
+          <text
+            x="210"
+            y="155"
+            fontSize="14"
+            fill="#6b7280"
+            fontFamily="Arial, sans-serif"
+            letterSpacing="1.5"
+          >
+            écris ton pattern
+          </text>
+
+          <text
+            x="210"
+            y="178"
+            fontSize="14"
+            fill="#6b7280"
+            fontFamily="Arial, sans-serif"
+            letterSpacing="1.5"
+          >
+            écoute · apprends
+          </text>
+        </svg>
+      </header>
+
+      <main className=" flex items-center justify-center px-8 pb-8">
+        <div className="grid gap-4 w-full max-w-2xl">
+          {HOME_ENTRIES.map(({ to, icon: Icon, label }) => (
+            <div className="div-animated-wrapper" key={to}>
+              <Link to={to} className="link-animated-inner group">
+                <p className="text-primary flex justify-center w-full">
+                  <Icon size={25} />
+                </p>
+                <p className="text-primary">{label}</p>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </main>
     </div>
   );
 }
