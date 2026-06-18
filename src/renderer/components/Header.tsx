@@ -18,7 +18,9 @@ const NAV_ICONS = {
   '/library': FileSliders,
 } as const;
 
-const NAV_TITLES: Record<string, string> = {
+type Route = keyof typeof NAV_ICONS;
+
+const NAV_TITLES: Record<Route, string> = {
   '/guide': 'Guide',
   '/workspace': 'Studio',
   '/configuration/instruments': 'Instruments',
@@ -27,7 +29,7 @@ const NAV_TITLES: Record<string, string> = {
   '/library': 'Bibliothèque',
 };
 
-const NAV_ROUTES = Object.keys(NAV_ICONS);
+const NAV_ROUTES = Object.keys(NAV_ICONS) as Route[];
 
 export default function Header() {
   const location = useLocation();
