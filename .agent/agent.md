@@ -101,6 +101,7 @@
 | `npm start` | Dev complet (webpack + electronmon) |
 | `npm run lint` | ESLint |
 | `npm run lint:fix` | ESLint auto-fix |
+| `npm run typecheck` | TypeScript strict check (tsc --noEmit) |
 | `npm run test` | Tests Jest |
 | `npm run build` | Build production |
 | `npm run package` | Package electron-builder |

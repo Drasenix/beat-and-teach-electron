@@ -39,4 +39,4 @@ Then: retourne "kickdrum"
 ### 5. Refacto
 - Améliorer le code sans changer le comportement
 - Extraire les fonctions pures, réduire la duplication, simplifier
-- Lancer `npm run test` + `npm run lint` pour confirmer
+- Lancer `npm run typecheck` + `npm run test` + `npm run lint` pour confirmer
