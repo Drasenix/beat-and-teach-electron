@@ -8,4 +8,5 @@ export type PatternStep = {
   valid: boolean;
   isGroup: boolean;
   steps?: PatternStep[];
+  frequency?: number;
 };

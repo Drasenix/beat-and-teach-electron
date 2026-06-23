@@ -1,3 +1,4 @@
+import { parseToken } from '../../../utils/token-parser';
 import { PatternFormValues } from '../types/pattern-types';
 
 type ValidatePatternFields = Pick<PatternFormValues, 'name' | 'sentences'>;
@@ -25,5 +26,8 @@ export function areAllSymbolsValid(
     .split(/\s+/)
     .filter((s) => s.length > 0);
   if (symbols.length === 0) return true;
-  return symbols.every((s) => s === '.' || validSymbols.includes(s));
+  return symbols.every((s) => {
+    const cleaned = parseToken(s).symbol;
+    return cleaned === '.' || validSymbols.includes(cleaned);
+  });
 }

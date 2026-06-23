@@ -1,4 +1,4 @@
-export type LibraryManifestVersion = 1;
+export type LibraryManifestVersion = 1 | 2;
 
 export interface LibraryPattern {
   slug: string;
@@ -12,6 +12,7 @@ export interface LibraryInstrument {
   symbol: string;
   name: string | null;
   audioFile: string;
+  referenceFrequency: number | null;
 }
 
 export interface LibraryManifest {

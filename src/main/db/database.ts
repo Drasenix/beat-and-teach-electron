@@ -3,6 +3,7 @@ import { app } from 'electron';
 import path from 'path';
 import runMigrations from './migrations/001_initial';
 import runMigration002 from './migrations/002_highlights';
+import runMigration003 from './migrations/003_reference_frequency';
 
 let db: Database.Database;
 
@@ -14,6 +15,7 @@ export default function getDatabase(): Database.Database {
     db.pragma('foreign_keys = ON');
     runMigrations(db);
     runMigration002(db);
+    runMigration003(db);
   }
   return db;
 }

@@ -7,4 +7,5 @@ export interface Instrument {
   symbol: string;
   filepath: FilePath;
   name: InstrumentName;
+  referenceFrequency: number | null;
 }

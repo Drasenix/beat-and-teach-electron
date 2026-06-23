@@ -11,6 +11,12 @@ type StepCellProps = {
   ) => void;
   isMuted: (sentenceIndex: number, tokenIndex: number) => boolean;
   onToggleMute?: (sentenceIndex: number, tokenIndex: number) => void;
+  onFrequencyChange?: (
+    sentenceIndex: number,
+    tokenIndex: number,
+    frequency: number | null,
+  ) => void;
+  referenceFrequencies?: Map<string, number | null>;
 };
 
 export default function StepCell({
@@ -19,8 +25,14 @@ export default function StepCell({
   onChangeHighlight,
   isMuted,
   onToggleMute,
+  onFrequencyChange,
+  referenceFrequencies,
 }: StepCellProps) {
   const { step, sentenceIndex, tokenIndex } = trackStep;
+
+  const getReferenceFrequency = (symbol: string): number | null => {
+    return referenceFrequencies?.get(symbol) ?? null;
+  };
 
   if (!step) return <span className="step-cell-empty">—</span>;
 
@@ -43,6 +55,13 @@ export default function StepCell({
                   ? () => onToggleMute(sentenceIndex, innerTokenIndex)
                   : undefined
               }
+              onFrequencyChange={
+                onFrequencyChange
+                  ? (freq) =>
+                      onFrequencyChange(sentenceIndex, innerTokenIndex, freq)
+                  : undefined
+              }
+              referenceFrequency={getReferenceFrequency(innerToken.symbol)}
             />
           );
         })}
@@ -64,6 +83,12 @@ export default function StepCell({
             ? () => onToggleMute(sentenceIndex, tokenIndex)
             : undefined
         }
+        onFrequencyChange={
+          onFrequencyChange
+            ? (freq) => onFrequencyChange(sentenceIndex, tokenIndex, freq)
+            : undefined
+        }
+        referenceFrequency={getReferenceFrequency(step.symbol)}
       />
     </div>
   );

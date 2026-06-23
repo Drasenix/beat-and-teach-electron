@@ -29,7 +29,7 @@ export function parseLibraryFile(zipPath: string): LibraryManifest {
   const manifest: LibraryManifest = JSON.parse(
     manifestEntry.getData().toString('utf8'),
   );
-  if (manifest.version !== 1) {
+  if (manifest.version !== 1 && manifest.version !== 2) {
     throw new Error(`Version de manifest non supportée : ${manifest.version}`);
   }
   return manifest;
@@ -154,6 +154,7 @@ export async function importLibrary(
         symbol: inst.symbol,
         name: finalName,
         filepath: destPath,
+        referenceFrequency: inst.referenceFrequency ?? null,
       });
       result.importedInstruments += 1;
     } catch (error: unknown) {

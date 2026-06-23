@@ -1,3 +1,5 @@
+import { parseToken } from './token-parser';
+
 const SENTENCE_REGEX = /\(([^)]*)\)|(\S+)/g;
 
 export interface TokenMatch {
@@ -26,9 +28,11 @@ export function extractSymbols(sentence: string): string[] {
   const tokens = tokenizeSentence(sentence);
   tokens.forEach((token) => {
     if (token.group !== undefined) {
-      token.group.split(/\s+/).forEach((s) => symbols.push(s));
+      token.group
+        .split(/\s+/)
+        .forEach((s) => symbols.push(parseToken(s).symbol));
     } else if (token.symbol !== undefined) {
-      symbols.push(token.symbol);
+      symbols.push(parseToken(token.symbol).symbol);
     }
   });
   return symbols;

@@ -4,6 +4,7 @@ import { extractIpcError } from '../../../../utils/util';
 import { InstrumentFormValues } from '../../types/instrument-types';
 import InstrumentForm from './InstrumentForm';
 import validateInstrument from '../../utils/instrument-validator';
+import useDetectPitch from '../../hooks/useDetectPitch';
 
 type EditInstrumentFormProps = {
   instrument: Instrument;
@@ -23,6 +24,7 @@ export default function EditInstrumentForm({
       symbol: instrument.symbol,
       name: instrument.name ?? '',
       filepath: instrument.filepath ?? null,
+      referenceFrequency: instrument.referenceFrequency,
     });
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -41,6 +43,11 @@ export default function EditInstrumentForm({
     }
   };
 
+  const handleDetectPitch = useDetectPitch(
+    instrumentValues.filepath,
+    instrumentValues.symbol,
+  );
+
   return (
     <div className="form-card">
       <InstrumentForm
@@ -51,6 +58,7 @@ export default function EditInstrumentForm({
           setInstrumentValues((prev) => ({ ...prev, ...partial }))
         }
         onOpenFileDialog={onOpenFileDialog}
+        onDetectPitch={handleDetectPitch}
         onSubmit={handleSubmit}
         onCancel={onCancel}
         titleLabel="Modifier l'instrument"

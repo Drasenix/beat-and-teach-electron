@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useState,
+  useRef,
   ReactNode,
   useMemo,
   useCallback,
@@ -29,6 +30,7 @@ const AudioContext = createContext<AudioContextType | null>(null);
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [playing, setPlaying] = useState(false);
   const [activeStep, setActiveStep] = useState<number | null>(null);
+  const playingRef = useRef(false);
 
   const handleStep = useCallback((stepIndex: number) => {
     setActiveStep(stepIndex);
@@ -39,16 +41,22 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       playing,
       activeStep,
       playTrack: async (sentences: string[], bpm: number): Promise<void> => {
+        if (playingRef.current) return;
+        playingRef.current = true;
+        setPlaying(true);
         try {
           await playPattern(sentences, bpm, handleStep);
-          setPlaying(true);
         } catch (error) {
+          playingRef.current = false;
+          setPlaying(false);
+          setActiveStep(null);
           // eslint-disable-next-line no-alert
           alert(error);
         }
       },
       stopTrack: (): void => {
         stopPattern();
+        playingRef.current = false;
         setPlaying(false);
         setActiveStep(null);
       },

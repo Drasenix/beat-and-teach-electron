@@ -15,6 +15,11 @@ type PatternStepsProps = {
   activeColumnIndex?: number | null;
   mutedSteps?: Set<string>;
   toggleMute?: (sentenceIndex: number, tokenIndex: number) => void;
+  onFrequencyChange?: (
+    sentenceIndex: number,
+    tokenIndex: number,
+    frequency: number | null,
+  ) => void;
 };
 
 export default function PatternSteps({
@@ -24,11 +29,17 @@ export default function PatternSteps({
   activeColumnIndex,
   mutedSteps,
   toggleMute,
+  onFrequencyChange,
 }: PatternStepsProps) {
   const { instruments } = useInstruments();
 
   const symbols = useMemo(
     () => instruments.map((i) => i.symbol),
+    [instruments],
+  );
+
+  const referenceFrequencies: Map<string, number | null> = useMemo(
+    () => new Map(instruments.map((i) => [i.symbol, i.referenceFrequency])),
     [instruments],
   );
 
@@ -69,6 +80,8 @@ export default function PatternSteps({
               isActive={activeColumnIndex === index}
               isMuted={isMuted}
               onToggleMute={handleToggleMute}
+              onFrequencyChange={onFrequencyChange}
+              referenceFrequencies={referenceFrequencies}
             />
           ))}
         </div>

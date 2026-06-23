@@ -5,6 +5,8 @@ export default function validateInstrument(
 ): string[] {
   const errors: string[] = [];
   if (!instrument.symbol.trim()) errors.push('Le symbole est requis.');
+  if (instrument.symbol.includes('@'))
+    errors.push("Le symbole ne peut pas contenir le caractère '@'.");
   if (!instrument.name?.trim()) errors.push('Le nom est requis.');
   if (!instrument.filepath) errors.push('Le fichier audio est requis.');
   return errors;

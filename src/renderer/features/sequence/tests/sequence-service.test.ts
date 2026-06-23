@@ -66,6 +66,9 @@ describe('#preparePattern', () => {
         assertSymbolKnown(symbol);
         return instrumentNames[symbol];
       });
+    jest
+      .spyOn(instrumentFacade, 'getInstrumentReferenceFrequencyFromSymbol')
+      .mockImplementation(async () => null);
   });
 
   it('should return a list of notes based on a sentence and a list of instruments', async () => {
@@ -76,9 +79,12 @@ describe('#preparePattern', () => {
       await sequenceService.preparePattern(sentenceOK);
     // Then
     const expected: SequenceNotes[] = [
-      'kickdrum',
-      ['hihat', 'kickdrum'],
-      'hihat',
+      { name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 },
+      [
+        { name: 'hihat', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 },
+      ],
+      { name: 'hihat', playbackRate: 1, semitoneOffset: 0 },
       null,
     ];
     expect(result).toEqual(expected);
@@ -91,5 +97,62 @@ describe('#preparePattern', () => {
     await expect(sequenceService.preparePattern(sentenceKO)).rejects.toThrow(
       `Le symbole K n'existe pas.`,
     );
+  });
+
+  it('should compute playbackRate from @freq with referenceFrequency', async () => {
+    jest
+      .mocked(instrumentFacade.getInstrumentReferenceFrequencyFromSymbol)
+      .mockResolvedValue(440);
+
+    const result: SequenceNotes[] =
+      await sequenceService.preparePattern('P@880 Ts@220');
+
+    expect(result).toEqual([
+      { name: 'kickdrum', playbackRate: 2, semitoneOffset: 12 },
+      { name: 'hihat', playbackRate: 0.5, semitoneOffset: -12 },
+    ]);
+  });
+
+  it('should clamp playbackRate to minimum 0.25', async () => {
+    jest
+      .mocked(instrumentFacade.getInstrumentReferenceFrequencyFromSymbol)
+      .mockResolvedValue(440);
+
+    const result: SequenceNotes[] =
+      await sequenceService.preparePattern('P@55');
+
+    expect(result).toEqual([
+      { name: 'kickdrum', playbackRate: 0.25, semitoneOffset: -24 },
+    ]);
+  });
+
+  it('should clamp playbackRate to maximum 4', async () => {
+    jest
+      .mocked(instrumentFacade.getInstrumentReferenceFrequencyFromSymbol)
+      .mockResolvedValue(440);
+
+    const result: SequenceNotes[] =
+      await sequenceService.preparePattern('P@2200');
+
+    expect(result).toEqual([
+      { name: 'kickdrum', playbackRate: 4, semitoneOffset: 24 },
+    ]);
+  });
+
+  it('should compute playbackRate for @freq inside a group', async () => {
+    jest
+      .mocked(instrumentFacade.getInstrumentReferenceFrequencyFromSymbol)
+      .mockResolvedValue(440);
+
+    const result: SequenceNotes[] =
+      await sequenceService.preparePattern('P (Ts@880 P@220)');
+
+    expect(result).toEqual([
+      { name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 },
+      [
+        { name: 'hihat', playbackRate: 2, semitoneOffset: 12 },
+        { name: 'kickdrum', playbackRate: 0.5, semitoneOffset: -12 },
+      ],
+    ]);
   });
 });

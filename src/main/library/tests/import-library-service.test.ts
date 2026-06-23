@@ -95,10 +95,10 @@ describe('#parseLibraryFile', () => {
     );
   });
 
-  it('should throw when manifest version is not 1', () => {
+  it('should throw when manifest version is not supported', () => {
     // Given
     const invalidManifest = JSON.stringify({
-      version: 2,
+      version: 3,
       exportDate: '2026-01-01T00:00:00.000Z',
       patterns: [],
       instruments: [],
@@ -136,6 +136,7 @@ describe('#importLibrary', () => {
         symbol: 'K',
         name: 'Kick Drum',
         audioFile: 'audio/kick.wav',
+        referenceFrequency: null,
       },
     ],
   };
@@ -310,6 +311,7 @@ describe('#importLibrary', () => {
         symbol: 'K',
         name: 'Old Kick',
         filepath: '/audio/old-kick.wav',
+        referenceFrequency: null,
       },
     ]);
     const resolutions = [

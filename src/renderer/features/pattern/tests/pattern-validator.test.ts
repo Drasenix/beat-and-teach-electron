@@ -112,4 +112,22 @@ describe('#areAllSymbolsValid', () => {
     const result = areAllSymbolsValid(['   '], VALID_SYMBOLS);
     expect(result).toBe(true);
   });
+
+  it('should strip @freq and validate the cleaned symbol', () => {
+    const result = areAllSymbolsValid(['Hum@440 P@220'], ['Hum', 'P']);
+    expect(result).toBe(true);
+  });
+
+  it('should return false when cleaned symbol is unknown', () => {
+    const result = areAllSymbolsValid(['Hum@440 X@880'], ['Hum']);
+    expect(result).toBe(false);
+  });
+
+  it('should strip @freq from symbols inside groups', () => {
+    const result = areAllSymbolsValid(
+      ['P (Hum@440 Ts@880)'],
+      ['P', 'Hum', 'Ts'],
+    );
+    expect(result).toBe(true);
+  });
 });

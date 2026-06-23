@@ -1,18 +1,24 @@
 import { PatternStep } from '../types/pattern-types';
 import { TrackColumn } from '../types/track-column';
 import { tokenizeSentence } from '../../../utils/sentence-tokenizer';
+import { parseToken } from '../../../utils/token-parser';
 
 export function createStep(
-  symbol: string,
+  raw: string,
   validSymbols: string[],
   id: number,
 ): PatternStep {
-  return {
+  const { symbol, frequency } = parseToken(raw);
+  const step: PatternStep = {
     id: `step-${id}`,
     symbol,
     valid: validSymbols.includes(symbol),
     isGroup: false,
   };
+  if (frequency !== undefined) {
+    step.frequency = frequency;
+  }
+  return step;
 }
 
 export function createGroup(
@@ -20,13 +26,12 @@ export function createGroup(
   symbols: string[],
   startId: number,
 ): PatternStep {
-  const inner = raw
-    .trim()
-    .split(/\s+/)
-    .map((s, i) => createStep(s, symbols, startId + i));
+  const innerTokens = raw.trim().split(/\s+/);
+  const inner = innerTokens.map((s, i) => createStep(s, symbols, startId + i));
+  const displaySymbols = innerTokens.map((s) => parseToken(s).symbol).join(' ');
   return {
     id: `group-${startId + inner.length}`,
-    symbol: `(${raw})`,
+    symbol: `(${displaySymbols})`,
     valid: inner.every((t) => t.valid),
     isGroup: true,
     steps: inner,

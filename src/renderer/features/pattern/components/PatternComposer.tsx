@@ -13,6 +13,11 @@ type PatternComposerProps = {
     tokenIndex: number,
     color: string | null,
   ) => void;
+  changeFrequency: (
+    sentenceIndex: number,
+    tokenIndex: number,
+    frequency: number | null,
+  ) => void;
   activeColumnIndex?: number | null;
   mutedSteps: Set<string>;
   toggleMute: (sentenceIndex: number, tokenIndex: number) => void;
@@ -25,6 +30,7 @@ export default function PatternComposer({
   removeSentence,
   normalizeAllSentences,
   changeHighlight,
+  changeFrequency,
   activeColumnIndex,
   mutedSteps,
   toggleMute,
@@ -47,6 +53,7 @@ export default function PatternComposer({
           activeColumnIndex={activeColumnIndex}
           mutedSteps={mutedSteps}
           toggleMute={toggleMute}
+          onFrequencyChange={changeFrequency}
         />
       </div>
     </div>

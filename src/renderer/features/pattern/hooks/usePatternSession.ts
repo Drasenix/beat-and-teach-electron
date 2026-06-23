@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import usePattern from './usePattern';
 import { transformSentencesWithMute } from '../utils/pattern-mute';
+import updateTokenFrequency from '../../../utils/update-token-frequency';
 
 const usePatternSession = () => {
   const patternHooks = usePattern();
@@ -35,6 +36,20 @@ const usePatternSession = () => {
     return mutedSteps.has(`${sentenceIndex}-${tokenIndex}`);
   };
 
+  const changeFrequency = useCallback(
+    (sentenceIndex: number, tokenIndex: number, frequency: number | null) => {
+      const currentSentence = patternHooks.pattern.sentences[sentenceIndex];
+      if (currentSentence === undefined) return;
+      const newSentence = updateTokenFrequency(
+        currentSentence,
+        tokenIndex,
+        frequency,
+      );
+      patternHooks.changeSentence(sentenceIndex, newSentence);
+    },
+    [patternHooks],
+  );
+
   const sentencesForPlayback = useMemo(
     () =>
       transformSentencesWithMute(patternHooks.pattern.sentences, mutedSteps),
@@ -48,6 +63,7 @@ const usePatternSession = () => {
     mutedSteps,
     toggleMute,
     isMuted,
+    changeFrequency,
     sentencesForPlayback,
   };
 };

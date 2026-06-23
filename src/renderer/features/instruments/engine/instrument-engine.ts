@@ -51,4 +51,14 @@ export default class InstrumentEngine {
     }
     throw new Error(`Le symbole ${symbol} n'existe pas.`);
   }
+
+  public getInstrumentReferenceFrequency(symbol: string): number | null {
+    const instru: Instrument | undefined = this.instruments.find(
+      (instrument: Instrument) => instrument.symbol === symbol,
+    );
+    if (instru) {
+      return instru.referenceFrequency;
+    }
+    throw new Error(`Le symbole ${symbol} n'existe pas.`);
+  }
 }

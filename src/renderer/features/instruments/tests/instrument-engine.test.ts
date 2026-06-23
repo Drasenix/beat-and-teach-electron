@@ -9,6 +9,7 @@ const instrumentDTOOne: InstrumentDTO = {
   symbol: 'P',
   filepath: './assets/audio/kickdrum.mp3',
   name: 'kickdrum',
+  referenceFrequency: null,
 };
 const instrumentDTOTwo: InstrumentDTO = {
   id: 2,
@@ -16,6 +17,7 @@ const instrumentDTOTwo: InstrumentDTO = {
   symbol: 'Ts',
   filepath: './assets/audio/hihat.mp3',
   name: 'hihat',
+  referenceFrequency: null,
 };
 const instrumentDTOThree: InstrumentDTO = {
   id: 3,
@@ -23,6 +25,7 @@ const instrumentDTOThree: InstrumentDTO = {
   symbol: '.',
   filepath: null,
   name: null,
+  referenceFrequency: null,
 };
 const instrumentsDTO: InstrumentDTO[] = [
   instrumentDTOOne,
@@ -39,6 +42,7 @@ const sampleInstruments: Instrument[] = [
     symbol: 'P',
     name: 'kickdrum',
     filepath: '/path/kickdrum.mp3',
+    referenceFrequency: null,
   },
   {
     id: 2,
@@ -46,8 +50,24 @@ const sampleInstruments: Instrument[] = [
     symbol: 'Ts',
     name: 'hihat',
     filepath: '/path/hihat.mp3',
+    referenceFrequency: null,
   },
-  { id: 3, slug: 'silence', symbol: '.', name: null, filepath: null },
+  {
+    id: 3,
+    slug: 'silence',
+    symbol: '.',
+    name: null,
+    filepath: null,
+    referenceFrequency: null,
+  },
+  {
+    id: 4,
+    slug: 'hum',
+    symbol: 'Hum',
+    name: 'hum',
+    filepath: '/path/hum.mp3',
+    referenceFrequency: 220,
+  },
 ];
 
 describe('#getAllSymbols', () => {
@@ -63,7 +83,7 @@ describe('#getAllSymbols', () => {
   it('should return all symbols from loaded instruments', () => {
     instrumentEngine.loadInstruments(sampleInstruments);
     const result = instrumentEngine.getAllSymbols();
-    expect(result).toEqual(['P', 'Ts', '.']);
+    expect(result).toEqual(['P', 'Ts', '.', 'Hum']);
   });
 
   it('should reflect changes after reloading instruments', () => {
@@ -74,6 +94,7 @@ describe('#getAllSymbols', () => {
         symbol: 'P',
         name: 'kickdrum',
         filepath: '/path/kickdrum.mp3',
+        referenceFrequency: null,
       },
       {
         id: 2,
@@ -81,6 +102,7 @@ describe('#getAllSymbols', () => {
         symbol: 'Ts',
         name: 'hihat',
         filepath: '/path/hihat.mp3',
+        referenceFrequency: null,
       },
     ]);
     const result = instrumentEngine.getAllSymbols();
@@ -119,5 +141,26 @@ describe('#getInstrumentFilePathsFromSymbol', () => {
     expect(() =>
       instrumentEngine.getInstrumentFilePathsFromSymbol(symbol),
     ).toThrow(`Le symbole K n'existe pas.`);
+  });
+});
+
+describe('#getInstrumentReferenceFrequency', () => {
+  it('should return reference frequency for a known instrument', () => {
+    instrumentEngine.loadInstruments(sampleInstruments);
+    const result = instrumentEngine.getInstrumentReferenceFrequency('Hum');
+    expect(result).toBe(220);
+  });
+
+  it('should return null when instrument has no reference frequency', () => {
+    instrumentEngine.loadInstruments(sampleInstruments);
+    const result = instrumentEngine.getInstrumentReferenceFrequency('P');
+    expect(result).toBeNull();
+  });
+
+  it('should throw an error for unknown symbol', () => {
+    instrumentEngine.loadInstruments(sampleInstruments);
+    expect(() => instrumentEngine.getInstrumentReferenceFrequency('X')).toThrow(
+      `Le symbole X n'existe pas.`,
+    );
   });
 });

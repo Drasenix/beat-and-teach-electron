@@ -66,6 +66,7 @@ describe('#exportLibrary', () => {
         symbol: 'K',
         name: 'Kick Drum',
         filepath: '/audio/kick.wav',
+        referenceFrequency: null,
       },
     ]);
     mockedFs.existsSync.mockReturnValue(true);
@@ -98,6 +99,7 @@ describe('#exportLibrary', () => {
         symbol: 'K',
         name: 'Kick Drum',
         filepath: null,
+        referenceFrequency: null,
       },
     ]);
 
@@ -125,6 +127,7 @@ describe('#exportLibrary', () => {
         symbol: 'K',
         name: 'Kick Drum',
         filepath: '/audio/missing.wav',
+        referenceFrequency: null,
       },
     ]);
     mockedFs.existsSync.mockReturnValue(false);

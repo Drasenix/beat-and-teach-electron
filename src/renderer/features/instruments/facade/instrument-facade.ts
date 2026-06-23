@@ -46,6 +46,13 @@ export async function getInstrumentFilePathsFromSymbol(
   return instrumentEngine.getInstrumentFilePathsFromSymbol(symbol);
 }
 
+export async function getInstrumentReferenceFrequencyFromSymbol(
+  symbol: string,
+): Promise<number | null> {
+  const instrumentEngine = await prepareInstrumentEngine();
+  return instrumentEngine.getInstrumentReferenceFrequency(symbol);
+}
+
 export async function createInstrument(
   instrument: InstrumentFormValues,
 ): Promise<Instrument> {
@@ -53,6 +60,7 @@ export async function createInstrument(
     symbol: instrument.symbol,
     name: instrument.name,
     filepath: instrument.filepath,
+    referenceFrequency: instrument.referenceFrequency ?? null,
   });
   refreshInstrumentEngine();
   return adaptInstrument(created);
@@ -66,6 +74,7 @@ export async function updateInstrument(
     symbol: instrument.symbol,
     name: instrument.name,
     filepath: instrument.filepath,
+    referenceFrequency: instrument.referenceFrequency,
   });
   refreshInstrumentEngine();
   return adaptInstrument(updated);

@@ -4,4 +4,5 @@ export interface InstrumentDTO {
   symbol: string;
   name: string | null;
   filepath: string | null;
+  referenceFrequency: number | null;
 }

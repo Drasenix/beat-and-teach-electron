@@ -62,6 +62,13 @@ describe('#tokenizeSentence', () => {
     const result = tokenizeSentence('P Ts ');
     expect(result).toHaveLength(2);
   });
+
+  it('should tokenize a sentence with @freq notation', () => {
+    const result = tokenizeSentence('Hum@440 P');
+    expect(result).toHaveLength(2);
+    expect(result[0].symbol).toBe('Hum@440');
+    expect(result[1].symbol).toBe('P');
+  });
 });
 
 describe('#extractSymbols', () => {
@@ -83,6 +90,16 @@ describe('#extractSymbols', () => {
   it('should extract symbols from multiple groups', () => {
     const result = extractSymbols('(P Ts) K (. Bw)');
     expect(result).toEqual(['P', 'Ts', 'K', '.', 'Bw']);
+  });
+
+  it('should strip @freq from atomic tokens', () => {
+    const result = extractSymbols('Hum@440 P@220');
+    expect(result).toEqual(['Hum', 'P']);
+  });
+
+  it('should strip @freq from tokens inside groups', () => {
+    const result = extractSymbols('P (Hum@440 Ts@880) .');
+    expect(result).toEqual(['P', 'Hum', 'Ts', '.']);
   });
 });
 
@@ -123,5 +140,14 @@ describe('#extractUniqueSymbols', () => {
     expect(result).toContain('.');
     expect(result).toContain('Bw');
     expect(result).toContain('Pf');
+  });
+
+  it('should strip @freq and deduplicate cleaned symbols', () => {
+    const result = extractUniqueSymbols(['Hum@440 P', 'Hum@880 Ts']);
+    expect(result).toContain('Hum');
+    expect(result).toContain('P');
+    expect(result).toContain('Ts');
+    expect(result).not.toContain('Hum@440');
+    expect(result).not.toContain('Hum@880');
   });
 });

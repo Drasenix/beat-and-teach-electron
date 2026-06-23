@@ -1,4 +1,5 @@
 import { FolderOpen } from 'lucide-react';
+import { useState } from 'react';
 import { InstrumentFormValues } from '../../types/instrument-types';
 
 type InstrumentFormProps = {
@@ -7,6 +8,7 @@ type InstrumentFormProps = {
   submitLabel: string;
   onInstrumentChange: (fields: Partial<InstrumentFormValues>) => void;
   onOpenFileDialog: () => Promise<string | null>;
+  onDetectPitch: () => Promise<number | null>;
   onSubmit: () => void;
   onCancel: () => void;
   titleLabel: string;
@@ -19,12 +21,32 @@ export default function InstrumentForm({
   titleLabel,
   onInstrumentChange,
   onOpenFileDialog,
+  onDetectPitch,
   onSubmit,
   onCancel,
 }: InstrumentFormProps) {
+  const [detecting, setDetecting] = useState(false);
+  const [detectError, setDetectError] = useState<string | null>(null);
+
   const handleSelectFile = async () => {
     const path = await onOpenFileDialog();
     if (path) onInstrumentChange({ filepath: path });
+  };
+
+  const handleDetectPitch = async () => {
+    setDetecting(true);
+    setDetectError(null);
+    try {
+      const freq = await onDetectPitch();
+      if (freq !== null) {
+        onInstrumentChange({ referenceFrequency: Math.round(freq) });
+      } else {
+        setDetectError('Hauteur non détectable sur ce sample.');
+      }
+    } catch {
+      setDetectError('Erreur lors de la détection.');
+    }
+    setDetecting(false);
   };
 
   return (
@@ -59,6 +81,33 @@ export default function InstrumentForm({
           </span>
         )}
       </div>
+
+      <div className="flex items-center gap-3">
+        <input
+          type="number"
+          placeholder="Fréquence de référence (Hz)"
+          value={instrument.referenceFrequency ?? ''}
+          onChange={(e) =>
+            onInstrumentChange({
+              referenceFrequency: e.target.value
+                ? parseFloat(e.target.value)
+                : null,
+            })
+          }
+          className="input-field w-full"
+        />
+        <button
+          type="button"
+          onClick={handleDetectPitch}
+          disabled={!instrument.filepath || detecting}
+          className="btn-add"
+        >
+          {detecting ? 'Détection...' : 'Détecter'}
+        </button>
+      </div>
+      {detectError && (
+        <span className="text-text-secondary text-xs">{detectError}</span>
+      )}
 
       {errors.length > 0 && (
         <ul className="flex flex-col gap-1">

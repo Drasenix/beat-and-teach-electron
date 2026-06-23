@@ -12,13 +12,16 @@ jest.mock('tone', () => {
   return {
     decodeFn,
     Sequence: jest.fn(),
-    Players: jest.fn(() => ({
-      add: jest.fn(),
-      player: jest.fn(() => ({ start: jest.fn() })),
-      toDestination: jest.fn(),
+    Player: jest.fn(() => ({
+      start: jest.fn(),
+      stop: jest.fn(),
+      playbackRate: {},
+      toDestination: jest.fn(function () {
+        return this;
+      }),
       dispose: jest.fn(),
     })),
-    Loop: jest.fn((loopCallback: () => void) => ({
+    Loop: jest.fn((loopCallback: (time: number) => void) => ({
       start: jest.fn(),
       dispose: jest.fn(),
       cb: loopCallback,
@@ -35,18 +38,50 @@ jest.mock('tone', () => {
 
 const mockTone = jest.requireMock('tone') as {
   decodeFn: jest.Mock;
-  Sequence: jest.Mock;
-  Players: jest.Mock;
+  Player: jest.Mock;
   Loop: jest.Mock;
   Time: jest.Mock;
   getContext: jest.Mock;
 };
 
+const mockBuffer = new ArrayBuffer(8);
+
+async function createPlayersWith(
+  engine: AudioEngine,
+  names: string[],
+): Promise<void> {
+  const data: Record<string, ArrayBuffer> = {};
+  names.forEach((n) => {
+    data[n] = mockBuffer;
+  });
+  await engine.createPlayers(data);
+}
+
+function setField(engine: AudioEngine, key: string, value: unknown): void {
+  (engine as unknown as Record<string, unknown>)[key] = value;
+}
+
+function getLoopCallback(index: number): (time: number) => void {
+  return (mockTone.Loop.mock.results[index]?.value as MockLoopInstance).cb;
+}
+
+function getPooledPlayer(
+  engine: AudioEngine,
+  trackIndex: number,
+  name: string,
+  semitoneOffset: number,
+): { start: jest.Mock; playbackRate: Record<string, number> } | undefined {
+  const pool = (engine as unknown as Record<string, unknown>).playerPool as Map<
+    string,
+    Map<number, { start: jest.Mock; playbackRate: Record<string, number> }>
+  >[];
+  return pool[trackIndex]?.get(name)?.get(semitoneOffset);
+}
+
 beforeEach(() => {
-  mockTone.Sequence.mockClear();
   mockTone.Loop.mockClear();
+  mockTone.Player.mockClear();
   mockTone.decodeFn.mockClear();
-  mockTone.Players.mockClear();
   mockTone.Time.mockClear();
 });
 
@@ -75,230 +110,281 @@ describe('#registerSymbol', () => {
 describe('#addToPlayers', () => {
   it('should decode audio data for each buffer entry', async () => {
     const engine = AudioEngine.getInstance();
-    await engine.createPlayers({});
-    const buffer: ArrayBuffer = new ArrayBuffer(8);
-    await engine.addToPlayers({ kickdrum: buffer, hihat: buffer });
-    expect(mockTone.decodeFn).toHaveBeenCalledTimes(2);
-  });
-
-  it('should add decoded buffers to Tone.Players', async () => {
-    const engine = AudioEngine.getInstance();
-    await engine.createPlayers({});
-    const buffer: ArrayBuffer = new ArrayBuffer(8);
-    await engine.addToPlayers({ kickdrum: buffer, hihat: buffer });
-    const players = mockTone.Players.mock.results[0]?.value;
-    expect(players.add).toHaveBeenCalledTimes(2);
+    await engine.createPlayers({ kickdrum: mockBuffer });
+    mockTone.decodeFn.mockClear();
+    await engine.addToPlayers({ hihat: mockBuffer });
+    expect(mockTone.decodeFn).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('#createSequence', () => {
-  let engine: AudioEngine;
-
-  beforeAll(() => {
-    engine = AudioEngine.getInstance();
-  });
-
-  beforeEach(async () => {
-    await engine.createPlayers({});
-  });
-
-  it('should create a single master Tone.Loop and no Tone.Sequence', () => {
+  it('should create one Tone.Loop per track', async () => {
+    const engine = AudioEngine.getInstance();
+    await createPlayersWith(engine, ['a', 'b', 'c', 'd']);
     engine.setStepCallback(jest.fn());
-    engine.createSequence([['a', 'b']]);
-    expect(mockTone.Loop).toHaveBeenCalledTimes(1);
-    expect(mockTone.Sequence).not.toHaveBeenCalled();
+    engine.createSequence([
+      [
+        { name: 'a', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'b', playbackRate: 1, semitoneOffset: 0 },
+      ],
+      [{ name: 'c', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
+    expect(mockTone.Loop).toHaveBeenCalledTimes(2);
   });
 
-  it('should not create master loop when onStep is not set', () => {
+  it('should not create loops when onStep is not set', async () => {
+    const engine = AudioEngine.getInstance();
+    await createPlayersWith(engine, ['a']);
     engine.clearStepCallback();
-    engine.createSequence([['a', 'b']]);
+    engine.createSequence([
+      [{ name: 'a', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
     expect(mockTone.Loop).not.toHaveBeenCalled();
   });
 
-  it('should play a note on each tick', () => {
+  it('should play a note on each tick', async () => {
+    const engine = AudioEngine.getInstance();
     const stepCb: StepCallback = jest.fn();
+    await createPlayersWith(engine, ['kickdrum', 'hihat']);
     engine.setStepCallback(stepCb);
-    engine.createSequence([['kickdrum'], ['hihat']]);
-    const capturedCallback = (
-      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
-    ).cb;
+    engine.createSequence([
+      [{ name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 }],
+      [{ name: 'hihat', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
 
-    capturedCallback(0);
+    const loop0 = getLoopCallback(0);
+    loop0(0);
+    const loop1 = getLoopCallback(1);
+    loop1(0);
 
-    const playerFn = mockTone.Players.mock.results[0]?.value.player;
-    expect(playerFn).toHaveBeenCalledWith('kickdrum');
-    expect(playerFn).toHaveBeenCalledWith('hihat');
+    expect(
+      getPooledPlayer(engine, 0, 'kickdrum', 0)?.start,
+    ).toHaveBeenCalledWith(0);
+    expect(getPooledPlayer(engine, 1, 'hihat', 0)?.start).toHaveBeenCalledWith(
+      0,
+    );
     expect(stepCb).toHaveBeenCalledWith(0);
   });
 
-  it('should play sub-notes with time offsets for groups', () => {
+  it('should play sub-notes with time offsets for groups', async () => {
+    const engine = AudioEngine.getInstance();
     const stepCb: StepCallback = jest.fn();
+    await createPlayersWith(engine, ['hihat', 'snare']);
     engine.setStepCallback(stepCb);
     engine.setTempo(120);
-    engine.createSequence([['kickdrum']]);
-    (engine as unknown as Record<string, unknown>).trackNotes = [
-      [['hihat', 'snare']],
-    ];
-    const capturedCallback = (
-      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
-    ).cb;
+    engine.createSequence([
+      [
+        { name: 'hihat', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'snare', playbackRate: 1, semitoneOffset: 0 },
+      ],
+    ]);
+    setField(engine, 'trackNotes', [
+      [
+        [
+          { name: 'hihat', playbackRate: 1, semitoneOffset: 0 },
+          { name: 'snare', playbackRate: 1, semitoneOffset: 0 },
+        ],
+      ],
+    ]);
 
-    capturedCallback(0);
+    const loop0 = getLoopCallback(0);
+    loop0(0);
 
-    const playerFn = mockTone.Players.mock.results[0]?.value.player;
-    expect(playerFn).toHaveBeenCalledWith('hihat');
-    expect(playerFn).toHaveBeenCalledWith('snare');
-
-    const startHihat = playerFn.mock.results[0]?.value.start;
-    const startSnare = playerFn.mock.results[1]?.value.start;
-    expect(startHihat).toHaveBeenCalledWith(0);
-    expect(startSnare).toHaveBeenCalledWith(expect.closeTo(0.1, 0.001));
+    expect(getPooledPlayer(engine, 0, 'hihat', 0)?.start).toHaveBeenCalledWith(
+      0,
+    );
+    expect(getPooledPlayer(engine, 0, 'snare', 0)?.start).toHaveBeenCalledWith(
+      expect.closeTo(0.1, 0.001),
+    );
     expect(stepCb).toHaveBeenCalledWith(0);
   });
 
-  it('should spread three sub-notes across the step duration', () => {
+  it('should spread three sub-notes across the step duration', async () => {
+    const engine = AudioEngine.getInstance();
     const stepCb: StepCallback = jest.fn();
+    await createPlayersWith(engine, ['a', 'b', 'c']);
     engine.setStepCallback(stepCb);
     engine.setTempo(120);
-    engine.createSequence([['kickdrum']]);
-    (engine as unknown as Record<string, unknown>).trackNotes = [
-      [['a', 'b', 'c']],
-    ];
-    const capturedCallback = (
-      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
-    ).cb;
+    engine.createSequence([
+      [
+        { name: 'a', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'b', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'c', playbackRate: 1, semitoneOffset: 0 },
+      ],
+    ]);
+    setField(engine, 'trackNotes', [
+      [
+        [
+          { name: 'a', playbackRate: 1, semitoneOffset: 0 },
+          { name: 'b', playbackRate: 1, semitoneOffset: 0 },
+          { name: 'c', playbackRate: 1, semitoneOffset: 0 },
+        ],
+      ],
+    ]);
 
-    capturedCallback(0);
+    const loop0 = getLoopCallback(0);
+    loop0(0);
 
-    const playerFn = mockTone.Players.mock.results[0]?.value.player;
-    const startA = playerFn.mock.results[0]?.value.start;
-    const startB = playerFn.mock.results[1]?.value.start;
-    const startC = playerFn.mock.results[2]?.value.start;
-
-    expect(startA).toHaveBeenCalledWith(expect.closeTo(0, 0.001));
-    expect(startB).toHaveBeenCalledWith(expect.closeTo(0.0666, 0.001));
-    expect(startC).toHaveBeenCalledWith(expect.closeTo(0.1333, 0.001));
+    expect(getPooledPlayer(engine, 0, 'a', 0)?.start).toHaveBeenCalledWith(
+      expect.closeTo(0, 0.001),
+    );
+    expect(getPooledPlayer(engine, 0, 'b', 0)?.start).toHaveBeenCalledWith(
+      expect.closeTo(0.0666, 0.001),
+    );
+    expect(getPooledPlayer(engine, 0, 'c', 0)?.start).toHaveBeenCalledWith(
+      expect.closeTo(0.1333, 0.001),
+    );
   });
 
-  it('should play a single-element group at time 0', () => {
+  it('should play a single-element group at time 0', async () => {
+    const engine = AudioEngine.getInstance();
     const stepCb: StepCallback = jest.fn();
+    await createPlayersWith(engine, ['solo']);
     engine.setStepCallback(stepCb);
     engine.setTempo(120);
-    engine.createSequence([['kickdrum']]);
-    (engine as unknown as Record<string, unknown>).trackNotes = [[['solo']]];
-    const capturedCallback = (
-      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
-    ).cb;
+    engine.createSequence([
+      [{ name: 'solo', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
+    setField(engine, 'trackNotes', [
+      [[{ name: 'solo', playbackRate: 1, semitoneOffset: 0 }]],
+    ]);
 
-    capturedCallback(0);
+    const loop0 = getLoopCallback(0);
+    loop0(0);
 
-    const playerFn = mockTone.Players.mock.results[0]?.value.player;
-    const startSolo = playerFn.mock.results[0]?.value.start;
-    expect(startSolo).toHaveBeenCalledWith(expect.closeTo(0, 0.001));
+    expect(getPooledPlayer(engine, 0, 'solo', 0)?.start).toHaveBeenCalledWith(
+      expect.closeTo(0, 0.001),
+    );
   });
 
-  it('should skip null notes (silence)', () => {
+  it('should skip null notes (silence)', async () => {
+    const engine = AudioEngine.getInstance();
     const stepCb: StepCallback = jest.fn();
+    await createPlayersWith(engine, ['kickdrum']);
     engine.setStepCallback(stepCb);
-    engine.createSequence([['kickdrum']]);
-    (engine as unknown as Record<string, unknown>).trackNotes = [[null]];
-    const capturedCallback = (
-      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
-    ).cb;
+    engine.createSequence([
+      [{ name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
+    setField(engine, 'trackNotes', [[null]]);
 
-    capturedCallback(0);
+    const loop0 = getLoopCallback(0);
+    loop0(0);
 
-    const playerFn = mockTone.Players.mock.results[0]?.value.player;
-    expect(playerFn).not.toHaveBeenCalled();
+    expect(
+      getPooledPlayer(engine, 0, 'kickdrum', 0),
+    ).toBeUndefined();
     expect(stepCb).toHaveBeenCalledWith(0);
   });
 
-  it('should skip tracks shorter than current step', () => {
+  it('should skip tracks shorter than current step', async () => {
+    const engine = AudioEngine.getInstance();
     const stepCb: StepCallback = jest.fn();
+    await createPlayersWith(engine, ['a', 'b', 'c']);
     engine.setStepCallback(stepCb);
-    engine.createSequence([['a', 'b'], ['c']]);
-    (engine as unknown as Record<string, unknown>).trackNotes = [
-      ['a', 'b'],
-      ['c'],
-    ];
-    (engine as unknown as Record<string, unknown>).stepIndex = 1;
-    (engine as unknown as Record<string, unknown>).currentColumnCount = 2;
-    const capturedCallback = (
-      mockTone.Loop.mock.results[0]?.value as MockLoopInstance
-    ).cb;
+    engine.createSequence([
+      [
+        { name: 'a', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'b', playbackRate: 1, semitoneOffset: 0 },
+      ],
+      [{ name: 'c', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
+    setField(engine, 'trackNotes', [
+      [
+        { name: 'a', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'b', playbackRate: 1, semitoneOffset: 0 },
+      ],
+      [{ name: 'c', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
+    setField(engine, 'currentColumnCount', 2);
 
-    capturedCallback(0);
+    const loop0 = getLoopCallback(0);
+    loop0(0);
+    loop0(0);
 
-    const playerFn = mockTone.Players.mock.results[0]?.value.player;
-    expect(playerFn).toHaveBeenCalledWith('b');
-    expect(playerFn).not.toHaveBeenCalledWith('c');
+    expect(getPooledPlayer(engine, 0, 'b', 0)?.start).toHaveBeenCalled();
+    expect(getPooledPlayer(engine, 1, 'c', 0)).toBeUndefined();
+    expect(stepCb).toHaveBeenCalledWith(0);
     expect(stepCb).toHaveBeenCalledWith(1);
   });
 });
 
 describe('#updateSequences', () => {
-  let engine: AudioEngine;
-
-  beforeAll(() => {
-    engine = AudioEngine.getInstance();
-  });
-
-  afterEach(() => {
-    engine.clearStepCallback();
-  });
-
-  it('should guard against no master loop (race condition)', () => {
-    engine.updateSequences([['kickdrum']]);
+  it('should guard against no master loop', async () => {
+    const engine = AudioEngine.getInstance();
+    engine.updateSequences([
+      [{ name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
     expect(true).toBe(true);
   });
 
-  it('should accept more tracks without crashing', () => {
+  it('should accept more tracks without crashing', async () => {
+    const engine = AudioEngine.getInstance();
+    await createPlayersWith(engine, ['kickdrum', 'hihat']);
     engine.setStepCallback(jest.fn());
-    engine.createSequence([['kickdrum']]);
-    engine.updateSequences([['kickdrum'], ['hihat']]);
+    engine.createSequence([
+      [{ name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
+    engine.updateSequences([
+      [{ name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 }],
+      [{ name: 'hihat', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
     expect(true).toBe(true);
   });
 
-  it('should accept fewer tracks without crashing', () => {
+  it('should accept fewer tracks without crashing', async () => {
+    const engine = AudioEngine.getInstance();
+    await createPlayersWith(engine, ['kickdrum', 'hihat']);
     engine.setStepCallback(jest.fn());
-    engine.createSequence([['kickdrum'], ['hihat']]);
-    engine.updateSequences([['kickdrum']]);
+    engine.createSequence([
+      [{ name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 }],
+      [{ name: 'hihat', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
+    engine.updateSequences([
+      [{ name: 'kickdrum', playbackRate: 1, semitoneOffset: 0 }],
+    ]);
     expect(true).toBe(true);
   });
 
-  it('should update trackNotes without recreating master loop', () => {
+  it('should update trackNotes without recreating master loop', async () => {
+    const engine = AudioEngine.getInstance();
+    await createPlayersWith(engine, ['a', 'b', 'x', 'y', 'z']);
     engine.setStepCallback(jest.fn());
-    engine.createSequence([['a', 'b']]);
+    engine.createSequence([
+      [
+        { name: 'a', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'b', playbackRate: 1, semitoneOffset: 0 },
+      ],
+    ]);
     mockTone.Loop.mockClear();
-    engine.updateSequences([['x', 'y', 'z']]);
+    engine.updateSequences([
+      [
+        { name: 'x', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'y', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'z', playbackRate: 1, semitoneOffset: 0 },
+      ],
+    ]);
     expect(mockTone.Loop).not.toHaveBeenCalled();
   });
 
-  it('should preserve relative position when columnCount changes', () => {
+  it('should not recreate loops when columnCount unchanged', async () => {
+    const engine = AudioEngine.getInstance();
+    await createPlayersWith(engine, ['a', 'b', 'c', 'x', 'y', 'z']);
     engine.setStepCallback(jest.fn());
-    engine.createSequence([['a', 'b', 'c', 'd']]);
-    (engine as unknown as Record<string, unknown>).stepIndex = 11;
-    (engine as unknown as Record<string, unknown>).currentColumnCount = 4;
-
-    engine.updateSequences([['w', 'x', 'y', 'z', 'a']]);
-
-    const sIdx = (engine as unknown as Record<string, unknown>)
-      .stepIndex as number;
-    const colCount = (engine as unknown as Record<string, unknown>)
-      .currentColumnCount as number;
-    const tNotes = (engine as unknown as Record<string, unknown>)
-      .trackNotes as string[][];
-
-    expect(sIdx).toBe(3);
-    expect(colCount).toBe(5);
-    expect(tNotes).toEqual([['w', 'x', 'y', 'z', 'a']]);
-  });
-
-  it('should not change master loop when columnCount unchanged', () => {
-    engine.setStepCallback(jest.fn());
-    engine.createSequence([['a', 'b', 'c']]);
+    engine.createSequence([
+      [
+        { name: 'a', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'b', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'c', playbackRate: 1, semitoneOffset: 0 },
+      ],
+    ]);
     mockTone.Loop.mockClear();
-    engine.updateSequences([['x', 'y', 'z']]);
+    engine.updateSequences([
+      [
+        { name: 'x', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'y', playbackRate: 1, semitoneOffset: 0 },
+        { name: 'z', playbackRate: 1, semitoneOffset: 0 },
+      ],
+    ]);
     expect(mockTone.Loop).not.toHaveBeenCalled();
   });
 });

@@ -6,6 +6,7 @@ describe('#validateInstrument', () => {
       symbol: '',
       name: 'Kick',
       filepath: '/audio/kick.wav',
+      referenceFrequency: null,
     });
     expect(result).toContain('Le symbole est requis.');
   });
@@ -15,6 +16,7 @@ describe('#validateInstrument', () => {
       symbol: 'K',
       name: '',
       filepath: '/audio/kick.wav',
+      referenceFrequency: null,
     });
     expect(result).toContain('Le nom est requis.');
   });
@@ -24,12 +26,18 @@ describe('#validateInstrument', () => {
       symbol: 'K',
       name: 'Kick',
       filepath: null,
+      referenceFrequency: null,
     });
     expect(result).toContain('Le fichier audio est requis.');
   });
 
   it('retourne plusieurs erreurs si plusieurs champs sont invalides', () => {
-    const result = validateInstrument({ symbol: '', name: '', filepath: null });
+    const result = validateInstrument({
+      symbol: '',
+      name: '',
+      filepath: null,
+      referenceFrequency: null,
+    });
     expect(result).toHaveLength(3);
   });
 
@@ -38,6 +46,7 @@ describe('#validateInstrument', () => {
       symbol: 'K',
       name: 'Kick',
       filepath: '/audio/kick.wav',
+      referenceFrequency: null,
     });
     expect(result).toHaveLength(0);
   });
@@ -47,6 +56,7 @@ describe('#validateInstrument', () => {
       symbol: '   ',
       name: 'Kick',
       filepath: '/audio/kick.wav',
+      referenceFrequency: null,
     });
     expect(result).toContain('Le symbole est requis.');
   });
@@ -56,7 +66,32 @@ describe('#validateInstrument', () => {
       symbol: 'K',
       name: '   ',
       filepath: '/audio/kick.wav',
+      referenceFrequency: null,
     });
     expect(result).toContain('Le nom est requis.');
+  });
+
+  it('retourne une erreur si le symbole contient le caractère @', () => {
+    const result = validateInstrument({
+      symbol: 'A@',
+      name: 'Test',
+      filepath: '/audio/test.wav',
+      referenceFrequency: null,
+    });
+    expect(result).toContain(
+      "Le symbole ne peut pas contenir le caractère '@'.",
+    );
+  });
+
+  it('retourne une erreur si le symbole est uniquement @', () => {
+    const result = validateInstrument({
+      symbol: '@',
+      name: 'Test',
+      filepath: '/audio/test.wav',
+      referenceFrequency: null,
+    });
+    expect(result).toContain(
+      "Le symbole ne peut pas contenir le caractère '@'.",
+    );
   });
 });

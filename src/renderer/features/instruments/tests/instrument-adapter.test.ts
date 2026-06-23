@@ -11,6 +11,7 @@ describe('adaptInstruments', () => {
       symbol: 'P',
       filepath: './assets/audio/kickdrum.mp3',
       name: 'kickdrum',
+      referenceFrequency: null,
     };
     const instrument2: InstrumentDTO = {
       id: 2,
@@ -18,26 +19,30 @@ describe('adaptInstruments', () => {
       symbol: 'Ts',
       filepath: './assets/audio/hihat.mp3',
       name: 'hihat',
+      referenceFrequency: 440,
     };
     const tested: InstrumentDTO[] = [instrument1, instrument2];
     // When
     const result: Instrument[] = adaptInstruments(tested);
     // Then
-    const instrument1Expected: InstrumentDTO = {
-      id: 1,
-      slug: 'Kick Drum',
-      symbol: 'P',
-      filepath: './assets/audio/kickdrum.mp3',
-      name: 'kickdrum',
-    };
-    const instrument2Expected: InstrumentDTO = {
-      id: 2,
-      slug: 'Hi Hat',
-      symbol: 'Ts',
-      filepath: './assets/audio/hihat.mp3',
-      name: 'hihat',
-    };
-    const expected: Instrument[] = [instrument1Expected, instrument2Expected];
+    const expected: Instrument[] = [
+      {
+        id: 1,
+        slug: 'Kick Drum',
+        symbol: 'P',
+        filepath: './assets/audio/kickdrum.mp3',
+        name: 'kickdrum',
+        referenceFrequency: null,
+      },
+      {
+        id: 2,
+        slug: 'Hi Hat',
+        symbol: 'Ts',
+        filepath: './assets/audio/hihat.mp3',
+        name: 'hihat',
+        referenceFrequency: 440,
+      },
+    ];
     expect(result).toEqual(expected);
   });
 });

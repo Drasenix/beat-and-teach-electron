@@ -36,6 +36,7 @@ export default function PatternWorkspace() {
     removeSentence,
     normalizeAllSentences,
     changeHighlight,
+    changeFrequency,
     resetPattern,
     sentencesForPlayback,
     mutedSteps,
@@ -120,6 +121,7 @@ export default function PatternWorkspace() {
               removeSentence={removeSentence}
               normalizeAllSentences={normalizeAllSentences}
               changeHighlight={changeHighlight}
+              changeFrequency={changeFrequency}
               activeColumnIndex={activeStep}
               mutedSteps={mutedSteps}
               toggleMute={toggleMute}

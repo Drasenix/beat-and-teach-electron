@@ -2,14 +2,37 @@ import { removeParenthesis, removeDuplicates } from '../../../utils/util';
 import {
   getInstrumentFilePathsFromSymbol,
   getInstrumentNameFromSymbol,
+  getInstrumentReferenceFrequencyFromSymbol,
 } from '../../instruments/facade/instrument-facade';
 import { InstrumentFilePath } from '../../../../shared/types/instrument';
 import { SequenceNotes, SequenceNote } from '../types/sequence-note';
 import toSequenceNote from '../adapters/sequence-adapter';
+import { parseToken } from '../../../utils/token-parser';
 import {
   tokenizeSentence,
   TokenMatch,
 } from '../../../utils/sentence-tokenizer';
+
+const DEFAULT_PLAYBACK_RATE = 1;
+const DEFAULT_SEMITONE_OFFSET = 0;
+
+async function computePlaybackRate(
+  symbol: string,
+  targetFrequency: number,
+): Promise<{ playbackRate: number; semitoneOffset: number }> {
+  const referenceFrequency: number | null =
+    await getInstrumentReferenceFrequencyFromSymbol(symbol);
+  if (referenceFrequency === null || referenceFrequency <= 0) {
+    return {
+      playbackRate: DEFAULT_PLAYBACK_RATE,
+      semitoneOffset: DEFAULT_SEMITONE_OFFSET,
+    };
+  }
+  const rate = targetFrequency / referenceFrequency;
+  const clamped = Math.min(Math.max(rate, 0.25), 4);
+  const semitoneOffset = Math.round(12 * Math.log2(clamped));
+  return { playbackRate: clamped, semitoneOffset };
+}
 
 export async function prepareFilePaths(
   sentence: string,
@@ -19,17 +42,30 @@ export async function prepareFilePaths(
     sentenceWithOnlyInstruments.split(' '),
   );
   const resolved: InstrumentFilePath[][] = await Promise.all(
-    symbols.map((symbol) => getInstrumentFilePathsFromSymbol(symbol)),
+    symbols.map((symbol) =>
+      getInstrumentFilePathsFromSymbol(parseToken(symbol).symbol),
+    ),
   );
   return resolved.flat();
 }
 
 async function toGroupNotes(group: string): Promise<SequenceNote[]> {
-  const symbols = group.trim().split(/\s+/);
+  const tokens = group.trim().split(/\s+/);
   return Promise.all(
-    symbols.map(async (symbol) =>
-      toSequenceNote(await getInstrumentNameFromSymbol(symbol)),
-    ),
+    tokens.map(async (raw) => {
+      const { symbol, frequency } = parseToken(raw);
+      const computed = frequency
+        ? await computePlaybackRate(symbol, frequency)
+        : {
+            playbackRate: DEFAULT_PLAYBACK_RATE,
+            semitoneOffset: DEFAULT_SEMITONE_OFFSET,
+          };
+      return toSequenceNote(
+        await getInstrumentNameFromSymbol(symbol),
+        computed.playbackRate,
+        computed.semitoneOffset,
+      );
+    }),
   );
 }
 
@@ -37,7 +73,19 @@ async function toSequenceNotes(token: TokenMatch): Promise<SequenceNotes> {
   if (token.group !== undefined) {
     return toGroupNotes(token.group);
   }
-  return toSequenceNote(await getInstrumentNameFromSymbol(token.symbol ?? ''));
+  const raw: string = token.symbol ?? '';
+  const { symbol, frequency } = parseToken(raw);
+  const computed = frequency
+    ? await computePlaybackRate(symbol, frequency)
+    : {
+        playbackRate: DEFAULT_PLAYBACK_RATE,
+        semitoneOffset: DEFAULT_SEMITONE_OFFSET,
+      };
+  return toSequenceNote(
+    await getInstrumentNameFromSymbol(symbol),
+    computed.playbackRate,
+    computed.semitoneOffset,
+  );
 }
 
 export async function preparePattern(

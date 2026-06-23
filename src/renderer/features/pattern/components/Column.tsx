@@ -12,6 +12,12 @@ type ColumnProps = {
   isActive: boolean;
   isMuted: (sentenceIndex: number, tokenIndex: number) => boolean;
   onToggleMute?: (sentenceIndex: number, tokenIndex: number) => void;
+  onFrequencyChange?: (
+    sentenceIndex: number,
+    tokenIndex: number,
+    frequency: number | null,
+  ) => void;
+  referenceFrequencies?: Map<string, number | null>;
 };
 
 export default function Column({
@@ -21,6 +27,8 @@ export default function Column({
   isActive,
   isMuted,
   onToggleMute,
+  onFrequencyChange,
+  referenceFrequencies,
 }: ColumnProps) {
   return (
     <div className={`step-column${isActive ? ' step-column-active' : ''}`}>
@@ -32,6 +40,8 @@ export default function Column({
           onChangeHighlight={onChangeHighlight}
           isMuted={isMuted}
           onToggleMute={onToggleMute}
+          onFrequencyChange={onFrequencyChange}
+          referenceFrequencies={referenceFrequencies}
         />
       ))}
     </div>

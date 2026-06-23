@@ -62,7 +62,12 @@ describe('#updatePattern', () => {
     jest
       .mocked(tokenizer.extractUniqueSymbols)
       .mockReturnValue(['P', 'Ts', '.']);
-    jest.mocked(preparePattern).mockResolvedValue([['kickdrum', 'hihat']]);
+    jest.mocked(preparePattern).mockResolvedValue([
+      [
+        { name: 'kickdrum', playbackRate: 1 },
+        { name: 'hihat', playbackRate: 1 },
+      ],
+    ]);
 
     await updatePattern(['P Ts .']);
 
@@ -80,7 +85,12 @@ describe('#updatePattern', () => {
     jest
       .mocked(getAudioBuffers)
       .mockResolvedValue({ liproll: {} as ArrayBuffer });
-    jest.mocked(preparePattern).mockResolvedValue([['kickdrum', 'liproll']]);
+    jest.mocked(preparePattern).mockResolvedValue([
+      [
+        { name: 'kickdrum', playbackRate: 1 },
+        { name: 'liproll', playbackRate: 1 },
+      ],
+    ]);
 
     await updatePattern(['P Bw']);
 
@@ -96,7 +106,9 @@ describe('#updatePattern', () => {
     jest
       .mocked(tokenizer.extractUniqueSymbols)
       .mockReturnValue(['P', '.', '.']);
-    jest.mocked(preparePattern).mockResolvedValue([['kickdrum', null, null]]);
+    jest
+      .mocked(preparePattern)
+      .mockResolvedValue([[{ name: 'kickdrum', playbackRate: 1 }, null, null]]);
 
     await updatePattern(['P . .']);
 
@@ -113,7 +125,9 @@ describe('#updatePattern', () => {
     jest
       .mocked(getAudioBuffers)
       .mockResolvedValue({ liproll: {} as ArrayBuffer });
-    jest.mocked(preparePattern).mockResolvedValue([['liproll']]);
+    jest
+      .mocked(preparePattern)
+      .mockResolvedValue([[{ name: 'liproll', playbackRate: 1 }]]);
 
     await updatePattern(['Bw']);
 

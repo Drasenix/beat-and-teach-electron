@@ -28,6 +28,38 @@ describe('#createStep', () => {
       isGroup: false,
     });
   });
+
+  it('should extract frequency from @freq notation', () => {
+    const result = createStep('Hum@440', ['Hum', 'P', 'Ts'], 0);
+    expect(result).toEqual({
+      id: 'step-0',
+      symbol: 'Hum',
+      valid: true,
+      isGroup: false,
+      frequency: 440,
+    });
+  });
+
+  it('should mark step invalid when symbol with @ is unknown', () => {
+    const result = createStep('X@440', ['P', 'Ts', 'K'], 0);
+    expect(result).toEqual({
+      id: 'step-0',
+      symbol: 'X',
+      valid: false,
+      isGroup: false,
+      frequency: 440,
+    });
+  });
+
+  it('should ignore invalid frequency and keep raw symbol', () => {
+    const result = createStep('Hum@abc', ['Hum', 'P', 'Ts'], 0);
+    expect(result).toEqual({
+      id: 'step-0',
+      symbol: 'Hum',
+      valid: true,
+      isGroup: false,
+    });
+  });
 });
 
 describe('#createGroup', () => {
@@ -44,6 +76,15 @@ describe('#createGroup', () => {
     const result = createGroup('Ts X', ['P', 'Ts', 'K'], 0);
     expect(result.isGroup).toBe(true);
     expect(result.valid).toBe(false);
+  });
+
+  it('should extract frequencies from @freq notation in group', () => {
+    const result = createGroup('Ts@440 Hum@880', ['Ts', 'Hum', 'K'], 0);
+    expect(result.isGroup).toBe(true);
+    expect(result.valid).toBe(true);
+    expect(result.steps).toHaveLength(2);
+    expect(result.steps?.[0].frequency).toBe(440);
+    expect(result.steps?.[1].frequency).toBe(880);
   });
 });
 
@@ -77,6 +118,19 @@ describe('#parseSteps', () => {
     const result = parseSteps('(P X)', ['P', 'Ts', 'K']);
     expect(result[0].isGroup).toBe(true);
     expect(result[0].valid).toBe(false);
+  });
+
+  it('should extract frequency from @freq in atomic tokens', () => {
+    const result = parseSteps('Hum@440 P@220', ['Hum', 'P', 'Ts']);
+    expect(result[0].frequency).toBe(440);
+    expect(result[1].frequency).toBe(220);
+  });
+
+  it('should extract frequency from @freq inside groups', () => {
+    const result = parseSteps('P (Hum@440 Ts@880)', ['P', 'Hum', 'Ts']);
+    expect(result[1].isGroup).toBe(true);
+    expect(result[1].steps?.[0].frequency).toBe(440);
+    expect(result[1].steps?.[1].frequency).toBe(880);
   });
 });
 

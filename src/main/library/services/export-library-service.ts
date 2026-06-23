@@ -29,6 +29,7 @@ function toLibraryInstrument(
     symbol: db.symbol,
     name: db.name,
     audioFile: `audio/${audioFileName}`,
+    referenceFrequency: db.referenceFrequency,
   };
 }
 
@@ -55,7 +56,7 @@ export default async function exportLibrary(
   });
 
   const manifest: LibraryManifest = {
-    version: 1,
+    version: 2,
     exportDate: new Date().toISOString(),
     patterns: libraryPatterns,
     instruments: libraryInstruments,

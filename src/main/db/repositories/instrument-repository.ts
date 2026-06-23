@@ -29,7 +29,9 @@ export function getAllInstruments(): InstrumentDTO[] {
   const db = getDatabase();
   return withResolvedFilepaths(
     db
-      .prepare('SELECT id, slug, symbol, name, filepath FROM instruments')
+      .prepare(
+        'SELECT id, slug, symbol, name, filepath, reference_frequency AS referenceFrequency FROM instruments',
+      )
       .all() as InstrumentDTO[],
   );
 }
@@ -38,7 +40,7 @@ export function getInstrumentById(id: number): InstrumentDTO | undefined {
   const db = getDatabase();
   const inst = db
     .prepare(
-      'SELECT id, slug, symbol, name, filepath FROM instruments WHERE id = ?',
+      'SELECT id, slug, symbol, name, filepath, reference_frequency AS referenceFrequency FROM instruments WHERE id = ?',
     )
     .get(id) as InstrumentDTO | undefined;
   return inst
@@ -53,7 +55,7 @@ export function getInstrumentsByIds(ids: number[]): InstrumentDTO[] {
   return withResolvedFilepaths(
     db
       .prepare(
-        `SELECT id, slug, symbol, name, filepath FROM instruments WHERE id IN (${placeholders})`,
+        `SELECT id, slug, symbol, name, filepath, reference_frequency AS referenceFrequency FROM instruments WHERE id IN (${placeholders})`,
       )
       .all(...ids) as InstrumentDTO[],
   );
@@ -72,11 +74,17 @@ export function createInstrument(
     const result = db
       .prepare(
         `
-      INSERT INTO instruments (slug, symbol, name, filepath)
-      VALUES (@slug, @symbol, @name, @filepath)
+      INSERT INTO instruments (slug, symbol, name, filepath, reference_frequency)
+      VALUES (@slug, @symbol, @name, @filepath, @reference_frequency)
     `,
       )
-      .run({ ...instrument, slug });
+      .run({
+        slug,
+        symbol: instrument.symbol,
+        name: instrument.name,
+        filepath: instrument.filepath,
+        reference_frequency: instrument.referenceFrequency ?? null,
+      });
     return getInstrumentById(result.lastInsertRowid as number)!;
   } catch (error: any) {
     if (
@@ -113,9 +121,20 @@ export function updateInstrument(
        SET slug     = COALESCE(@slug, slug),
            symbol   = COALESCE(@symbol, symbol),
            name     = COALESCE(@name, name),
-           filepath = COALESCE(@filepath, filepath)
+           filepath = COALESCE(@filepath, filepath),
+           reference_frequency = COALESCE(@reference_frequency, reference_frequency)
        WHERE id = @id`,
-    ).run({ ...instrument, slug, id });
+    ).run({
+      slug,
+      symbol: instrument.symbol,
+      name: instrument.name,
+      filepath: instrument.filepath,
+      reference_frequency:
+        instrument.referenceFrequency !== undefined
+          ? instrument.referenceFrequency
+          : null,
+      id,
+    });
     return getInstrumentById(id)!;
   } catch (error: any) {
     if (
