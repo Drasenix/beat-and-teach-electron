@@ -1,3 +1,4 @@
+import { FolderOpen } from 'lucide-react';
 import { InstrumentFormValues } from '../../types/instrument-types';
 
 type InstrumentFormProps = {
@@ -43,11 +44,8 @@ export default function InstrumentForm({
       />
 
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={handleSelectFile}
-          className="btn-secondary"
-        >
+        <button type="button" onClick={handleSelectFile} className="btn-add">
+          <FolderOpen size={16} />
           {instrument.filepath
             ? 'Remplacer le fichier'
             : 'Sélectionner un fichier'}
