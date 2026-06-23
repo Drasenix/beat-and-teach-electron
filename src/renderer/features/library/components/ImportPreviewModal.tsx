@@ -81,7 +81,7 @@ export default function ImportPreviewModal({
           <button type="button" className="btn-secondary" onClick={onCancel}>
             Annuler
           </button>
-          <button type="button" className="btn-primary" onClick={handleConfirm}>
+          <button type="button" className="btn-add" onClick={handleConfirm}>
             Importer
           </button>
         </div>

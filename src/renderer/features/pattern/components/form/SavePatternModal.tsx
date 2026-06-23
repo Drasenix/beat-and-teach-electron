@@ -126,7 +126,7 @@ export default function SavePatternModal({
             type="button"
             onClick={selectedPattern ? onSaveExisting : onSaveNew}
             disabled={!allSentencesValid || (!selectedPattern && !name.trim())}
-            className="btn-primary"
+            className="btn-add"
           >
             Sauvegarder
           </button>

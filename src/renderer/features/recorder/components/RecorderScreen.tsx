@@ -220,7 +220,7 @@ export default function RecorderScreen() {
               <div className="flex gap-3 mt-2">
                 <button
                   type="button"
-                  className="btn-primary inline-flex items-center gap-2"
+                  className="btn-add inline-flex items-center gap-2"
                   disabled={saving}
                   onClick={handleSave}
                 >
@@ -234,7 +234,7 @@ export default function RecorderScreen() {
                 </button>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-2 text-text-secondary hover:text-button-delete transition-colors duration-200 font-mono text-sm uppercase tracking-widest"
+                  className="btn-secondary inline-flex items-center gap-2"
                   onClick={handleNew}
                 >
                   <Trash2 size={20} /> Effacer

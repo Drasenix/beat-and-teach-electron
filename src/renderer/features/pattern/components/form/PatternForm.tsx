@@ -80,7 +80,7 @@ export default function PatternForm({
         </ul>
       )}
       <div className="flex gap-3">
-        <button type="button" onClick={onSubmit} className="btn-primary">
+        <button type="button" onClick={onSubmit} className="btn-add">
           Enregistrer
         </button>
         <button type="button" onClick={onCancel} className="btn-secondary">

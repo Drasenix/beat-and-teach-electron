@@ -73,7 +73,7 @@ export default function InstrumentForm({
       )}
 
       <div className="flex gap-3">
-        <button type="button" onClick={onSubmit} className="btn-primary">
+        <button type="button" onClick={onSubmit} className="btn-add">
           {submitLabel}
         </button>
         <button type="button" onClick={onCancel} className="btn-secondary">
