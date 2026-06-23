@@ -124,7 +124,7 @@ export const studioSteps = [
 
 let driverInstance: Driver | null = null;
 
-export function runStudioTour(navigateTo?: (path: string) => void): void {
+export function runStudioTour(onDestroy?: () => void): void {
   if (driverInstance) {
     driverInstance.destroy();
   }
@@ -192,7 +192,7 @@ export function runStudioTour(navigateTo?: (path: string) => void): void {
       driverInstance?.movePrevious();
     },
     onDestroyed: () => {
-      navigateTo?.('/guide');
+      onDestroy?.();
     },
   });
 

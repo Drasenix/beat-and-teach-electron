@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import usePatternSession from '../hooks/usePatternSession';
 import useAudio from '../../audio/hooks/useAudio';
 import { Pattern, DEFAULT_PATTERN } from '../models/pattern-model';
@@ -15,7 +15,6 @@ import { areAllSymbolsValid } from '../utils/pattern-validator';
 import OnboardingDriver from '../../onboarding/components/OnboardingDriver';
 
 export default function PatternWorkspace() {
-  const navigate = useNavigate();
   const { showGuideModal } = useGuideModalContext();
 
   useEffect(() => {
@@ -96,7 +95,7 @@ export default function PatternWorkspace() {
   };
 
   return (
-    <OnboardingDriver tourKey="studio" navigate={navigate}>
+    <OnboardingDriver tourKey="studio">
       <div className="daw-layout">
         <div className="transport-bar">
           <AudioControls sentences={sentencesForPlayback} />

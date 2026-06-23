@@ -56,7 +56,7 @@ export const instrumentSteps = [
 
 let driverInstance: Driver | null = null;
 
-export function runInstrumentTour(navigateTo?: (path: string) => void): void {
+export function runInstrumentTour(onDestroy?: () => void): void {
   if (driverInstance) {
     driverInstance.destroy();
   }
@@ -65,7 +65,7 @@ export function runInstrumentTour(navigateTo?: (path: string) => void): void {
     showProgress: true,
     steps: instrumentSteps,
     onDestroyed: () => {
-      navigateTo?.('/guide');
+      onDestroy?.();
     },
   });
   driverInstance.drive();

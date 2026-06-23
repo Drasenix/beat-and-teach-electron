@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import usePatterns from '../hooks/usePatterns';
 import AddPatternForm from './form/AddPatternForm';
@@ -10,7 +9,6 @@ import ConfigurationFooter from '../../../components/ConfigurationFooter';
 import OnboardingDriver from '../../onboarding/components/OnboardingDriver';
 
 export default function PatternsConfiguration() {
-  const navigate = useNavigate();
   const { patterns, addPattern, editPattern, removePattern, error } =
     usePatterns();
 
@@ -27,7 +25,7 @@ export default function PatternsConfiguration() {
   } = useConfigurationActions(removePattern, editPattern);
 
   return (
-    <OnboardingDriver tourKey="patterns" navigate={navigate}>
+    <OnboardingDriver tourKey="patterns">
       <div className="content-page">
         <div className="workspace-section-content">
           <h2 className="section-title">Patterns</h2>

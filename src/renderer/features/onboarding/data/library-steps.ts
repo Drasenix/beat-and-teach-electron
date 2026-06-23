@@ -41,7 +41,7 @@ export const librarySteps = [
 ];
 let driverInstance: Driver | null = null;
 
-export function runLibraryTour(navigateTo?: (path: string) => void): void {
+export function runLibraryTour(onDestroy?: () => void): void {
   if (driverInstance) {
     driverInstance.destroy();
   }
@@ -50,7 +50,7 @@ export function runLibraryTour(navigateTo?: (path: string) => void): void {
     showProgress: true,
     steps: librarySteps,
     onDestroyed: () => {
-      navigateTo?.('/guide');
+      onDestroy?.();
     },
   });
   driverInstance.drive();

@@ -11,34 +11,34 @@ export default function GuideContent() {
   const navigate = useNavigate();
 
   const handleStudioTour = () => {
-    localStorage.removeItem('studio_tour_seen');
+    localStorage.setItem('studio_tour_seen', 'true');
     navigate('/workspace');
     setTimeout(() => {
-      runStudioTour(navigate);
+      runStudioTour(() => navigate('/guide'));
     }, 500);
   };
 
   const handleInstrumentTour = () => {
-    localStorage.removeItem('instruments_tour_seen');
+    localStorage.setItem('instruments_tour_seen', 'true');
     navigate('/configuration/instruments');
     setTimeout(() => {
-      runInstrumentTour(navigate);
+      runInstrumentTour(() => navigate('/guide'));
     }, 500);
   };
 
   const handlePatternTour = () => {
-    localStorage.removeItem('patterns_tour_seen');
+    localStorage.setItem('patterns_tour_seen', 'true');
     navigate('/configuration/patterns');
     setTimeout(() => {
-      runPatternTour(navigate);
+      runPatternTour(() => navigate('/guide'));
     }, 500);
   };
 
   const handleLibraryTour = () => {
-    localStorage.removeItem('library_tour_seen');
+    localStorage.setItem('library_tour_seen', 'true');
     navigate('/library');
     setTimeout(() => {
-      runLibraryTour(navigate);
+      runLibraryTour(() => navigate('/guide'));
     }, 500);
   };
 

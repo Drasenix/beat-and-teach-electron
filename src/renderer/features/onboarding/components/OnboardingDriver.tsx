@@ -8,13 +8,9 @@ import 'driver.js/dist/driver.css';
 type OnboardingDriverProps = {
   children: React.ReactNode;
   tourKey: string;
-  navigate?: (path: string) => void;
 };
 
-const tourFunctions: Record<
-  string,
-  (navigate?: (path: string) => void) => void
-> = {
+const tourFunctions: Record<string, (onDestroy?: () => void) => void> = {
   instruments: runInstrumentTour,
   patterns: runPatternTour,
   library: runLibraryTour,
@@ -24,7 +20,6 @@ const tourFunctions: Record<
 export default function OnboardingDriver({
   children,
   tourKey,
-  navigate,
 }: OnboardingDriverProps) {
   useEffect(() => {
     const key = `${tourKey}_tour_seen`;
@@ -34,7 +29,7 @@ export default function OnboardingDriver({
 
     if (!seen && tourFn) {
       const timer = setTimeout(() => {
-        tourFn(navigate);
+        tourFn();
         localStorage.setItem(key, 'true');
       }, 500);
 
@@ -42,7 +37,7 @@ export default function OnboardingDriver({
     }
 
     return undefined;
-  }, [tourKey, navigate]);
+  }, [tourKey]);
 
   return children;
 }

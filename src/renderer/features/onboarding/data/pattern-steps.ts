@@ -41,7 +41,7 @@ export const patternSteps = [
 
 let driverInstance: Driver | null = null;
 
-export function runPatternTour(navigateTo?: (path: string) => void): void {
+export function runPatternTour(onDestroy?: () => void): void {
   if (driverInstance) {
     driverInstance.destroy();
   }
@@ -50,7 +50,7 @@ export function runPatternTour(navigateTo?: (path: string) => void): void {
     showProgress: true,
     steps: patternSteps,
     onDestroyed: () => {
-      navigateTo?.('/guide');
+      onDestroy?.();
     },
   });
   driverInstance.drive();
