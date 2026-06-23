@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Download, Upload } from 'lucide-react';
 import useInstruments from '../../instruments/hooks/useInstruments';
 import usePatterns from '../../pattern/hooks/usePatterns';
 import { exportLibrary, importLibrary } from '../facade/library-facade';
@@ -170,21 +171,23 @@ export default function LibraryScreen() {
             <button
               id="export"
               type="button"
-              className="btn-primary"
+              className="btn-add"
               onClick={handleExport}
               disabled={
                 selectedPatternIds.size === 0 &&
                 selectedInstrumentIds.size === 0
               }
             >
+              <Download size={16} />
               Exporter ({selectedPatternIds.size + selectedInstrumentIds.size})
             </button>
             <button
               id="import"
               type="button"
-              className="btn-secondary"
+              className="btn-add"
               onClick={handleImportClick}
             >
+              <Upload size={16} />
               Importer
             </button>
           </div>
