@@ -142,7 +142,7 @@ export default function RecorderScreen() {
             </p>
             <button
               type="button"
-              className="btn-primary inline-flex items-center gap-2"
+              className="btn-add inline-flex items-center gap-2"
               onClick={startRecording}
             >
               <Radio size={20} /> Enregistrer
@@ -160,7 +160,7 @@ export default function RecorderScreen() {
             </div>
             <button
               type="button"
-              className="btn-secondary inline-flex items-center gap-2"
+              className="btn-add inline-flex items-center gap-2"
               onClick={stopRecording}
             >
               <Square size={20} /> Arrêter
@@ -234,7 +234,7 @@ export default function RecorderScreen() {
                 </button>
                 <button
                   type="button"
-                  className="btn-secondary inline-flex items-center gap-2"
+                  className="inline-flex items-center gap-2 text-text-secondary hover:text-button-delete transition-colors duration-200 font-mono text-sm uppercase tracking-widest"
                   onClick={handleNew}
                 >
                   <Trash2 size={20} /> Effacer
@@ -265,7 +265,7 @@ export default function RecorderScreen() {
               </p>
               <button
                 type="button"
-                className="btn-secondary mt-2"
+                className="btn-add inline-flex items-center gap-2 mt-2"
                 onClick={handleNew}
               >
                 <Radio size={20} /> Nouvel enregistrement
