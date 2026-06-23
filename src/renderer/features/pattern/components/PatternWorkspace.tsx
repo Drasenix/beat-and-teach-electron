@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import usePatternSession from '../hooks/usePatternSession';
 import useAudio from '../../audio/hooks/useAudio';
 import { Pattern, DEFAULT_PATTERN } from '../models/pattern-model';
@@ -12,8 +12,10 @@ import SavePatternModal from './form/SavePatternModal';
 import { useGuideModalContext } from '../../guide/components/GuideModalProvider';
 import { useInstrumentsContext } from '../../instruments/contexts/InstrumentsContext';
 import { areAllSymbolsValid } from '../utils/pattern-validator';
+import OnboardingDriver from '../../onboarding/components/OnboardingDriver';
 
 export default function PatternWorkspace() {
+  const navigate = useNavigate();
   const { showGuideModal } = useGuideModalContext();
 
   useEffect(() => {
@@ -94,43 +96,45 @@ export default function PatternWorkspace() {
   };
 
   return (
-    <div className="daw-layout">
-      <div className="transport-bar">
-        <AudioControls sentences={sentencesForPlayback} />
-      </div>
-      <div className="daw-columns">
-        <SideBar>
-          <PatternChoices
-            selectPattern={selectPattern}
-            onSave={() => setShowSaveModal(true)}
-            canSave={
-              pattern.sentences.length > 0 &&
-              pattern.sentences.every((s) => s.trim().length > 0)
-            }
-          />
-          <InstrumentsLegend />
-        </SideBar>
-        <div className="daw-main">
-          <PatternComposer
-            pattern={pattern}
-            changeSentence={changeSentence}
-            addSentence={addSentence}
-            removeSentence={removeSentence}
-            normalizeAllSentences={normalizeAllSentences}
-            changeHighlight={changeHighlight}
-            activeColumnIndex={activeStep}
-            mutedSteps={mutedSteps}
-            toggleMute={toggleMute}
-          />
+    <OnboardingDriver tourKey="studio" navigate={navigate}>
+      <div className="daw-layout">
+        <div className="transport-bar">
+          <AudioControls sentences={sentencesForPlayback} />
         </div>
+        <div className="daw-columns">
+          <SideBar>
+            <PatternChoices
+              selectPattern={selectPattern}
+              onSave={() => setShowSaveModal(true)}
+              canSave={
+                pattern.sentences.length > 0 &&
+                pattern.sentences.every((s) => s.trim().length > 0)
+              }
+            />
+            <InstrumentsLegend />
+          </SideBar>
+          <div className="daw-main">
+            <PatternComposer
+              pattern={pattern}
+              changeSentence={changeSentence}
+              addSentence={addSentence}
+              removeSentence={removeSentence}
+              normalizeAllSentences={normalizeAllSentences}
+              changeHighlight={changeHighlight}
+              activeColumnIndex={activeStep}
+              mutedSteps={mutedSteps}
+              toggleMute={toggleMute}
+            />
+          </div>
+        </div>
+        {showSaveModal && (
+          <SavePatternModal
+            pattern={pattern}
+            selectedPattern={selectedPattern}
+            onClose={() => setShowSaveModal(false)}
+          />
+        )}
       </div>
-      {showSaveModal && (
-        <SavePatternModal
-          pattern={pattern}
-          selectedPattern={selectedPattern}
-          onClose={() => setShowSaveModal(false)}
-        />
-      )}
-    </div>
+    </OnboardingDriver>
   );
 }
