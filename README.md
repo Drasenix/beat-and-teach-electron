@@ -106,6 +106,7 @@ npm run package    # Package desktop (electron-builder)
 | `Ctrl + ↓`        | BPM -1                    |
 | `↑` / `↓`         | Navigation autocomplétion |
 | `Space` / `Enter` | Valider suggestion        |
+| `Ctrl + Espace`   | Afficher/Masquer autocomp |
 | `Escape`          | Fermer modale             |
 
 <br>

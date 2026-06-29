@@ -4,6 +4,7 @@ import useAutocomplete from '../../../autocomplete/hooks/useAutocomplete';
 import useCaretPosition from '../../../autocomplete/hooks/useCaretPosition';
 import useInstruments from '../../../instruments/hooks/useInstruments';
 import { countSentenceSteps } from '../../utils/pattern-parser';
+import normalizeSpaces from '../../../../utils/normalize-spaces';
 
 type SentenceInputProps = {
   sentence: string;
@@ -23,6 +24,7 @@ export default function SentenceInput({
     top: number;
     left: number;
   } | null>(null);
+  const [caretIndex, setCaretIndex] = useState(0);
   const [showLimit, setShowLimit] = useState(false);
   const { getPosition } = useCaretPosition(textareaRef);
   const { instruments } = useInstruments();
@@ -30,11 +32,20 @@ export default function SentenceInput({
     suggestions,
     selectedIndex,
     isOpen,
+    forceHidden,
     handleKeyDown,
     confirmSuggestion,
+    toggleAutocomplete,
     setDismissed,
     setIsFocused,
-  } = useAutocomplete({ instruments, value: sentence, onChange });
+  } = useAutocomplete({
+    instruments,
+    value: sentence,
+    caretIndex,
+    onChange,
+    setCaretIndex,
+    textareaRef,
+  });
 
   const handleWrapSelection = (
     e: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -65,13 +76,28 @@ export default function SentenceInput({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(e.target.value);
-    setCaretPos(getPosition());
+    const raw = e.target.value;
+    const rawCaret = e.target.selectionStart;
+    const normalized = normalizeSpaces(raw);
 
-    if (
-      maxTokens !== undefined &&
-      countSentenceSteps(e.target.value) > maxTokens
-    ) {
+    onChange(normalized);
+
+    const newCaret =
+      normalized !== raw
+        ? normalizeSpaces(raw.substring(0, rawCaret)).length
+        : rawCaret;
+
+    setCaretIndex(newCaret);
+    if (normalized !== raw) {
+      requestAnimationFrame(() => {
+        textareaRef.current?.setSelectionRange(newCaret, newCaret);
+        setCaretPos(getPosition());
+      });
+    } else {
+      setCaretPos(getPosition());
+    }
+
+    if (maxTokens !== undefined && countSentenceSteps(normalized) > maxTokens) {
       setShowLimit(true);
       setTimeout(() => setShowLimit(false), 2000);
     } else {
@@ -86,6 +112,10 @@ export default function SentenceInput({
         value={sentence}
         onChange={handleChange}
         onFocus={() => setIsFocused(true)}
+        onSelect={(e) => {
+          setCaretIndex(e.currentTarget.selectionStart);
+          setCaretPos(getPosition());
+        }}
         onBlur={() => {
           setIsFocused(false);
           setDismissed(true);
@@ -98,8 +128,20 @@ export default function SentenceInput({
           }
         }}
         placeholder="P Ts K . P (Ts P) K"
-        className="input-field w-full text-xl p-4 resize-none h-24"
+        className="input-field w-full text-xl p-4 pr-8 resize-none h-24"
       />
+      <button
+        type="button"
+        onClick={toggleAutocomplete}
+        title={
+          forceHidden
+            ? "Afficher l'autocomplétion (Ctrl+Espace)"
+            : "Masquer l'autocomplétion (Ctrl+Espace)"
+        }
+        className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded text-sm leading-none opacity-30 hover:opacity-100 transition-opacity text-text-secondary"
+      >
+        {forceHidden ? '\u2298' : '\u25BC'}
+      </button>
       {isOpen && caretPos && (
         <Autocomplete
           suggestions={suggestions}

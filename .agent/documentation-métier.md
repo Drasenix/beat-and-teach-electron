@@ -339,6 +339,7 @@ bibliotheque.beatpack/
 | `Space` / `Enter` / `Tab` (autocomplete) | Valider la suggestion sélectionnée |
 | `)` (autocomplete) | Valider la suggestion + ajouter `)` |
 | `Escape` (autocomplete) | Fermer la liste de suggestions |
+| `Ctrl + Espace` | Afficher / Masquer l'autocomplétion |
 
 ### Sidebar
 

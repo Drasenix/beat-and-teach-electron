@@ -15,6 +15,10 @@ export default function GuideShortcuts() {
             Entourer toute la sélection par <code>()</code>.
           </li>
           <li>
+            <code className="text-primary font-bold">Ctrl + Espace</code>{' '}
+            Afficher / Masquer l&apos;autocomplétion.
+          </li>
+          <li>
             <code className="text-primary font-bold">Autocomplétion</code> La
             liste des instruments commençant par cette lettre est suggérée.
           </li>
@@ -53,6 +57,10 @@ export default function GuideShortcuts() {
           <li>
             <code className="text-primary font-bold">Maj + Clic droit</code>{' '}
             Sélectionner le texte depuis la position du curseur.
+          </li>
+          <li>
+            <code className="text-primary font-bold">Ctrl + Espace</code>{' '}
+            Afficher / Masquer l&apos;autocomplétion.
           </li>
         </ul>
       </div>

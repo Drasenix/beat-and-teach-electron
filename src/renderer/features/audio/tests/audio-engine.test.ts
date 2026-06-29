@@ -270,9 +270,7 @@ describe('#createSequence', () => {
     const loop0 = getLoopCallback(0);
     loop0(0);
 
-    expect(
-      getPooledPlayer(engine, 0, 'kickdrum', 0),
-    ).toBeUndefined();
+    expect(getPooledPlayer(engine, 0, 'kickdrum', 0)).toBeUndefined();
     expect(stepCb).toHaveBeenCalledWith(0);
   });
 

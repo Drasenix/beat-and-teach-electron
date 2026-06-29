@@ -24,7 +24,7 @@ export default function Autocomplete({
       }}
       className="z-50"
     >
-      <ul className="bg-surface border border-border rounded-lg overflow-hidden shadow-xl min-w-24">
+      <ul className="bg-surface border border-border rounded-lg overflow-hidden shadow-xl min-w-24 max-h-60 overflow-y-auto">
         {suggestions.map((instrument, index) => (
           <li key={instrument.symbol}>
             <button
