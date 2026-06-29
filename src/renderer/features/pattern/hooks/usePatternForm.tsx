@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PatternFormValues } from '../types/pattern-types';
-import { normalizeSentences, flatTokenCount } from '../utils/pattern-parser';
+import { flatTokenCount } from '../utils/pattern-parser';
 
 const usePatternForm = (initialValues: PatternFormValues) => {
   const [patternValues, setPatternValues] =
@@ -21,20 +21,7 @@ const usePatternForm = (initialValues: PatternFormValues) => {
     });
   };
 
-  const handleNormalize = () => {
-    const normalized = normalizeSentences(patternValues.sentences);
-    if (normalized.some((s, i) => s !== patternValues.sentences[i])) {
-      setPatternValues((prev) => ({
-        ...prev,
-        sentences: normalized,
-        highlights: normalized.map((s, i) =>
-          i === 0 ? prev.highlights[0] : buildDefaultHighlights(s),
-        ),
-      }));
-    }
-  };
-
-  return { patternValues, handlePatternChange, handleNormalize };
+  return { patternValues, handlePatternChange };
 };
 
 export default usePatternForm;

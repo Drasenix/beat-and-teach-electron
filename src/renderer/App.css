@@ -604,6 +604,9 @@
 .step-column-active {
   animation: step-active-pulse 0.15s ease-in-out;
 }
+.step-active-pulse {
+  animation: step-active-pulse 0.15s ease-in-out;
+}
 .transport-slider::-webkit-slider-runnable-track {
   height: 4px;
   background: #679ff9;

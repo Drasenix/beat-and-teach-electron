@@ -5,7 +5,7 @@ import {
   SequenceNote,
 } from '../../sequence/types/sequence-note';
 
-export type StepCallback = (stepIndex: number) => void;
+export type StepCallback = (trackIndex: number, stepIndex: number) => void;
 
 export default class AudioEngine {
   // eslint-disable-next-line no-use-before-define
@@ -20,8 +20,6 @@ export default class AudioEngine {
   private onStep?: StepCallback;
 
   private loadedSymbols: Set<string> = new Set();
-
-  private currentColumnCount: number = 0;
 
   private stepDuration: number = 0;
 
@@ -89,8 +87,9 @@ export default class AudioEngine {
     this.trackNotes.forEach((_trackNotes, trackIndex) => {
       let localStep = 0;
       const loop = new Tone.Loop((time) => {
-        if (this.currentColumnCount <= 0) return;
-        const step = localStep % this.currentColumnCount;
+        const trackLength = this.trackNotes[trackIndex]?.length ?? 0;
+        if (trackLength <= 0) return;
+        const step = localStep % trackLength;
 
         const notes = this.trackNotes[trackIndex];
         if (!notes || step >= notes.length) return;
@@ -105,8 +104,8 @@ export default class AudioEngine {
           });
         }
 
-        if (trackIndex === 0 && this.onStep) {
-          this.onStep(step);
+        if (this.onStep) {
+          this.onStep(trackIndex, step);
         }
         localStep += 1;
       }, '8n');
@@ -147,7 +146,6 @@ export default class AudioEngine {
     this.clearAll();
 
     this.trackNotes = tracks;
-    this.currentColumnCount = tracks[0]?.length ?? 0;
 
     if (!this.onStep) return;
 
@@ -172,7 +170,6 @@ export default class AudioEngine {
     });
     this.playerPool = [];
     this.trackNotes = [];
-    this.currentColumnCount = 0;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -237,8 +234,5 @@ export default class AudioEngine {
         console.error('[AudioEngine] updateSequences build error', error);
       }
     }
-
-    const newColumnCount = tracks[0]?.length ?? 0;
-    this.currentColumnCount = newColumnCount;
   }
 }

@@ -1,8 +1,11 @@
-import { TrackStep } from '../types/track-column';
+import { PatternStep } from '../types/pattern-types';
 import StepBadge from './StepBadge';
 
 type StepCellProps = {
-  trackStep: TrackStep;
+  step: PatternStep;
+  sentenceIndex: number;
+  tokenIndex: number;
+  isActive?: boolean;
   highlights: (string | null)[][];
   onChangeHighlight: (
     sentenceIndex: number,
@@ -20,7 +23,10 @@ type StepCellProps = {
 };
 
 export default function StepCell({
-  trackStep,
+  step,
+  sentenceIndex,
+  tokenIndex,
+  isActive,
   highlights,
   onChangeHighlight,
   isMuted,
@@ -28,17 +34,13 @@ export default function StepCell({
   onFrequencyChange,
   referenceFrequencies,
 }: StepCellProps) {
-  const { step, sentenceIndex, tokenIndex } = trackStep;
-
   const getReferenceFrequency = (symbol: string): number | null => {
     return referenceFrequencies?.get(symbol) ?? null;
   };
 
-  if (!step) return <span className="step-cell-empty">—</span>;
-
   if (step.isGroup && step.steps) {
     return (
-      <div className="step-cell-group">
+      <div className={`step-cell-group${isActive ? ' step-active-pulse' : ''}`}>
         {step.steps.map((innerToken, i) => {
           const innerTokenIndex = tokenIndex + i;
           return (
@@ -70,7 +72,7 @@ export default function StepCell({
   }
 
   return (
-    <div className="step-cell-atomic">
+    <div className={`step-cell-atomic${isActive ? ' step-active-pulse' : ''}`}>
       <StepBadge
         token={step}
         highlight={highlights[sentenceIndex]?.[tokenIndex] ?? null}

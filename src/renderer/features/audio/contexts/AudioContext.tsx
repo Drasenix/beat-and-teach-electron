@@ -17,7 +17,7 @@ import {
 
 type AudioContextType = {
   playing: boolean;
-  activeStep: number | null;
+  activeSteps: number[];
   playTrack: (sentences: string[], bpm: number) => Promise<void>;
   stopTrack: () => void;
   changeBpm: (bpm: number) => void;
@@ -29,17 +29,21 @@ const AudioContext = createContext<AudioContextType | null>(null);
 
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [playing, setPlaying] = useState(false);
-  const [activeStep, setActiveStep] = useState<number | null>(null);
+  const [activeSteps, setActiveSteps] = useState<number[]>([]);
   const playingRef = useRef(false);
 
-  const handleStep = useCallback((stepIndex: number) => {
-    setActiveStep(stepIndex);
+  const handleStep = useCallback((trackIndex: number, stepIndex: number) => {
+    setActiveSteps((prev) => {
+      const next = [...prev];
+      next[trackIndex] = stepIndex;
+      return next;
+    });
   }, []);
 
   const value = useMemo<AudioContextType>(
     () => ({
       playing,
-      activeStep,
+      activeSteps,
       playTrack: async (sentences: string[], bpm: number): Promise<void> => {
         if (playingRef.current) return;
         playingRef.current = true;
@@ -49,7 +53,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         } catch (error) {
           playingRef.current = false;
           setPlaying(false);
-          setActiveStep(null);
+          setActiveSteps([]);
           // eslint-disable-next-line no-alert
           alert(error);
         }
@@ -58,7 +62,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         stopPattern();
         playingRef.current = false;
         setPlaying(false);
-        setActiveStep(null);
+        setActiveSteps([]);
       },
       changeBpm: (bpm: number): void => {
         changeTempo(bpm);
@@ -79,7 +83,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         }
       },
     }),
-    [playing, activeStep, handleStep],
+    [playing, activeSteps, handleStep],
   );
 
   return (

@@ -3,21 +3,16 @@ import Autocomplete from '../../../autocomplete/components/Autocomplete';
 import useAutocomplete from '../../../autocomplete/hooks/useAutocomplete';
 import useCaretPosition from '../../../autocomplete/hooks/useCaretPosition';
 import useInstruments from '../../../instruments/hooks/useInstruments';
-import { countSentenceSteps } from '../../utils/pattern-parser';
 import normalizeSpaces from '../../../../utils/normalize-spaces';
 
 type SentenceInputProps = {
   sentence: string;
-  maxTokens?: number;
   onChange: (value: string) => void;
-  onBlur: () => void;
 };
 
 export default function SentenceInput({
   sentence,
-  maxTokens,
   onChange,
-  onBlur,
 }: SentenceInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [caretPos, setCaretPos] = useState<{
@@ -25,7 +20,6 @@ export default function SentenceInput({
     left: number;
   } | null>(null);
   const [caretIndex, setCaretIndex] = useState(0);
-  const [showLimit, setShowLimit] = useState(false);
   const { getPosition } = useCaretPosition(textareaRef);
   const { instruments } = useInstruments();
   const {
@@ -96,13 +90,6 @@ export default function SentenceInput({
     } else {
       setCaretPos(getPosition());
     }
-
-    if (maxTokens !== undefined && countSentenceSteps(normalized) > maxTokens) {
-      setShowLimit(true);
-      setTimeout(() => setShowLimit(false), 2000);
-    } else {
-      setShowLimit(false);
-    }
   };
 
   return (
@@ -119,7 +106,6 @@ export default function SentenceInput({
         onBlur={() => {
           setIsFocused(false);
           setDismissed(true);
-          onBlur();
         }}
         onKeyDown={(e) => {
           handleWrapSelection(e);
@@ -149,18 +135,6 @@ export default function SentenceInput({
           onSelect={confirmSuggestion}
           caretPos={caretPos}
         />
-      )}
-      {showLimit && caretPos && (
-        <div
-          style={{
-            position: 'absolute',
-            top: caretPos.top + 20,
-            left: caretPos.left,
-          }}
-          className="z-50 bg-surface border border-primary rounded-lg px-3 py-1 text-xs font-mono text-primary shadow-xl"
-        >
-          Limite atteinte, ({maxTokens} notes sur la piste 1)
-        </div>
       )}
     </div>
   );

@@ -17,12 +17,11 @@ export default function EditPatternForm({
   onUpdate,
   onCancel,
 }: EditPatternFormProps) {
-  const { patternValues, handlePatternChange, handleNormalize } =
-    usePatternForm({
-      name: pattern.name,
-      sentences: pattern.sentences.length > 0 ? pattern.sentences : [''],
-      highlights: pattern.highlights.length > 0 ? pattern.highlights : [[]],
-    });
+  const { patternValues, handlePatternChange } = usePatternForm({
+    name: pattern.name,
+    sentences: pattern.sentences.length > 0 ? pattern.sentences : [''],
+    highlights: pattern.highlights.length > 0 ? pattern.highlights : [[]],
+  });
   const [errors, setErrors] = useState<string[]>([]);
 
   const onSubmit = async () => {
@@ -44,7 +43,6 @@ export default function EditPatternForm({
         pattern={patternValues}
         errors={errors}
         onPatternChange={handlePatternChange}
-        onNormalize={handleNormalize}
         onSubmit={onSubmit}
         onCancel={onCancel}
         titleLabel="Modifier le pattern"

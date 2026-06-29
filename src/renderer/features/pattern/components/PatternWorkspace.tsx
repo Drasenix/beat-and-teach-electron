@@ -34,7 +34,6 @@ export default function PatternWorkspace() {
     changeSentence,
     addSentence,
     removeSentence,
-    normalizeAllSentences,
     changeHighlight,
     changeFrequency,
     resetPattern,
@@ -42,7 +41,7 @@ export default function PatternWorkspace() {
     mutedSteps,
     toggleMute,
   } = usePatternSession();
-  const { activeStep, playing, updateTrack } = useAudio();
+  const { activeSteps, playing, updateTrack } = useAudio();
   const { instruments } = useInstrumentsContext();
   const [selectedPattern, setSelectedPattern] = useState<Pattern | null>(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -119,10 +118,9 @@ export default function PatternWorkspace() {
               changeSentence={changeSentence}
               addSentence={addSentence}
               removeSentence={removeSentence}
-              normalizeAllSentences={normalizeAllSentences}
               changeHighlight={changeHighlight}
               changeFrequency={changeFrequency}
-              activeColumnIndex={activeStep}
+              activeSteps={activeSteps}
               mutedSteps={mutedSteps}
               toggleMute={toggleMute}
             />

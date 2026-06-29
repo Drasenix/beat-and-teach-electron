@@ -7,7 +7,6 @@ type PatternFormProps = {
   errors: string[];
   titleLabel: string;
   onPatternChange: (fields: Partial<PatternFormValues>) => void;
-  onNormalize: () => void;
   onSubmit: () => void;
   onCancel: () => void;
 };
@@ -17,7 +16,6 @@ export default function PatternForm({
   errors,
   titleLabel,
   onPatternChange,
-  onNormalize,
   onSubmit,
   onCancel,
 }: PatternFormProps) {
@@ -63,7 +61,6 @@ export default function PatternForm({
         onChangeSentence={changeSentence}
         onRemoveSentence={removeSentence}
         onAddSentence={addSentence}
-        onBlur={onNormalize}
       />
       <PatternSteps
         sentences={pattern.sentences}

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import useInstruments from '../../instruments/hooks/useInstruments';
-import { parseMultiTrackSteps } from '../utils/pattern-parser';
-import { TrackColumn } from '../types/track-column';
-import Column from './Column';
+import { parseSteps, buildFlatTokenIndices } from '../utils/pattern-parser';
+import { PatternStep } from '../types/pattern-types';
+import StepCell from './StepCell';
 
 type PatternStepsProps = {
   sentences: string[];
@@ -12,7 +12,7 @@ type PatternStepsProps = {
     tokenIndex: number,
     color: string | null,
   ) => void;
-  activeColumnIndex?: number | null;
+  activeSteps?: number[];
   mutedSteps?: Set<string>;
   toggleMute?: (sentenceIndex: number, tokenIndex: number) => void;
   onFrequencyChange?: (
@@ -26,7 +26,7 @@ export default function PatternSteps({
   sentences,
   highlights,
   onChangeHighlight,
-  activeColumnIndex,
+  activeSteps,
   mutedSteps,
   toggleMute,
   onFrequencyChange,
@@ -43,8 +43,13 @@ export default function PatternSteps({
     [instruments],
   );
 
-  const columns: TrackColumn[] = useMemo(
-    () => parseMultiTrackSteps(sentences, symbols),
+  const tracks: { steps: PatternStep[]; tokenIndices: number[] }[] = useMemo(
+    () =>
+      sentences.map((sentence) => {
+        const steps = parseSteps(sentence, symbols);
+        const tokenIndices = buildFlatTokenIndices(steps);
+        return { steps, tokenIndices };
+      }),
     [sentences, symbols],
   );
 
@@ -58,33 +63,40 @@ export default function PatternSteps({
       }
     : undefined;
 
-  if (columns.length === 0) return null;
+  if (tracks.every((t) => t.steps.length === 0)) return null;
 
   return (
     <div className="pattern-section-content">
       <h2 className="section-title">Pattern</h2>
       <div id="pattern-preview" className="section-background">
-        <span
-          id="time"
-          className="text-xs font-mono text-text-secondary bg-surface px-2 py-1 rounded border border-border"
-        >
-          {columns.length} temps
-        </span>
-        <div id="steps" className="flex flex-wrap gap-2">
-          {columns.map((column, index) => (
-            <Column
-              key={column.id}
-              column={column}
-              highlights={highlights}
-              onChangeHighlight={onChangeHighlight}
-              isActive={activeColumnIndex === index}
-              isMuted={isMuted}
-              onToggleMute={handleToggleMute}
-              onFrequencyChange={onFrequencyChange}
-              referenceFrequencies={referenceFrequencies}
-            />
-          ))}
-        </div>
+        {tracks.map((track, trackIndex) => {
+          if (track.steps.length === 0) return null;
+          return (
+            // eslint-disable-next-line react/no-array-index-key
+            <div key={trackIndex} className="mb-3">
+              <span className="text-xs font-mono text-text-secondary bg-surface px-2 py-1 rounded border border-border">
+                {track.steps.length} temps
+              </span>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {track.steps.map((step, stepIndex) => (
+                  <StepCell
+                    key={step.id}
+                    step={step}
+                    sentenceIndex={trackIndex}
+                    tokenIndex={track.tokenIndices[stepIndex]}
+                    isActive={activeSteps?.[trackIndex] === stepIndex}
+                    highlights={highlights}
+                    onChangeHighlight={onChangeHighlight}
+                    isMuted={isMuted}
+                    onToggleMute={handleToggleMute}
+                    onFrequencyChange={onFrequencyChange}
+                    referenceFrequencies={referenceFrequencies}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

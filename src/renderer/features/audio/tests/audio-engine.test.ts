@@ -163,7 +163,8 @@ describe('#createSequence', () => {
     expect(getPooledPlayer(engine, 1, 'hihat', 0)?.start).toHaveBeenCalledWith(
       0,
     );
-    expect(stepCb).toHaveBeenCalledWith(0);
+    expect(stepCb).toHaveBeenCalledWith(0, 0);
+    expect(stepCb).toHaveBeenCalledWith(1, 0);
   });
 
   it('should play sub-notes with time offsets for groups', async () => {
@@ -196,7 +197,7 @@ describe('#createSequence', () => {
     expect(getPooledPlayer(engine, 0, 'snare', 0)?.start).toHaveBeenCalledWith(
       expect.closeTo(0.1, 0.001),
     );
-    expect(stepCb).toHaveBeenCalledWith(0);
+    expect(stepCb).toHaveBeenCalledWith(0, 0);
   });
 
   it('should spread three sub-notes across the step duration', async () => {
@@ -271,7 +272,7 @@ describe('#createSequence', () => {
     loop0(0);
 
     expect(getPooledPlayer(engine, 0, 'kickdrum', 0)).toBeUndefined();
-    expect(stepCb).toHaveBeenCalledWith(0);
+    expect(stepCb).toHaveBeenCalledWith(0, 0);
   });
 
   it('should skip tracks shorter than current step', async () => {
@@ -293,7 +294,6 @@ describe('#createSequence', () => {
       ],
       [{ name: 'c', playbackRate: 1, semitoneOffset: 0 }],
     ]);
-    setField(engine, 'currentColumnCount', 2);
 
     const loop0 = getLoopCallback(0);
     loop0(0);
@@ -301,8 +301,8 @@ describe('#createSequence', () => {
 
     expect(getPooledPlayer(engine, 0, 'b', 0)?.start).toHaveBeenCalled();
     expect(getPooledPlayer(engine, 1, 'c', 0)).toBeUndefined();
-    expect(stepCb).toHaveBeenCalledWith(0);
-    expect(stepCb).toHaveBeenCalledWith(1);
+    expect(stepCb).toHaveBeenCalledWith(0, 0);
+    expect(stepCb).toHaveBeenCalledWith(0, 1);
   });
 });
 

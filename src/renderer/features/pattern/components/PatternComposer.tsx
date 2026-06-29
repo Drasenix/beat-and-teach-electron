@@ -7,7 +7,6 @@ type PatternComposerProps = {
   changeSentence: (index: number, value: string) => void;
   addSentence: () => void;
   removeSentence: (index: number) => void;
-  normalizeAllSentences: () => void;
   changeHighlight: (
     sentenceIndex: number,
     tokenIndex: number,
@@ -18,7 +17,7 @@ type PatternComposerProps = {
     tokenIndex: number,
     frequency: number | null,
   ) => void;
-  activeColumnIndex?: number | null;
+  activeSteps?: number[];
   mutedSteps: Set<string>;
   toggleMute: (sentenceIndex: number, tokenIndex: number) => void;
 };
@@ -28,10 +27,9 @@ export default function PatternComposer({
   changeSentence,
   addSentence,
   removeSentence,
-  normalizeAllSentences,
   changeHighlight,
   changeFrequency,
-  activeColumnIndex,
+  activeSteps,
   mutedSteps,
   toggleMute,
 }: PatternComposerProps) {
@@ -43,14 +41,13 @@ export default function PatternComposer({
           onChangeSentence={changeSentence}
           onRemoveSentence={removeSentence}
           onAddSentence={addSentence}
-          onBlur={normalizeAllSentences}
           withBackground
         />
         <PatternSteps
           sentences={pattern.sentences}
           highlights={pattern.highlights}
           onChangeHighlight={changeHighlight}
-          activeColumnIndex={activeColumnIndex}
+          activeSteps={activeSteps}
           mutedSteps={mutedSteps}
           toggleMute={toggleMute}
           onFrequencyChange={changeFrequency}

@@ -1,5 +1,4 @@
 import { Plus, X } from 'lucide-react';
-import { countSentenceSteps } from '../../utils/pattern-parser';
 import SentenceInput from './SentenceInput';
 
 type SentencesFormProps = {
@@ -8,7 +7,6 @@ type SentencesFormProps = {
   onChangeSentence: (index: number, value: string) => void;
   onRemoveSentence: (index: number) => void;
   onAddSentence: () => void;
-  onBlur: () => void;
 };
 
 export default function SentencesForm({
@@ -17,9 +15,7 @@ export default function SentencesForm({
   onChangeSentence,
   onRemoveSentence,
   onAddSentence,
-  onBlur,
 }: SentencesFormProps) {
-  const maxTokens = countSentenceSteps(sentences[0]);
   return (
     <div className="pattern-section-content">
       <h2 className="section-title">Pistes</h2>
@@ -32,9 +28,7 @@ export default function SentencesForm({
             <div className="flex items-start gap-2">
               <SentenceInput
                 sentence={sentence}
-                maxTokens={index > 0 ? maxTokens : undefined}
                 onChange={(value) => onChangeSentence(index, value)}
-                onBlur={onBlur}
               />
               {sentences.length > 1 && (
                 <button

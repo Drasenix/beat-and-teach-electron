@@ -14,12 +14,11 @@ export default function AddPatternForm({
   onAdd,
   onCancel,
 }: AddPatternFormProps) {
-  const { patternValues, handlePatternChange, handleNormalize } =
-    usePatternForm({
-      name: '',
-      sentences: [''],
-      highlights: [[]],
-    });
+  const { patternValues, handlePatternChange } = usePatternForm({
+    name: '',
+    sentences: [''],
+    highlights: [[]],
+  });
   const [errors, setErrors] = useState<string[]>([]);
 
   const onSubmit = async () => {
@@ -42,7 +41,6 @@ export default function AddPatternForm({
         pattern={patternValues}
         errors={errors}
         onPatternChange={handlePatternChange}
-        onNormalize={handleNormalize}
         onSubmit={onSubmit}
         onCancel={onCancel}
         titleLabel="Nouveau pattern"

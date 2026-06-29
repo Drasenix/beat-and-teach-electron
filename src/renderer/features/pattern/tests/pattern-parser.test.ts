@@ -3,8 +3,6 @@ import {
   createGroup,
   parseSteps,
   countSentenceSteps,
-  normalizeSentences,
-  parseMultiTrackSteps,
   flatTokenCount,
 } from '../utils/pattern-parser';
 
@@ -149,99 +147,6 @@ describe('#countSentenceSteps', () => {
 
   it('should count multiple groups correctly', () => {
     expect(countSentenceSteps('P (Ts K) (. P) .')).toBe(4);
-  });
-});
-
-describe('#normalizeSentences', () => {
-  it('should return empty array unchanged', () => {
-    expect(normalizeSentences([])).toEqual([]);
-  });
-
-  it('should not modify the first sentence', () => {
-    const result = normalizeSentences(['P Ts K .', 'P']);
-    expect(result[0]).toBe('P Ts K .');
-  });
-
-  it('should pad a shorter sentence with silences', () => {
-    const result = normalizeSentences(['P Ts K .', 'P K Ts']);
-    expect(result[1]).toBe('P K Ts .');
-  });
-
-  it('should pad a shorter sentence with silences and preserve trailing space', () => {
-    const result = normalizeSentences(['P Ts K .', 'P K Ts ']);
-    expect(result[1]).toBe('P K Ts . ');
-  });
-
-  it('should truncate a longer sentence', () => {
-    const result = normalizeSentences(['P Ts K .', 'P K Ts Pf Ts']);
-    expect(result[1]).toBe('P K Ts Pf');
-  });
-
-  it('should truncate a longer sentence and preserve trailing space', () => {
-    const result = normalizeSentences(['P Ts K .', 'P K Ts Pf Ts ']);
-    expect(result[1]).toBe('P K Ts Pf ');
-  });
-
-  it('should count a group as one step when truncating', () => {
-    const result = normalizeSentences(['P Ts K .', 'P (K . . .) P (Ts .) Ts']);
-    expect(result[1]).toBe('P (K . . .) P (Ts .)');
-  });
-
-  it('should count a group as one step when padding', () => {
-    const result = normalizeSentences(['P Ts Pf K', 'P (K . . .) P']);
-    expect(result[1]).toBe('P (K . . .) P .');
-  });
-});
-
-describe('#parseMultiTrackSteps', () => {
-  it('should return columns aligned across tracks', () => {
-    const result = parseMultiTrackSteps(['P Ts', 'K .'], ['P', 'Ts', 'K', '.']);
-    expect(result).toHaveLength(2);
-    expect(result[0].steps[0].step?.symbol).toBe('P');
-    expect(result[0].steps[1].step?.symbol).toBe('K');
-    expect(result[1].steps[0].step?.symbol).toBe('Ts');
-    expect(result[1].steps[1].step?.symbol).toBe('.');
-  });
-
-  it('should fill with null when a track is shorter', () => {
-    const result = parseMultiTrackSteps(['P Ts K', 'P'], ['P', 'Ts', 'K']);
-    expect(result).toHaveLength(3);
-    expect(result[1].steps[1].step).toBeNull();
-    expect(result[2].steps[1].step).toBeNull();
-  });
-
-  it('should return empty array for empty sentences', () => {
-    const result = parseMultiTrackSteps([], ['P', 'Ts', 'K']);
-    expect(result).toHaveLength(0);
-  });
-
-  it('should handle groups as single columns', () => {
-    const result = parseMultiTrackSteps(
-      ['P (Ts K)', 'K .'],
-      ['P', 'Ts', 'K', '.'],
-    );
-    expect(result).toHaveLength(2);
-    expect(result[1].steps[0].step?.isGroup).toBe(true);
-  });
-
-  it('should carry correct sentenceIndex', () => {
-    const result = parseMultiTrackSteps(['P Ts', 'K .'], ['P', 'Ts', 'K', '.']);
-    expect(result[0].steps[0].sentenceIndex).toBe(0);
-    expect(result[0].steps[1].sentenceIndex).toBe(1);
-  });
-
-  it('should carry correct tokenIndex for simple tokens', () => {
-    const result = parseMultiTrackSteps(['P Ts K'], ['P', 'Ts', 'K']);
-    expect(result[0].steps[0].tokenIndex).toBe(0);
-    expect(result[1].steps[0].tokenIndex).toBe(1);
-    expect(result[2].steps[0].tokenIndex).toBe(2);
-  });
-
-  it('should carry correct tokenIndex for groups', () => {
-    const result = parseMultiTrackSteps(['P (Ts K) .'], ['P', 'Ts', 'K', '.']);
-    expect(result[0].steps[0].tokenIndex).toBe(0); // P
-    expect(result[1].steps[0].tokenIndex).toBe(1); // (Ts K) -> Ts à l'index 1, K à 2
-    expect(result[2].steps[0].tokenIndex).toBe(3); // .
   });
 });
 
