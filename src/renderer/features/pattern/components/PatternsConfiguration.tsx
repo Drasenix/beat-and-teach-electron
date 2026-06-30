@@ -1,27 +1,26 @@
-import { Plus } from 'lucide-react';
 import usePatterns from '../hooks/usePatterns';
-import AddPatternForm from './form/AddPatternForm';
-import EditPatternForm from './form/EditPatternForm';
+import RenamePatternForm from './form/RenamePatternForm';
 import useConfigurationActions from '../../../hooks/useConfigurationActions';
 import ConfigurationItem from '../../../components/ConfigurationItem';
 import ItemActions from '../../../components/ItemActions';
-import ConfigurationFooter from '../../../components/ConfigurationFooter';
 
 export default function PatternsConfiguration() {
-  const { patterns, addPattern, editPattern, removePattern, error } =
-    usePatterns();
+  const { patterns, editPattern, removePattern, error } = usePatterns();
 
   const {
-    adding,
-    onStartAdding,
-    onCancelAdding,
     editingId,
     setEditingId,
     confirmDeleteId,
     setConfirmDeleteId,
     handleConfirm,
-    handleEdit,
   } = useConfigurationActions(removePattern, editPattern);
+
+  const handleRename = async (name: string): Promise<void> => {
+    const patternId = editingId;
+    if (patternId === null) return;
+    await editPattern(patternId, { name });
+    setEditingId(null);
+  };
 
   return (
     <div className="content-page">
@@ -37,51 +36,28 @@ export default function PatternsConfiguration() {
               editingId={editingId}
               leftContent={<span className="pattern-name">{pattern.name}</span>}
               rightContent={
-                <>
-                  <div className="pattern-tracks">
-                    {pattern.sentences.map((sentence) => (
-                      <span key={sentence} className="pattern-track">
-                        {sentence}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="actions">
-                    <ItemActions
-                      onEdit={() => {
-                        setEditingId(pattern.id);
-                        onCancelAdding();
-                      }}
-                      onDelete={() => setConfirmDeleteId(pattern.id)}
-                      onCancelDelete={() => setConfirmDeleteId(null)}
-                      onConfirm={() => handleConfirm(pattern.id)}
-                      isConfirming={confirmDeleteId === pattern.id}
-                    />
-                  </span>
-                </>
+                <span className="actions ml-auto">
+                  <ItemActions
+                    onEdit={() => {
+                      setEditingId(pattern.id);
+                    }}
+                    onDelete={() => setConfirmDeleteId(pattern.id)}
+                    onCancelDelete={() => setConfirmDeleteId(null)}
+                    onConfirm={() => handleConfirm(pattern.id)}
+                    isConfirming={confirmDeleteId === pattern.id}
+                  />
+                </span>
               }
               editForm={
-                <EditPatternForm
-                  pattern={pattern}
-                  onUpdate={(data) => handleEdit(pattern.id, data)}
+                <RenamePatternForm
+                  name={pattern.name}
+                  onRename={handleRename}
                   onCancel={() => setEditingId(null)}
                 />
               }
             />
           ))}
         </ul>
-
-        <ConfigurationFooter
-          adding={adding}
-          onStartAdding={onStartAdding}
-          buttonText={
-            <>
-              <Plus size={16} /> Ajouter un pattern
-            </>
-          }
-          addForm={
-            <AddPatternForm onAdd={addPattern} onCancel={onCancelAdding} />
-          }
-        />
       </div>
     </div>
   );
