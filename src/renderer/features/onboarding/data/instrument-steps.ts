@@ -1,18 +1,20 @@
-import { driver, Driver } from 'driver.js';
+import { createTour, TourStep } from '../utils/createTour';
 
-export const instrumentSteps = [
+const instrumentSteps: TourStep[] = [
   {
     element: '.content-page',
     popover: {
       title: 'Instruments',
-      description: 'Voici la liste de tout tes instruments.',
+      description:
+        'Voici la liste de tous tes instruments. Tu peux les éditer, les supprimer, ou en ajouter de nouveaux avec tes propres fichiers audio.',
     },
   },
   {
     element: '.instrument-play-btn',
     popover: {
       title: 'Écouter',
-      description: 'Clique sur le bouton play pour écouter un instrument.',
+      description:
+        "Clique sur ▶ pour pré-écouter un instrument. Utile pour vérifier le son avant de l'utiliser dans un pattern.",
     },
   },
   {
@@ -20,28 +22,31 @@ export const instrumentSteps = [
     popover: {
       title: 'Symboles',
       description:
-        'Chaque instrument est identifié par un symbole unique. Utilise le pour composer.',
+        'Chaque instrument a un symbole unique (P, Ts, K…). Tape ces symboles dans une piste au studio pour composer ton rythme.',
     },
   },
   {
     element: '.instrument-name',
     popover: {
       title: 'Nom',
-      description: 'Chaque instrument possède également un nom.',
+      description:
+        "Le nom lisible t'aide à identifier l'instrument. Exemple : le symbole P correspond au kickdrum.",
     },
   },
   {
     element: '.instrument-filepath',
     popover: {
       title: 'Fichier',
-      description: 'Le fichier audio qui lui est associé.',
+      description:
+        "Le fichier audio (.mp3, .wav, .ogg) associé à l'instrument. C'est ce fichier qui est joué quand le symbole apparaît dans la grille.",
     },
   },
   {
     element: '.actions',
     popover: {
       title: 'Actions',
-      description: 'Chaque instrument peut-être édité ✎ et supprimé ✕',
+      description:
+        "✎ Édite l'instrument pour changer son nom, son symbole ou son fichier audio. ✕ Supprime-le définitivement.",
     },
   },
   {
@@ -49,24 +54,11 @@ export const instrumentSteps = [
     popover: {
       title: 'Ajouter',
       description:
-        'Ajoute tes propres instruments en sélectionner un fichier audio.',
+        'Ajoute tes propres instruments en choisissant un fichier audio sur ton ordinateur (mp3, wav, ogg). Le symbole te servira à le noter dans tes patterns.',
     },
   },
 ];
 
-let driverInstance: Driver | null = null;
+export { instrumentSteps };
 
-export function runInstrumentTour(onDestroy?: () => void): void {
-  if (driverInstance) {
-    driverInstance.destroy();
-  }
-  driverInstance = driver({
-    animate: true,
-    showProgress: true,
-    steps: instrumentSteps,
-    onDestroyed: () => {
-      onDestroy?.();
-    },
-  });
-  driverInstance.drive();
-}
+export const runInstrumentTour = createTour(instrumentSteps);

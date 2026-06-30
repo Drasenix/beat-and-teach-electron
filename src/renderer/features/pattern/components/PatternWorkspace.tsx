@@ -95,7 +95,7 @@ export default function PatternWorkspace() {
   };
 
   return (
-    <OnboardingDriver tourKey="studio">
+    <OnboardingDriver tourKey="studio" tourPageSelector=".daw-layout">
       <div className="daw-layout">
         <div className="transport-bar">
           <AudioControls sentences={sentencesForPlayback} />

@@ -1,3 +1,5 @@
+import { MousePointer2, ArrowUpDown, Undo2 } from 'lucide-react';
+
 export default function GuideShortcuts() {
   return (
     <>
@@ -7,6 +9,21 @@ export default function GuideShortcuts() {
           <li>
             <code className="text-primary font-bold">( symboles )</code> Diviser
             un temps en succession de notes.
+          </li>
+          <li className="flex items-start gap-2">
+            <MousePointer2 size={16} className="mt-0.5 text-primary shrink-0" />
+            <span>
+              Survol d&apos;une step : ouvre le panneau d&apos;édition (muet,
+              couleurs, sélecteur de note).
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <ArrowUpDown size={16} className="mt-0.5 text-primary shrink-0" />
+            <span>Molette sur une step : ajuste la hauteur par demi-tons.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Undo2 size={16} className="mt-0.5 text-primary shrink-0" />
+            <span>Double-clic sur une step : réinitialise la hauteur.</span>
           </li>
           <li>
             <code className="text-primary font-bold">

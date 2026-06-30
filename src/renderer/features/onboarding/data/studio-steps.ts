@@ -1,18 +1,69 @@
-import { driver, Driver } from 'driver.js';
+import { Driver } from 'driver.js';
+import { createTour, TourStep } from '../utils/createTour';
 
-export const studioSteps = [
+function setSectionState(selector: string, shouldBeOpen: boolean): void {
+  const sectionEl = document.querySelector(selector);
+  if (!sectionEl) return;
+  const button = sectionEl.querySelector(
+    '.sidebar-header',
+  ) as HTMLElement | null;
+  if (!button) return;
+  const collapsible = sectionEl.querySelector('.section-collapsible');
+  const isCurrentlyOpen = collapsible?.classList.contains('open') ?? false;
+  if (isCurrentlyOpen !== shouldBeOpen) {
+    button.click();
+  }
+}
+
+function openPatterns(): void {
+  setSectionState('#patterns-choices', true);
+}
+
+function closePatterns(): void {
+  setSectionState('#patterns-choices', false);
+}
+
+function openInstruments(): void {
+  setSectionState('#instrument-choices', true);
+}
+
+function closeInstruments(): void {
+  setSectionState('#instrument-choices', false);
+}
+
+function selectFirstPattern(): void {
+  const firstPatternButton = document.querySelector(
+    '#patterns-choices .sidebar-list button',
+  ) as HTMLElement | null;
+  if (firstPatternButton) {
+    firstPatternButton.click();
+  }
+}
+
+function clickNewPattern(): void {
+  const newButton = document.querySelector(
+    '#patterns-choices .sidebar-footer .sidebar-btn-new',
+  ) as HTMLElement | null;
+  if (newButton) {
+    newButton.click();
+  }
+}
+
+const studioSteps: TourStep[] = [
   {
     element: '.daw-layout',
     popover: {
       title: 'Espace de travail',
-      description: "Voici l'écran studio.",
+      description:
+        "Bienvenue dans le studio. C'est ici que tu composes : ajoute des pistes, écris des symboles, et écoute le résultat en temps réel.",
     },
   },
   {
     element: '#patterns-choices',
     popover: {
       title: 'Patterns',
-      description: 'Tu peux sélectionner un pattern déjà existant.',
+      description:
+        "Sélectionne un pattern existant dans la liste pour le modifier ou t'en inspirer. Tu peux aussi en créer un nouveau avec le bouton « Nouveau pattern ».",
     },
   },
   {
@@ -20,20 +71,7 @@ export const studioSteps = [
     popover: {
       title: 'Instruments',
       description:
-        'Tu peux retrouver tes différents instruments et rapidement les écouter.',
-    },
-  },
-  {
-    popover: {
-      title: 'Pattern',
-      description: 'Voyons maintenant comment fonctionne un pattern.',
-    },
-  },
-  {
-    element: '.daw-main',
-    popover: {
-      title: 'Pistes',
-      description: 'Ici se trouve ton espace de travail.',
+        'Retrouve tes instruments ici. Chacun a un symbole unique (P, Ts, K…). Clique sur le bouton ▶ pour pré-écouter un instrument.',
     },
   },
   {
@@ -41,44 +79,22 @@ export const studioSteps = [
     popover: {
       title: 'Pistes',
       description:
-        'Tu peux retrouver les différentes pistes qui composent ton pattern.',
-    },
-  },
-  {
-    element: '.pattern-section-content .section-background .btn-add',
-    popover: {
-      title: 'Pistes',
-      description: 'Tu peux ajouter une nouvelle piste.',
-    },
-  },
-  {
-    element: '.pattern-section-content .section-background .btn-delete',
-    popover: {
-      title: 'Pistes',
-      description: 'Et en supprimer une.',
+        'Écris les symboles des instruments séparés par des espaces. Exemple : <b>P Ts K . P (Ts P) K</b>. Chaque ligne est une piste différente. Utilise <b>()</b> pour mettre plusieurs notes sur un même temps.',
     },
   },
   {
     element: '#pattern-preview',
     popover: {
-      title: 'Pattern',
+      title: 'Grille',
       description:
-        'Cette section te permet de voir le pattern dans sa version finale.',
+        "La grille affiche le pattern complet. Chaque colonne est un temps. Survole une step pour ouvrir le panneau d'édition avec les options muet, couleurs et sélecteur de note.",
     },
   },
   {
-    element: '#time',
     popover: {
-      title: 'Mesure',
-      description: 'La longueur de la mesure est visible.',
-    },
-  },
-  {
-    element: '#steps',
-    popover: {
-      title: 'Steps',
+      title: "Panneau d'édition",
       description:
-        'Chaque Step est un bouton. Clique dessus pour <b>mute</b> celle-ci. Tu peux aussi assigner une <b>couleur</b> à une step.',
+        'Le panneau apparaît au survol d\'une step. Il permet de :<br/><br/><span class="text-primary font-bold">Muet</span> : Couper le son sans effacer le symbole.<br/><span class="text-primary font-bold">Couleurs</span> : 5 couleurs pour annoter (temps fort, liaison, ghost note, accent, syncope).<br/><span class="text-primary font-bold">Note</span> : Ajuster la hauteur perçue (si l\'instrument a une fréquence de référence).<br/><span class="text-primary font-bold">Molette</span> : Ajuster la hauteur par demi-tons.<br/><span class="text-primary font-bold">Double-clic</span> : Réinitialiser la hauteur.',
     },
   },
   {
@@ -86,7 +102,7 @@ export const studioSteps = [
     popover: {
       title: 'Note simple',
       description:
-        'Une step correspond à un temps. Par défaut il y a une note par temps.',
+        "Un symbole par temps. Le silence est représenté par <b>.</b> et s'affiche en grisé.",
     },
   },
   {
@@ -94,7 +110,7 @@ export const studioSteps = [
     popover: {
       title: 'Notes multiples',
       description:
-        'Utilise <b>()</b> pour découper un temps en autant de notes que tu le souhaites.',
+        "Avec <b>()</b>, tu découpes un temps en plusieurs notes jouées rapidement à l'intérieur de la même pulsation. Exemple : <b>(Ts P)</b> joue Ts puis P dans un seul temps.",
     },
   },
   {
@@ -102,99 +118,53 @@ export const studioSteps = [
     popover: {
       title: 'Contrôles',
       description:
-        'Cette section te permet de contrôler la lecture du pattern. Utilise le raccourci clavier <b>Ctrl+Enter</b> pour déclencher rapidement les actions <b>Play/Stop</b>. Aussi, <b>Ctrl+￪</b> et <b>Ctrl+￬</b> te permetterons de contrôler le <b>tempo</b>.',
+        'Utilise ▶ Play pour écouter le pattern, ■ Stop pour arrêter. Raccourci : <b>Ctrl+Enter</b>. Ajuste le tempo avec le slider ou avec <b>Ctrl+↑</b> et <b>Ctrl+↓</b>.',
     },
   },
   {
     element: '.sidebar-btn-save',
     popover: {
       title: 'Sauvegarde',
-      description: 'Sauvegarde ton pattern.',
-    },
-  },
-  {
-    element: '.sidebar-btn-new',
-    popover: {
-      title: 'Nouveau pattern',
       description:
-        'Crée un nouveau pattern. Attention, les modifications non sauvegardées seront perdues.',
+        'Sauvegarde ton travail régulièrement. Le pattern est stocké dans ta bibliothèque et tu peux le retrouver plus tard.',
     },
   },
 ];
 
-let driverInstance: Driver | null = null;
+export { studioSteps };
 
-export function runStudioTour(onDestroy?: () => void): void {
-  if (driverInstance) {
-    driverInstance.destroy();
-  }
+export const runStudioTour = createTour(studioSteps, {
+  onNextClick: (driverInstance: Driver): void => {
+    const activeIndex = driverInstance.getActiveIndex() ?? 0;
 
-  driverInstance = driver({
-    animate: true,
-    showProgress: true,
-    steps: studioSteps,
-    onNextClick: () => {
-      const activeIndex = driverInstance?.getActiveIndex() ?? 0;
-      let btn: HTMLElement;
-      if (activeIndex === 0) {
-        btn = document.querySelector('#patterns-choices button') as HTMLElement;
-        if (btn) btn.click();
-      } else if (activeIndex === 1) {
-        btn = document.querySelector('#patterns-choices button') as HTMLElement;
-        if (btn) btn.click();
-        btn = document.querySelector(
-          '#instrument-choices button',
-        ) as HTMLElement;
-        if (btn) btn.click();
-      } else if (activeIndex === 2) {
-        btn = document.querySelector(
-          '#instrument-choices button',
-        ) as HTMLElement;
-        if (btn) btn.click();
-      } else if (activeIndex === 3) {
-        btn = document.querySelector('#patterns-choices button') as HTMLElement;
-        if (btn) btn.click();
-        btn = document.querySelector(
-          '#patterns-choices .sidebar-list button',
-        ) as HTMLElement;
-        if (btn) btn.click();
-      }
+    if (activeIndex === 0) {
+      openPatterns();
+    } else if (activeIndex === 1) {
+      closePatterns();
+      openInstruments();
+    } else if (activeIndex === 2) {
+      closeInstruments();
+      openPatterns();
+      selectFirstPattern();
+    }
 
-      driverInstance?.moveNext();
-    },
-    onPrevClick: () => {
-      const activeIndex = driverInstance?.getActiveIndex() ?? 0;
-      let btn: HTMLElement;
-      if (activeIndex === 1) {
-        btn = document.querySelector('#patterns-choices button') as HTMLElement;
-        if (btn) btn.click();
-      } else if (activeIndex === 2) {
-        btn = document.querySelector('#patterns-choices button') as HTMLElement;
-        if (btn) btn.click();
-        btn = document.querySelector(
-          '#instrument-choices button',
-        ) as HTMLElement;
-        if (btn) btn.click();
-      } else if (activeIndex === 3) {
-        btn = document.querySelector(
-          '#instrument-choices button',
-        ) as HTMLElement;
-        if (btn) btn.click();
-      } else if (activeIndex === 4) {
-        btn = document.querySelector(
-          '#patterns-choices .sidebar-footer .sidebar-btn-new',
-        ) as HTMLElement;
-        if (btn) btn.click();
-        btn = document.querySelector('#patterns-choices button') as HTMLElement;
-        if (btn) btn.click();
-      }
+    driverInstance.moveNext();
+  },
+  onPrevClick: (driverInstance: Driver): void => {
+    const activeIndex = driverInstance.getActiveIndex() ?? 0;
 
-      driverInstance?.movePrevious();
-    },
-    onDestroyed: () => {
-      onDestroy?.();
-    },
-  });
+    if (activeIndex === 1) {
+      openPatterns();
+    } else if (activeIndex === 2) {
+      openPatterns();
+      openInstruments();
+    } else if (activeIndex === 3) {
+      openInstruments();
+    } else if (activeIndex === 4) {
+      openPatterns();
+      clickNewPattern();
+    }
 
-  driverInstance.drive();
-}
+    driverInstance.movePrevious();
+  },
+});

@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { runInstrumentTour } from '../data/instrument-steps';
-import { runPatternTour } from '../data/pattern-steps';
 import { runLibraryTour } from '../data/library-steps';
 import { runStudioTour } from '../data/studio-steps';
+import { waitForElement } from '../utils/createTour';
 import 'driver.js/dist/driver.css';
 
 type OnboardingDriverProps = {
   children: React.ReactNode;
   tourKey: string;
+  tourPageSelector: string;
 };
 
 const tourFunctions: Record<string, (onDestroy?: () => void) => void> = {
   instruments: runInstrumentTour,
-  patterns: runPatternTour,
   library: runLibraryTour,
   studio: runStudioTour,
 };
@@ -20,26 +20,34 @@ const tourFunctions: Record<string, (onDestroy?: () => void) => void> = {
 export default function OnboardingDriver({
   children,
   tourKey,
+  tourPageSelector,
 }: OnboardingDriverProps) {
   useEffect(() => {
     const key = `${tourKey}_tour_seen`;
     const seen = localStorage.getItem(key);
-
     const tourFn = tourFunctions[tourKey];
 
     if (!seen && tourFn) {
-      const timer = setTimeout(() => {
+      let cancelled = false;
+
+      const startTour = async (): Promise<void> => {
+        await waitForElement(tourPageSelector);
+        if (cancelled) return;
         tourFn();
         localStorage.setItem(key, 'true');
-      }, 500);
+      };
 
-      return () => clearTimeout(timer);
+      startTour();
+
+      return () => {
+        cancelled = true;
+      };
     }
 
     return undefined;
-  }, [tourKey]);
+  }, [tourKey, tourPageSelector]);
 
   return children;
 }
 
-export { runInstrumentTour, runPatternTour, runLibraryTour, runStudioTour };
+export { runInstrumentTour, runLibraryTour, runStudioTour };

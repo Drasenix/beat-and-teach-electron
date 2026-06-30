@@ -34,7 +34,7 @@ export default function InstrumentConfiguration() {
   } = useConfigurationActions(removeInstrument, editInstrument);
 
   return (
-    <OnboardingDriver tourKey="instruments">
+    <OnboardingDriver tourKey="instruments" tourPageSelector=".content-page">
       <div className="content-page">
         <div className="workspace-section-content">
           <h2 className="section-title">Instruments</h2>

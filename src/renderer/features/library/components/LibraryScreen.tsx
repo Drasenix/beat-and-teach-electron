@@ -83,7 +83,7 @@ export default function LibraryScreen() {
   };
 
   return (
-    <OnboardingDriver tourKey="library">
+    <OnboardingDriver tourKey="library" tourPageSelector=".content-page">
       <div className="content-page">
         <div className="workspace-section-content">
           <h2 className="section-title">Bibliothèque</h2>

@@ -6,7 +6,6 @@ import useConfigurationActions from '../../../hooks/useConfigurationActions';
 import ConfigurationItem from '../../../components/ConfigurationItem';
 import ItemActions from '../../../components/ItemActions';
 import ConfigurationFooter from '../../../components/ConfigurationFooter';
-import OnboardingDriver from '../../onboarding/components/OnboardingDriver';
 
 export default function PatternsConfiguration() {
   const { patterns, addPattern, editPattern, removePattern, error } =
@@ -25,69 +24,65 @@ export default function PatternsConfiguration() {
   } = useConfigurationActions(removePattern, editPattern);
 
   return (
-    <OnboardingDriver tourKey="patterns">
-      <div className="content-page">
-        <div className="workspace-section-content">
-          <h2 className="section-title">Patterns</h2>
-          {error && <div className="w-full error-message">{error}</div>}
+    <div className="content-page">
+      <div className="workspace-section-content">
+        <h2 className="section-title">Patterns</h2>
+        {error && <div className="w-full error-message">{error}</div>}
 
-          <ul className="config-liste">
-            {patterns.map((pattern) => (
-              <ConfigurationItem
-                key={pattern.id}
-                id={pattern.id}
-                editingId={editingId}
-                leftContent={
-                  <span className="pattern-name">{pattern.name}</span>
-                }
-                rightContent={
-                  <>
-                    <div className="pattern-tracks">
-                      {pattern.sentences.map((sentence) => (
-                        <span key={sentence} className="pattern-track">
-                          {sentence}
-                        </span>
-                      ))}
-                    </div>
-                    <span className="actions">
-                      <ItemActions
-                        onEdit={() => {
-                          setEditingId(pattern.id);
-                          onCancelAdding();
-                        }}
-                        onDelete={() => setConfirmDeleteId(pattern.id)}
-                        onCancelDelete={() => setConfirmDeleteId(null)}
-                        onConfirm={() => handleConfirm(pattern.id)}
-                        isConfirming={confirmDeleteId === pattern.id}
-                      />
-                    </span>
-                  </>
-                }
-                editForm={
-                  <EditPatternForm
-                    pattern={pattern}
-                    onUpdate={(data) => handleEdit(pattern.id, data)}
-                    onCancel={() => setEditingId(null)}
-                  />
-                }
-              />
-            ))}
-          </ul>
+        <ul className="config-liste">
+          {patterns.map((pattern) => (
+            <ConfigurationItem
+              key={pattern.id}
+              id={pattern.id}
+              editingId={editingId}
+              leftContent={<span className="pattern-name">{pattern.name}</span>}
+              rightContent={
+                <>
+                  <div className="pattern-tracks">
+                    {pattern.sentences.map((sentence) => (
+                      <span key={sentence} className="pattern-track">
+                        {sentence}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="actions">
+                    <ItemActions
+                      onEdit={() => {
+                        setEditingId(pattern.id);
+                        onCancelAdding();
+                      }}
+                      onDelete={() => setConfirmDeleteId(pattern.id)}
+                      onCancelDelete={() => setConfirmDeleteId(null)}
+                      onConfirm={() => handleConfirm(pattern.id)}
+                      isConfirming={confirmDeleteId === pattern.id}
+                    />
+                  </span>
+                </>
+              }
+              editForm={
+                <EditPatternForm
+                  pattern={pattern}
+                  onUpdate={(data) => handleEdit(pattern.id, data)}
+                  onCancel={() => setEditingId(null)}
+                />
+              }
+            />
+          ))}
+        </ul>
 
-          <ConfigurationFooter
-            adding={adding}
-            onStartAdding={onStartAdding}
-            buttonText={
-              <>
-                <Plus size={16} /> Ajouter un pattern
-              </>
-            }
-            addForm={
-              <AddPatternForm onAdd={addPattern} onCancel={onCancelAdding} />
-            }
-          />
-        </div>
+        <ConfigurationFooter
+          adding={adding}
+          onStartAdding={onStartAdding}
+          buttonText={
+            <>
+              <Plus size={16} /> Ajouter un pattern
+            </>
+          }
+          addForm={
+            <AddPatternForm onAdd={addPattern} onCancel={onCancelAdding} />
+          }
+        />
       </div>
-    </OnboardingDriver>
+    </div>
   );
 }
