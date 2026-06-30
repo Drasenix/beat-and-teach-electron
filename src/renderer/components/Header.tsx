@@ -10,23 +10,23 @@ import {
 import useAudio from '../features/audio/hooks/useAudio';
 
 const NAV_ICONS = {
-  '/guide': Compass,
   '/workspace': AudioLines,
   '/configuration/instruments': FileHeadphone,
-  '/recorder': Mic,
   '/configuration/patterns': ListMusic,
   '/library': FileSliders,
+  '/recorder': Mic,
+  '/guide': Compass,
 } as const;
 
 type Route = keyof typeof NAV_ICONS;
 
 const NAV_TITLES: Record<Route, string> = {
-  '/guide': 'Guide',
   '/workspace': 'Studio',
   '/configuration/instruments': 'Instruments',
-  '/recorder': 'Enregistreur',
   '/configuration/patterns': 'Patterns',
   '/library': 'Bibliothèque',
+  '/recorder': 'Enregistreur',
+  '/guide': 'Guide',
 };
 
 const NAV_ROUTES = Object.keys(NAV_ICONS) as Route[];

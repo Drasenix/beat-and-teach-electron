@@ -10,16 +10,16 @@ import {
 import HomeLogoSvg from './HomeLogoSvg';
 
 const HOME_ENTRIES = [
-  { to: '/guide', icon: Compass, label: 'guide' },
   { to: '/workspace', icon: AudioLines, label: 'studio' },
   {
     to: '/configuration/instruments',
     icon: FileHeadphone,
     label: 'instruments',
   },
-  { to: '/recorder', icon: Mic, label: 'enregistreur' },
   { to: '/configuration/patterns', icon: ListMusic, label: 'patterns' },
   { to: '/library', icon: FileSliders, label: 'bibliothèque' },
+  { to: '/recorder', icon: Mic, label: 'enregistreur' },
+  { to: '/guide', icon: Compass, label: 'guide' },
 ] as const;
 
 export default function Home() {
