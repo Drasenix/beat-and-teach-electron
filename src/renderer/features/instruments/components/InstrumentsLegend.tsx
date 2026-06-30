@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Play } from 'lucide-react';
 import useInstruments from '../hooks/useInstruments';
 import useAudio from '../../audio/hooks/useAudio';
+import frequencyToNoteName from '../../../utils/frequency-to-note';
 
 export default function InstrumentsLegend() {
   const { instruments } = useInstruments();
@@ -26,6 +27,11 @@ export default function InstrumentsLegend() {
               <span className="instrument-name">
                 {instrument.slug ?? 'error: no slug defined'}
               </span>
+              {instrument.referenceFrequency && (
+                <span className="text-[10px] text-text-secondary">
+                  {frequencyToNoteName(instrument.referenceFrequency)}
+                </span>
+              )}
               <button
                 type="button"
                 className="instrument-play-btn"

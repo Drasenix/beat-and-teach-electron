@@ -29,6 +29,11 @@
 - [x] **Studio tour — étape overlay descriptive "Panneau d'édition"** (sans tooltip forcé)
 - [x] **Studio tour — émojis + `—` remplacés par `<span class="text-primary font-bold">`**
 - [x] **GuideContent.tsx / GuideShortcuts.tsx — émojis remplacés par icônes Lucide**
+- [x] **GuideShortcuts.tsx — revert des 3 entrées au pattern `<code>` existant** (uniformisation, suppression imports Lucide)
+- [x] **GuideContent.tsx — enrichir section "Syntaxe"** : silence `.`, groupes `()`, couleurs en exemple
+- [x] **GuideContent.tsx — icônes Lucide sur les boutons de tour** (`AudioLines`, `FileHeadphone`, `FileSliders`)
+- [x] **GuideContent.tsx — grille des tours `grid-cols-2` → `grid-cols-3` + animation `div-animated-wrapper` / `link-animated-inner`**
+- [x] **GuideContent.tsx — section "Édition des steps" : couleurs reformulées en exemple**
 
 ## Avancement
 
@@ -38,4 +43,7 @@ GO
 ## Notes / décisions
 
 - Option A validée pour le tour Patterns (suppression).
-- Approche `data-tour-force-tooltip` : `MutationObserver` dans StepBadge, `zIndex: 10000` pour passer devant overlay driver.js.
+- Approche `data-tour-force-tooltip` annulée.
+- Couleurs de highlight citées en exemple, pas comme règle.
+- Normalisation des pistes retirée de la doc (obsolète).
+- eslint-disable orphelin dans GuideModalProvider.tsx conservé (utile).

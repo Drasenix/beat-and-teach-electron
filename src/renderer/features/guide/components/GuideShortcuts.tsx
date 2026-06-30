@@ -1,5 +1,3 @@
-import { MousePointer2, ArrowUpDown, Undo2 } from 'lucide-react';
-
 export default function GuideShortcuts() {
   return (
     <>
@@ -10,20 +8,21 @@ export default function GuideShortcuts() {
             <code className="text-primary font-bold">( symboles )</code> Diviser
             un temps en succession de notes.
           </li>
-          <li className="flex items-start gap-2">
-            <MousePointer2 size={16} className="mt-0.5 text-primary shrink-0" />
-            <span>
-              Survol d&apos;une step : ouvre le panneau d&apos;édition (muet,
-              couleurs, sélecteur de note).
-            </span>
+          <li>
+            <code className="text-primary font-bold">
+              Survol d&apos;une step
+            </code>{' '}
+            Ouvre le panneau d&apos;édition (muet, couleurs, sélecteur de note).
           </li>
-          <li className="flex items-start gap-2">
-            <ArrowUpDown size={16} className="mt-0.5 text-primary shrink-0" />
-            <span>Molette sur une step : ajuste la hauteur par demi-tons.</span>
+          <li>
+            <code className="text-primary font-bold">Molette sur une step</code>{' '}
+            Ajuste la hauteur par demi-tons.
           </li>
-          <li className="flex items-start gap-2">
-            <Undo2 size={16} className="mt-0.5 text-primary shrink-0" />
-            <span>Double-clic sur une step : réinitialise la hauteur.</span>
+          <li>
+            <code className="text-primary font-bold">
+              Double-clic sur une step
+            </code>{' '}
+            Réinitialise la hauteur.
           </li>
           <li>
             <code className="text-primary font-bold">
@@ -72,7 +71,7 @@ export default function GuideShortcuts() {
             Ajouter le symbole de gauche / droite à la sélection.
           </li>
           <li>
-            <code className="text-primary font-bold">Maj + Clic droit</code>{' '}
+            <code className="text-primary font-bold">Maj + Clic gauche</code>{' '}
             Sélectionner le texte depuis la position du curseur.
           </li>
           <li>
