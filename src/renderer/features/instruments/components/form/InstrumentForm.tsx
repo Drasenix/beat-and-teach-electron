@@ -41,7 +41,9 @@ export default function InstrumentForm({
       if (freq !== null) {
         onInstrumentChange({ referenceFrequency: Math.round(freq) });
       } else {
-        setDetectError("Aucune hauteur détectée. Les sons percussifs (kick, snare, hihat) n'ont pas de fréquence stable. La détection fonctionne mieux sur les sons soutenus (voix, instruments mélodiques).");
+        setDetectError(
+          "Aucune hauteur détectée. Les sons percussifs (kick, snare, hihat) n'ont pas de fréquence stable. La détection fonctionne mieux sur les sons soutenus (voix, instruments mélodiques).",
+        );
       }
     } catch {
       setDetectError('Erreur lors de la détection.');
