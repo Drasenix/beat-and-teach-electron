@@ -1,23 +1,55 @@
 import { useState, useMemo, useCallback } from 'react';
 import usePattern from './usePattern';
+import { Pattern, DEFAULT_PATTERN } from '../models/pattern-model';
 import { transformSentencesWithMute } from '../utils/pattern-mute';
 import updateTokenFrequency from '../../../utils/update-token-frequency';
 
 const usePatternSession = () => {
   const patternHooks = usePattern();
+  const { pattern, changeSentence } = patternHooks;
   const [mutedSteps, setMutedSteps] = useState<Set<string>>(new Set());
+  const [lastSavedSnapshot, setLastSavedSnapshot] = useState<string>(() =>
+    JSON.stringify({
+      name: DEFAULT_PATTERN.name,
+      sentences: DEFAULT_PATTERN.sentences,
+      highlights: DEFAULT_PATTERN.highlights,
+    }),
+  );
 
-  const setPattern = (
-    newPattern: Parameters<typeof patternHooks.setPattern>[0],
-  ) => {
+  const takeSnapshot = useCallback((p: Pattern): void => {
+    setLastSavedSnapshot(
+      JSON.stringify({
+        name: p.name,
+        sentences: p.sentences,
+        highlights: p.highlights,
+      }),
+    );
+  }, []);
+
+  const isDirty = useMemo(() => {
+    const current = JSON.stringify({
+      name: pattern.name,
+      sentences: pattern.sentences,
+      highlights: pattern.highlights,
+    });
+    return current !== lastSavedSnapshot;
+  }, [pattern, lastSavedSnapshot]);
+
+  const setPattern = (newPattern: Pattern): void => {
     patternHooks.setPattern(newPattern);
+    takeSnapshot(newPattern);
     setMutedSteps(new Set());
   };
 
   const resetPattern = () => {
     patternHooks.resetPattern();
+    takeSnapshot(DEFAULT_PATTERN);
     setMutedSteps(new Set());
   };
+
+  const markAsSaved = useCallback((): void => {
+    takeSnapshot(pattern);
+  }, [takeSnapshot, pattern]);
 
   const toggleMute = (sentenceIndex: number, tokenIndex: number) => {
     const key = `${sentenceIndex}-${tokenIndex}`;
@@ -38,22 +70,21 @@ const usePatternSession = () => {
 
   const changeFrequency = useCallback(
     (sentenceIndex: number, tokenIndex: number, frequency: number | null) => {
-      const currentSentence = patternHooks.pattern.sentences[sentenceIndex];
+      const currentSentence = pattern.sentences[sentenceIndex];
       if (currentSentence === undefined) return;
       const newSentence = updateTokenFrequency(
         currentSentence,
         tokenIndex,
         frequency,
       );
-      patternHooks.changeSentence(sentenceIndex, newSentence);
+      changeSentence(sentenceIndex, newSentence);
     },
-    [patternHooks],
+    [pattern.sentences, changeSentence],
   );
 
   const sentencesForPlayback = useMemo(
-    () =>
-      transformSentencesWithMute(patternHooks.pattern.sentences, mutedSteps),
-    [patternHooks.pattern.sentences, mutedSteps],
+    () => transformSentencesWithMute(pattern.sentences, mutedSteps),
+    [pattern.sentences, mutedSteps],
   );
 
   return {
@@ -65,6 +96,8 @@ const usePatternSession = () => {
     isMuted,
     changeFrequency,
     sentencesForPlayback,
+    isDirty,
+    markAsSaved,
   };
 };
 

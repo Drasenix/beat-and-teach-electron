@@ -1,4 +1,4 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider, Outlet } from 'react-router-dom';
 import './App.css';
 import Home from './components/Home';
 import PatternWorkspace from './features/pattern/components/PatternWorkspace';
@@ -14,38 +14,42 @@ import { AudioProvider } from './features/audio/contexts/AudioContext';
 import GuideModalProvider from './features/guide/components/GuideModalProvider';
 import GuideModal from './features/guide/components/GuideModal';
 
+const router = createMemoryRouter([
+  {
+    element: (
+      <div className="bg-background min-h-screen">
+        <Header />
+        <div className="main-container">
+          <Outlet />
+        </div>
+      </div>
+    ),
+    children: [
+      { index: true, element: <Home /> },
+      { path: 'workspace', element: <PatternWorkspace /> },
+      {
+        path: 'configuration/instruments',
+        element: <InstrumentConfiguration />,
+      },
+      { path: 'configuration/patterns', element: <PatternsConfiguration /> },
+      { path: 'library', element: <LibraryScreen /> },
+      { path: 'guide', element: <GuideScreen /> },
+      { path: 'recorder', element: <RecorderScreen /> },
+    ],
+  },
+]);
+
 export default function App() {
   return (
-    <Router>
-      <AudioProvider>
-        <PatternsProvider>
-          <InstrumentsProvider>
-            <GuideModalProvider>
-              <div className="bg-background min-h-screen">
-                <Header />
-                <div className="main-container">
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/workspace" element={<PatternWorkspace />} />
-                    <Route
-                      path="/configuration/instruments"
-                      element={<InstrumentConfiguration />}
-                    />
-                    <Route
-                      path="/configuration/patterns"
-                      element={<PatternsConfiguration />}
-                    />
-                    <Route path="/library" element={<LibraryScreen />} />
-                    <Route path="/guide" element={<GuideScreen />} />
-                    <Route path="/recorder" element={<RecorderScreen />} />
-                  </Routes>
-                </div>
-              </div>
-              <GuideModal />
-            </GuideModalProvider>
-          </InstrumentsProvider>
-        </PatternsProvider>
-      </AudioProvider>
-    </Router>
+    <AudioProvider>
+      <PatternsProvider>
+        <InstrumentsProvider>
+          <GuideModalProvider>
+            <RouterProvider router={router} />
+            <GuideModal />
+          </GuideModalProvider>
+        </InstrumentsProvider>
+      </PatternsProvider>
+    </AudioProvider>
   );
 }

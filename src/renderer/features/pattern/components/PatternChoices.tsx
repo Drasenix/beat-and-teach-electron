@@ -8,22 +8,20 @@ type PatternChoicesProps = {
   selectPattern: (pattern: Pattern | null) => void;
   onSave: () => void;
   canSave: boolean;
+  selectedId: number | null;
 };
 
 export default function PatternChoices(props: PatternChoicesProps) {
-  const { selectPattern, onSave, canSave } = props;
+  const { selectPattern, onSave, canSave, selectedId } = props;
   const { patterns } = usePatterns();
   const { playing } = useAudio();
-  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
   const handleSelect = (pat: Pattern): void => {
-    setSelectedId(pat.id);
     selectPattern(pat);
   };
 
   const handleNew = (): void => {
-    setSelectedId(null);
     selectPattern(null);
   };
 

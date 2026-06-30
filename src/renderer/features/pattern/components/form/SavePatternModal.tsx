@@ -10,6 +10,7 @@ type SavePatternModalProps = {
   pattern: Pattern;
   selectedPattern: Pattern | null;
   onClose: () => void;
+  onSaved?: () => void;
 };
 
 type ConfirmOverwriteState = {
@@ -21,6 +22,7 @@ export default function SavePatternModal({
   pattern,
   selectedPattern,
   onClose,
+  onSaved,
 }: SavePatternModalProps) {
   const { patterns, addPattern, editPattern } = usePatterns();
   const [name, setName] = useState('');
@@ -42,6 +44,7 @@ export default function SavePatternModal({
         sentences: pattern.sentences,
         highlights: pattern.highlights,
       });
+      onSaved?.();
       onClose();
     } catch (e) {
       setError(extractIpcError(e, 'Impossible de modifier le pattern.'));
@@ -67,6 +70,7 @@ export default function SavePatternModal({
         sentences: pattern.sentences,
         highlights: pattern.highlights,
       });
+      onSaved?.();
       resetFields();
       onClose();
     } catch (e) {
@@ -82,6 +86,7 @@ export default function SavePatternModal({
         sentences: pattern.sentences,
         highlights: pattern.highlights,
       });
+      onSaved?.();
       resetFields();
       onClose();
     } catch (e) {
