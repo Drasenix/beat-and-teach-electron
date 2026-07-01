@@ -26,6 +26,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - name: Wait for CI
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
