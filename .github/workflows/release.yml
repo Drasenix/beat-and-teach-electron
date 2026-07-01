@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Wait for CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 30); do
+            CONCLUSION=$(gh run list --workflow ci.yml --commit "${{ github.sha }}" --json conclusion --status completed --jq '.[0].conclusion // empty')
+            if [ "$CONCLUSION" = "success" ]; then
+              exit 0
+            elif [ -n "$CONCLUSION" ]; then
+              echo "CI failed: $CONCLUSION"
+              exit 1
+            fi
+            echo "Waiting for CI... ($i/30)"
+            sleep 10
+          done
+          echo "CI did not complete within 5 minutes"
+          exit 1
+      - run: npm ci
+      - run: npx ts-node ./.erb/scripts/clean.js dist
+      - run: npm run build
+      - name: Package and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npx electron-builder build --publish always

@@ -217,8 +217,8 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "Drasenix",
+      "repo": "beat-and-teach-electron"
     }
   },
   "collective": {
