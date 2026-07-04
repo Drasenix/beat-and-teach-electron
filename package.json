@@ -1,5 +1,5 @@
 {
-  "name": "beat-and-teach-electron",
+  "name": "beat-and-teach-it",
   "productName": "Beat and Teach It",
   "description": "A foundation for scalable desktop apps",
   "keywords": [
@@ -218,7 +218,7 @@
     "publish": {
       "provider": "github",
       "owner": "Drasenix",
-      "repo": "beat-and-teach-electron"
+      "repo": "beat-and-teach-it"
     }
   },
   "collective": {

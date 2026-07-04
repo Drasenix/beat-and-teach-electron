@@ -50,8 +50,8 @@ Webpack · Jest · Electron Builder · driver.js · Lucide Icons · adm-zip
 
 ```bash
 # Cloner le dépôt
-git clone https://github.com/Drasenix/beat-and-teach-electron.git
-cd beat-and-teach-electron
+git clone https://github.com/Drasenix/beat-and-teach-it.git
+cd beat-and-teach-it
 
 # Installer les dépendances
 npm install
