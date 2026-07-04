@@ -1,4 +1,4 @@
-<img src="assets/banner.svg" width="100%" />
+<img src="assets/banner.png" width="100%">
 
 <br>
 
@@ -9,16 +9,6 @@
 <br>
 
 <div align="center">
-
-![MIT License](https://img.shields.io/badge/license-MIT-%23679ff9)
-![Electron](https://img.shields.io/badge/Electron-%23030712?logo=electron&labelColor=%231d273c)
-![React](https://img.shields.io/badge/React-%23030712?logo=react&labelColor=%231d273c)
-![TypeScript](https://img.shields.io/badge/TypeScript-%23030712?logo=typescript&labelColor=%231d273c)
-![Tone.js](https://img.shields.io/badge/Tone.js-%23030712?logo=tone.js&labelColor=%231d273c)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-%23030712?logo=tailwindcss&labelColor=%231d273c)
-![SQLite](https://img.shields.io/badge/SQLite-%23030712?logo=sqlite&labelColor=%231d273c)
-
-</div>
 
 <br>
 
