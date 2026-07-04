@@ -1,4 +1,5 @@
 import { createMemoryRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { MessageSquareText } from 'lucide-react';
 import './App.css';
 import Home from './components/Home';
 import PatternWorkspace from './features/pattern/components/PatternWorkspace';
@@ -47,6 +48,14 @@ export default function App() {
           <GuideModalProvider>
             <RouterProvider router={router} />
             <GuideModal />
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSfTFrfdn3AjHeKy9fYllv9aqS2XRSrkWce0nmpYVU6WKkVQRg/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="fixed bottom-6 right-6 z-40 btn-primary flex items-center gap-2"
+            >
+              <MessageSquareText size={16} /> Donner mon avis
+            </a>
           </GuideModalProvider>
         </InstrumentsProvider>
       </PatternsProvider>
