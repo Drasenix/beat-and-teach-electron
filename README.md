@@ -6,9 +6,7 @@
   <strong>Beat & Teach</strong> — une application de composition musicale rythmique assistée, destinée à l'apprentissage du beatbox.
 </p>
 
-<br>
 
-<div align="center">
 
 <br>
 
