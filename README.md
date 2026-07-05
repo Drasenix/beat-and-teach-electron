@@ -6,8 +6,6 @@
   <strong>Beat & Teach</strong> — une application de composition musicale rythmique assistée, destinée à l'apprentissage du beatbox.
 </p>
 
-
-
 <br>
 
 ---
@@ -16,22 +14,22 @@
 
 ## ✦ Présentation
 
-**Beat & Teach** transforme la notation rythmique en un langage symbolique simple et visuel. Chaque symbole — `P`, `Ts`, `K`, `Bw`, `Lo` — représente un son percussif. Composez des séquences, superposez des pistes, associez vos propres samples, et écoutez le résultat en temps réel.
+**Beat & Teach** transforme la notation rythmique en un langage symbolique simple et visuel. Chaque symbole — `P`, `Ts`, `K`, `Bw`, `Lo` — représente un son. Composez des séquences, superposez des pistes, associez vos propres samples, et écoutez le résultat en temps réel.
 
-L'outil idéal pour les beatboxers, musiciens et enseignants en éveil musical qui veulent noter, apprendre et partager des patterns rythmiques.
+L'outil idéal pour les beatboxers, musiciens et enseignants qui veulent noter, apprendre et partager des patterns rythmiques.
 
 <br>
 
 ## ✦ Fonctionnalités
 
-|                                |                                                                                                            |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| **🎵 Notation symbolique**     | Écrivez vos rythmes avec un langage textuel intuitif :`P Ts (K . P) Ts K .`                                |
-| **🎛️ Séquenceur multi-pistes** | Superposez plusieurs lignes rythmiques avec visualisation en grille temps réel                             |
-| **🔊 Lecture temps réel**      | Moteur audio basé sur Tone.js — boucle synchronisée, step callback pour l'UI                               |
-| **🎚️ Banque d'instruments**    | 20 instruments préchargés, import de vos propres sons, mapping symbole → sample                            |
-| **📦 Bibliothèque .beatpack**  | Exportez et importez vos patterns et instruments dans un format portable                                   |
-| **🎓 Visites guidées**         | Tours interactifs driver.js pour une prise en main immédiate (Studio, Instruments, Patterns, Bibliothèque) |
+|                                         |                                                                                                              |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **🎵 Notation symbolique**        | Écrivez vos rythmes avec un langage textuel intuitif :`P Ts (K . P) Ts K .`                               |
+| **🎛️ Séquenceur multi-pistes** | Superposez plusieurs lignes rythmiques avec visualisation en grille temps réel                              |
+| **🔊 Lecture temps réel**        | Moteur audio basé sur Tone.js — boucle synchronisée, step callback pour l'UI                              |
+| **🎚️ Banque d'instruments**     | 20 instruments préchargés, import de vos propres sons, mapping symbole → sample                           |
+| **📦 Bibliothèque .beatpack**    | Exportez et importez vos patterns et instruments dans un format portable                                     |
+| **🎓 Visites guidées**           | Tours interactifs driver.js pour une prise en main immédiate (Studio, Instruments, Patterns, Bibliothèque) |
 
 <br>
 
@@ -86,16 +84,16 @@ npm run package    # Package desktop (electron-builder)
 
 ## ✦ Raccourcis clavier
 
-| Touche            | Action                    |
-| ----------------- | ------------------------- |
-| `F1`              | Aide — raccourcis         |
-| `Ctrl + Enter`    | Play / Stop               |
-| `Ctrl + ↑`        | BPM +1                    |
-| `Ctrl + ↓`        | BPM -1                    |
-| `↑` / `↓`         | Navigation autocomplétion |
-| `Space` / `Enter` | Valider suggestion        |
-| `Ctrl + Espace`   | Afficher/Masquer autocomp |
-| `Escape`          | Fermer modale             |
+| Touche                | Action                     |
+| --------------------- | -------------------------- |
+| `F1`                | Aide — raccourcis         |
+| `Ctrl + Enter`      | Play / Stop                |
+| `Ctrl + ↑`         | BPM +1                     |
+| `Ctrl + ↓`         | BPM -1                     |
+| `↑` / `↓`       | Navigation autocomplétion |
+| `Space` / `Enter` | Valider suggestion         |
+| `Ctrl + Espace`     | Afficher/Masquer autocomp  |
+| `Escape`            | Fermer modale              |
 
 <br>
 
