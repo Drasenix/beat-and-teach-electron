@@ -373,6 +373,9 @@
       }
 
       function showRelease(release) {
+        loadingEl.classList.remove('active');
+        errorEl.classList.remove('active');
+
         versionEl.textContent = release.tag_name;
 
         var os = detectOS();
@@ -393,6 +396,9 @@
       }
 
       function showError() {
+        loadingEl.classList.remove('active');
+        errorEl.classList.add('active');
+
         versionEl.textContent = 'Indisponible';
         downloadsEl.classList.add('error');
         downloadsEl.classList.remove('loading');
