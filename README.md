@@ -105,4 +105,4 @@ npm run package    # Package desktop (electron-builder)
 
 ## ✦ Licence
 
-MIT © Beat & Teach
+Tous droits réservés.
