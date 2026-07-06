@@ -332,8 +332,8 @@
 
       function getArchLabel(name) {
         if (name.indexOf('arm64') !== -1) return 'Apple Silicon';
-        if (name.indexOf('x64') !== -1) return 'Intel';
-        if (name.indexOf('x86_64') !== -1 && name.indexOf('AppImage') === -1) return 'Intel';
+        if (name.indexOf('x64') !== -1 || name.indexOf('x86_64') !== -1) return 'Intel';
+        if (name.indexOf('.dmg') !== -1) return 'Intel';
         return '';
       }
 
@@ -365,7 +365,7 @@
         if (platform === 'linux') {
           meta.textContent = 'AppImage \u2014 ' + formatSize(file.size);
         } else if (platform === 'macos') {
-          var arches = matches.map(getArchLabel).filter(Boolean).join(' / ') || 'DMG';
+          var arches = matches.map(function (a) { return getArchLabel(a.name); }).filter(Boolean).join(' / ') || 'DMG';
           meta.textContent = 'DMG \u2014 ' + arches + ' \u2014 ' + formatSize(file.size);
         } else if (platform === 'windows') {
           meta.textContent = 'Installeur \u2014 ' + formatSize(file.size);
@@ -373,26 +373,36 @@
       }
 
       function showRelease(release) {
-        loadingEl.classList.remove('active');
-        errorEl.classList.remove('active');
+        try {
+          loadingEl.classList.remove('active');
+          errorEl.classList.remove('active');
 
-        versionEl.textContent = release.tag_name;
+          versionEl.textContent = release.tag_name;
 
-        var os = detectOS();
-        setDownloadLink('linux', release.assets);
-        setDownloadLink('macos', release.assets);
-        setDownloadLink('windows', release.assets);
-
-        document.getElementById('changelog-link').href = release.html_url;
-
-        if (os) {
-          var defaultBtn = downloadsEl.querySelector('.' + os);
-          if (defaultBtn && defaultBtn.href && defaultBtn.href !== '#') {
-            defaultBtn.classList.add('default');
+          if (!release.assets) {
+            showError();
+            return;
           }
-        }
 
-        downloadsEl.classList.remove('loading', 'error');
+          var os = detectOS();
+          setDownloadLink('linux', release.assets);
+          setDownloadLink('macos', release.assets);
+          setDownloadLink('windows', release.assets);
+
+          document.getElementById('changelog-link').href = release.html_url || '#';
+
+          if (os) {
+            var defaultBtn = downloadsEl.querySelector('.' + os);
+            if (defaultBtn && defaultBtn.href && defaultBtn.href !== '#') {
+              defaultBtn.classList.add('default');
+            }
+          }
+
+          downloadsEl.classList.remove('loading', 'error');
+        } catch (err) {
+          console.error(err);
+          showError();
+        }
       }
 
       function showError() {
@@ -426,7 +436,8 @@
             localStorage.setItem(cacheKey, JSON.stringify(entry));
             showRelease(release);
           })
-          .catch(function () {
+          .catch(function (err) {
+            console.error('Release fetch error:', err);
             if (cached) {
               try {
                 var data = JSON.parse(cached);
