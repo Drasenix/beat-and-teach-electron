@@ -6,6 +6,12 @@
   <strong>Beat & Teach</strong> — une application de composition musicale rythmique assistée, destinée à l'apprentissage du beatbox.
 </p>
 
+<p align="center">
+  <a href="https://drasenix.github.io/beat-and-teach-it/">
+    <img src="https://img.shields.io/badge/%E2%AC%87%20T%C3%A9l%C3%A9charger-latest-%23679ff9?style=for-the-badge" alt="Télécharger">
+  </a>
+</p>
+
 <br>
 
 ---
