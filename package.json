@@ -1,5 +1,6 @@
 {
   "name": "beat-and-teach-it",
+  "version": "0.1.0",
   "productName": "Beat and Teach It",
   "description": "A foundation for scalable desktop apps",
   "keywords": [
@@ -23,9 +24,7 @@
   },
   "license": "UNLICENSED",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Drasenix"
   },
   "contributors": [
     {
@@ -44,6 +43,7 @@
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never && npm run build:dll",
+    "package:ci": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "prestart": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.main.dev.ts",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run prestart && npm run start:renderer",
@@ -215,11 +215,7 @@
     "extraResources": [
       "./assets/**"
     ],
-    "publish": {
-      "provider": "github",
-      "owner": "Drasenix",
-      "repo": "beat-and-teach-it"
-    }
+    "publish": null
   },
   "collective": {
     "url": "https://opencollective.com/electron-react-boilerplate-594"

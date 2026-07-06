@@ -2,68 +2,52 @@ name: Release
 
 on:
   push:
-    tags: ['v*']
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
 
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
-  release:
+  build:
     strategy:
-      fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
-          cache: npm
-      - name: Wait for CI
+          node-version: '20'
+
+      - name: Install libfuse2 (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y libfuse2
+
+      - name: Extract version from tag
         shell: bash
+        run: echo "APP_VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Set version for build
+        run: node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('release/app/package.json','utf8'));p.version=process.env.APP_VERSION;fs.writeFileSync('release/app/package.json',JSON.stringify(p,null,2)+'\n')"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Package
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          for i in $(seq 1 30); do
-            CONCLUSION=$(gh run list --workflow ci.yml --commit "${{ github.sha }}" --json conclusion --status completed --jq '.[0].conclusion // empty')
-            if [ "$CONCLUSION" = "success" ]; then
-              exit 0
-            elif [ -n "$CONCLUSION" ]; then
-              echo "CI failed: $CONCLUSION"
-              exit 1
-            fi
-            echo "Waiting for CI... ($i/30)"
-            sleep 10
-          done
-          echo "CI did not complete within 5 minutes"
-          exit 1
-      - run: npm ci
-      - name: Validate tag format
-        shell: bash
-        run: |
-          if [[ ! "${{ github.ref_name }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Invalid tag format: '${{ github.ref_name }}'. Expected vX.Y.Z"
-            exit 1
-          fi
-      - name: Set app version from tag
-        shell: bash
-        run: |
-          VERSION="${{ github.ref_name }}"
-          VERSION="${VERSION#v}"
-          node -e "
-            const pkg = require('./release/app/package.json');
-            pkg.version = '$VERSION';
-            require('fs').writeFileSync('./release/app/package.json', JSON.stringify(pkg, null, 2) + '\n');
-          "
-      - run: npx ts-node ./.erb/scripts/clean.js dist
-      - run: npm run build
-      - name: Package and publish
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: npx electron-builder build --publish always
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          CSC_LINK: ''
+          CSC_KEY_PASSWORD: ''
+        run: npm run package:ci
+
+      - name: Upload artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/build/*.AppImage
+            release/build/*.exe
+            release/build/*.dmg
+            release/build/*-mac.zip
