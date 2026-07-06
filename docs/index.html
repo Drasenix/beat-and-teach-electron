@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beat &amp; Teach — Téléchargement</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #679ff9;
+      --primary-hover: #4a8cf5;
+      --background: #030712;
+      --surface: #0f1726;
+      --surface-hover: #1a2640;
+      --border: #1f2937;
+      --text-primary: #f3f4f6;
+      --text-secondary: #6b7280;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 20px rgba(103, 159, 249, 0.3); }
+      to   { text-shadow: 0 0 40px rgba(103, 159, 249, 0.6), 0 0 80px rgba(103, 159, 249, 0.2); }
+    }
+
+    .tagline {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+    }
+
+    .version {
+      display: inline-block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-family: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+    }
+
+    .downloads {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-download {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-download:hover {
+      background: var(--surface-hover);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-download.default {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(103, 159, 249, 0.1), rgba(103, 159, 249, 0.04));
+    }
+
+    .btn-download.default::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), transparent 80%);
+      opacity: 0.08;
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .btn-info {
+      text-align: left;
+      flex: 1;
+    }
+
+    .btn-label {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .btn-meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.15rem;
+    }
+
+    .btn-arrow {
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .btn-arrow svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .default-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--background);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      margin-left: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+    }
+
+    .loading-state,
+    .error-state {
+      display: none;
+      color: var(--text-secondary);
+      padding: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .error-state {
+      color: #ef4444;
+    }
+
+    .loading-state.active,
+    .error-state.active {
+      display: block;
+    }
+
+    .downloads.loading .btn-download,
+    .downloads.error .btn-download {
+      display: none;
+    }
+
+    .footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .changelog-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-top: 1.5rem;
+      transition: color 0.2s;
+    }
+
+    .changelog-link:hover {
+      color: var(--primary);
+    }
+
+    @media (max-width: 480px) {
+      .logo { font-size: 2.5rem; }
+      .btn-download { padding: 0.85rem 1rem; gap: 0.75rem; }
+      .btn-icon svg { width: 28px; height: 28px; }
+      .btn-label { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="logo">Beat &amp; Teach</h1>
+    <p class="tagline">Composition rythmique assistée</p>
+
+    <div class="version" id="version-display">Chargement&hellip;</div>
+
+    <div class="downloads loading">
+      <div class="loading-state active">Recherche de la derni&egrave;re version&hellip;</div>
+      <div class="error-state">Impossible de r&eacute;cup&eacute;rer la version. R&eacute;essayez plus tard.</div>
+
+      <a class="btn-download linux" href="#" target="_blank">
+        <div class="btn-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a5 5 0 0 0-5 5v2H3v12h18V9h-4V7a5 5 0 0 0-5-5z"/>
+            <circle cx="12" cy="14" r="2"/>
+          </svg>
+        </div>
+        <div class="btn-info">
+          <div class="btn-label">Linux <span class="default-badge linux-badge">Recommand&eacute;</span></div>
+          <div class="btn-meta linux-meta">AppImage</div>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+      </a>
+
+      <a class="btn-download macos" href="#" target="_blank">
+        <div class="btn-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C8.5 2 5.5 4.5 5.5 7.5c0 1.5.5 3 1.5 4-1.5 1-3.5 3-4 5.5-0.5 2.5.5 4.5 3 4.5 1.5 0 3-1 4-2.5 1 1.5 2.5 2.5 4 2.5 2.5 0 3.5-2 3-4.5-.5-2.5-2.5-4.5-4-5.5 1-1 1.5-2.5 1.5-4C18.5 4.5 15.5 2 12 2z"/>
+            <circle cx="12" cy="7" r="1.5"/>
+          </svg>
+        </div>
+        <div class="btn-info">
+          <div class="btn-label">macOS <span class="default-badge macos-badge">Recommand&eacute;</span></div>
+          <div class="btn-meta macos-meta">DMG &mdash; Apple Silicon / Intel</div>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+      </a>
+
+      <a class="btn-download windows" href="#" target="_blank">
+        <div class="btn-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M2 8h20v9H2z"/>
+            <circle cx="6" cy="6" r="0.8" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div class="btn-info">
+          <div class="btn-label">Windows <span class="default-badge windows-badge">Recommand&eacute;</span></div>
+          <div class="btn-meta windows-meta">Installeur .exe</div>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+      </a>
+    </div>
+
+    <a class="changelog-link" id="changelog-link" href="#" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Notes de version
+    </a>
+
+    <footer class="footer">
+      <a href="https://github.com/Drasenix/beat-and-teach-it" target="_blank">Drasenix / beat-and-teach-it</a>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var owner = 'Drasenix';
+      var repo = 'beat-and-teach-it';
+      var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo + '/releases/latest';
+      var cacheKey = 'beat-and-teach-it-release';
+      var cacheTTL = 30 * 60 * 1000;
+
+      var versionEl = document.getElementById('version-display');
+      var downloadsEl = document.querySelector('.downloads');
+      var loadingEl = downloadsEl.querySelector('.loading-state');
+      var errorEl = downloadsEl.querySelector('.error-state');
+
+      function detectOS() {
+        var ua = navigator.userAgent;
+        if (ua.indexOf('Linux') !== -1 || ua.indexOf('X11') !== -1) return 'linux';
+        if (ua.indexOf('Mac') !== -1) return 'macos';
+        if (ua.indexOf('Windows') !== -1) return 'windows';
+        return null;
+      }
+
+      function formatSize(bytes) {
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' Ko';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
+      }
+
+      function getArchLabel(name) {
+        if (name.indexOf('arm64') !== -1) return 'Apple Silicon';
+        if (name.indexOf('x64') !== -1) return 'Intel';
+        if (name.indexOf('x86_64') !== -1 && name.indexOf('AppImage') === -1) return 'Intel';
+        return '';
+      }
+
+      function setDownloadLink(platform, assets) {
+        var btn = downloadsEl.querySelector('.' + platform);
+        var meta = downloadsEl.querySelector('.' + platform + '-meta');
+
+        if (!btn || !meta) return;
+
+        var matches = assets.filter(function (a) {
+          var n = a.name.toLowerCase();
+          if (platform === 'linux') return n.endsWith('.appimage');
+          if (platform === 'macos') return n.endsWith('.dmg');
+          if (platform === 'windows') return n.endsWith('.exe');
+          return false;
+        });
+
+        if (matches.length === 0) {
+          btn.style.opacity = '0.4';
+          btn.style.pointerEvents = 'none';
+          meta.textContent = 'Non disponible';
+          return;
+        }
+
+        matches.sort(function (a, b) { return b.download_count - a.download_count; });
+        var file = matches[0];
+        btn.href = file.browser_download_url;
+
+        if (platform === 'linux') {
+          meta.textContent = 'AppImage \u2014 ' + formatSize(file.size);
+        } else if (platform === 'macos') {
+          var arches = matches.map(getArchLabel).filter(Boolean).join(' / ') || 'DMG';
+          meta.textContent = 'DMG \u2014 ' + arches + ' \u2014 ' + formatSize(file.size);
+        } else if (platform === 'windows') {
+          meta.textContent = 'Installeur \u2014 ' + formatSize(file.size);
+        }
+      }
+
+      function showRelease(release) {
+        versionEl.textContent = release.tag_name;
+
+        var os = detectOS();
+        setDownloadLink('linux', release.assets);
+        setDownloadLink('macos', release.assets);
+        setDownloadLink('windows', release.assets);
+
+        document.getElementById('changelog-link').href = release.html_url;
+
+        if (os) {
+          var defaultBtn = downloadsEl.querySelector('.' + os);
+          if (defaultBtn && defaultBtn.href && defaultBtn.href !== '#') {
+            defaultBtn.classList.add('default');
+          }
+        }
+
+        downloadsEl.classList.remove('loading', 'error');
+      }
+
+      function showError() {
+        versionEl.textContent = 'Indisponible';
+        downloadsEl.classList.add('error');
+        downloadsEl.classList.remove('loading');
+      }
+
+      function fetchRelease() {
+        var cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          try {
+            var data = JSON.parse(cached);
+            if (Date.now() - data.ts < cacheTTL) {
+              showRelease(data.release);
+              return;
+            }
+          } catch (_) {}
+        }
+
+        fetch(apiUrl)
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+          })
+          .then(function (release) {
+            var entry = { ts: Date.now(), release: release };
+            localStorage.setItem(cacheKey, JSON.stringify(entry));
+            showRelease(release);
+          })
+          .catch(function () {
+            if (cached) {
+              try {
+                var data = JSON.parse(cached);
+                showRelease(data.release);
+                return;
+              } catch (_) {}
+            }
+            showError();
+          });
+      }
+
+      fetchRelease();
+    })();
+  </script>
+</body>
+</html>
