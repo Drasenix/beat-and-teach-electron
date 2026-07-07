@@ -97,20 +97,6 @@
       transform: translateY(-1px);
     }
 
-    .btn-download.default {
-      border-color: var(--primary);
-      background: linear-gradient(135deg, rgba(103, 159, 249, 0.1), rgba(103, 159, 249, 0.04));
-    }
-
-    .btn-download.default::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), transparent 80%);
-      opacity: 0.08;
-    }
-
     .btn-icon {
       width: 40px;
       height: 40px;
@@ -149,20 +135,6 @@
     .btn-arrow svg {
       width: 20px;
       height: 20px;
-    }
-
-    .default-badge {
-      display: inline-block;
-      background: var(--primary);
-      color: var(--background);
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.15rem 0.5rem;
-      border-radius: 999px;
-      margin-left: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      vertical-align: middle;
     }
 
     .loading-state,
@@ -242,8 +214,38 @@
           <i data-lucide="terminal" class="btn-icon-i"></i>
         </div>
         <div class="btn-info">
-          <div class="btn-label">Linux <span class="default-badge linux-badge">Recommand&eacute;</span></div>
+          <div class="btn-label">Linux</div>
           <div class="btn-meta linux-meta">AppImage</div>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+      </a>
+
+      <a class="btn-download linux-deb" href="#" target="_blank">
+        <div class="btn-icon">
+          <i data-lucide="terminal" class="btn-icon-i"></i>
+        </div>
+        <div class="btn-info">
+          <div class="btn-label">Linux (.deb)</div>
+          <div class="btn-meta linux-deb-meta">Debian / Ubuntu</div>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+      </a>
+
+      <a class="btn-download linux-rpm" href="#" target="_blank">
+        <div class="btn-icon">
+          <i data-lucide="terminal" class="btn-icon-i"></i>
+        </div>
+        <div class="btn-info">
+          <div class="btn-label">Linux (.rpm)</div>
+          <div class="btn-meta linux-rpm-meta">Fedora / RHEL</div>
         </div>
         <div class="btn-arrow">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -257,7 +259,7 @@
           <i data-lucide="apple" class="btn-icon-i"></i>
         </div>
         <div class="btn-info">
-          <div class="btn-label">macOS <span class="default-badge macos-badge">Recommand&eacute;</span></div>
+          <div class="btn-label">macOS</div>
           <div class="btn-meta macos-meta">DMG &mdash; Apple Silicon / Intel</div>
         </div>
         <div class="btn-arrow">
@@ -272,7 +274,7 @@
           <i data-lucide="monitor" class="btn-icon-i"></i>
         </div>
         <div class="btn-info">
-          <div class="btn-label">Windows <span class="default-badge windows-badge">Recommand&eacute;</span></div>
+          <div class="btn-label">Windows</div>
           <div class="btn-meta windows-meta">Installeur .exe</div>
         </div>
         <div class="btn-arrow">
@@ -308,14 +310,6 @@
       var loadingEl = downloadsEl.querySelector('.loading-state');
       var errorEl = downloadsEl.querySelector('.error-state');
 
-      function detectOS() {
-        var ua = navigator.userAgent;
-        if (ua.indexOf('Linux') !== -1 || ua.indexOf('X11') !== -1) return 'linux';
-        if (ua.indexOf('Mac') !== -1) return 'macos';
-        if (ua.indexOf('Windows') !== -1) return 'windows';
-        return null;
-      }
-
       function formatSize(bytes) {
         if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' Ko';
         return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
@@ -337,6 +331,8 @@
         var matches = assets.filter(function (a) {
           var n = a.name.toLowerCase();
           if (platform === 'linux') return n.endsWith('.appimage');
+          if (platform === 'linux-deb') return n.endsWith('.deb');
+          if (platform === 'linux-rpm') return n.endsWith('.rpm');
           if (platform === 'macos') return n.endsWith('.dmg');
           if (platform === 'windows') return n.endsWith('.exe');
           return false;
@@ -355,6 +351,10 @@
 
         if (platform === 'linux') {
           meta.textContent = 'AppImage \u2014 ' + formatSize(file.size);
+        } else if (platform === 'linux-deb') {
+          meta.textContent = formatSize(file.size);
+        } else if (platform === 'linux-rpm') {
+          meta.textContent = formatSize(file.size);
         } else if (platform === 'macos') {
           var arches = matches.map(function (a) { return getArchLabel(a.name); }).filter(Boolean).join(' / ') || 'DMG';
           meta.textContent = 'DMG \u2014 ' + arches + ' \u2014 ' + formatSize(file.size);
@@ -375,19 +375,13 @@
             return;
           }
 
-          var os = detectOS();
           setDownloadLink('linux', release.assets);
+          setDownloadLink('linux-deb', release.assets);
+          setDownloadLink('linux-rpm', release.assets);
           setDownloadLink('macos', release.assets);
           setDownloadLink('windows', release.assets);
 
           document.getElementById('changelog-link').href = release.html_url || '#';
-
-          if (os) {
-            var defaultBtn = downloadsEl.querySelector('.' + os);
-            if (defaultBtn && defaultBtn.href && defaultBtn.href !== '#') {
-              defaultBtn.classList.add('default');
-            }
-          }
 
           downloadsEl.classList.remove('loading', 'error');
         } catch (err) {

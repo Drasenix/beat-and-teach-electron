@@ -207,7 +207,8 @@
         "deb",
         "rpm"
       ],
-      "category": "Development"
+      "category": "Development",
+      "maintainer": "Drasenix <cauneauantoine@gmail.com>"
     },
     "directories": {
       "app": "release/app",
