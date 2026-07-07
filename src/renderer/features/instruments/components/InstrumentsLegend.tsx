@@ -17,7 +17,7 @@ export default function InstrumentsLegend() {
         className="sidebar-header"
       >
         <span className="sidebar-title">Instruments</span>
-        <span className={`section-toggle-arrow ${open ? 'open' : ''}`}>▲</span>
+        <span className="section-toggle-arrow">{open ? '▼' : '▶'}</span>
       </button>
       <div className={`section-collapsible ${open ? 'open' : ''}`}>
         <div className="sidebar-list">

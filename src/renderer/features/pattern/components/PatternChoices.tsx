@@ -33,7 +33,7 @@ export default function PatternChoices(props: PatternChoicesProps) {
         className="sidebar-header"
       >
         <span className="sidebar-title">Patterns</span>
-        <span className={`section-toggle-arrow ${open ? 'open' : ''}`}>▲</span>
+        <span className="section-toggle-arrow">{open ? '▼' : '▶'}</span>
       </button>
       {open && (
         <div className="sidebar-footer">
