@@ -46,6 +46,8 @@ jobs:
         with:
           files: |
             release/build/*.AppImage
+            release/build/*.deb
+            release/build/*.rpm
             release/build/*.exe
             release/build/*.dmg
             release/build/*-mac.zip
