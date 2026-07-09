@@ -23,6 +23,12 @@ Chaque entrée suit ce format :
 
 ## ✨ Features
 
+- [ ] **Ajout d'instrument par clic dans la sidebar (Studio)** — *P2* — `frontend, ux`
+  Sur l'écran Studio, cliquer sur un instrument dans la sidebar l'insère dans la phrase active à la position du curseur.
+  - Piste : `SentenceInput` expose une ref + une méthode `insertAtCursor(text)`, la sidebar appelle cette méthode via contexte ou callback
+  - Il faut connaître la `SentenceInput` active (focus ou index stocké dans `usePatternSession`)
+  - Gérer le cas où aucun `SentenceInput` n'a le focus
+
 - [ ] **Wiki / tutoriel par instrument** — *P2* — `frontend, ux`
   Ajouter un éditeur de contenu riche (texte, images, vidéos embarquées) pour chaque instrument, permettant de créer un mini tutoriel (ex: technique de frappe, contexte d'utilisation).
   - Piste : éditeur WYSIWYG léger (TinyMCE, TipTap/ProseMirror, ou Slate)
