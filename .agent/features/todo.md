@@ -46,6 +46,10 @@ Chaque entrée suit ce format :
 
 ## ⚡ Améliorations
 
+- [ ] **Améliorer le Guide — notes et détection de fréquences** — *P2* — `frontend, doc`
+  Enrichir l'écran `/guide` avec une section dédiée à la théorie des notes (hauteur, fréquence, timbre) et à la détection de fréquences (comment l'appli analyse/utilise le pitch, lien avec les instruments).
+  - Piste : nouvelle page ou section dans le Guide existant, schémas, exemples audio, lien vers les visites guidées
+
 ...
 
 ---
