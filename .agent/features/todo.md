@@ -23,6 +23,12 @@ Chaque entrée suit ce format :
 
 ## ✨ Features
 
+- [ ] **Écran de paramétrage** — *P2* — `frontend, ux`
+  Nouvel écran `/settings` permettant de personnaliser l'interface :
+  - **Thèmes de couleurs** : choix entre plusieurs palettes (sombre actuel, clair, daltonien, personnalisé) — stockage dans `localStorage` ou base
+  - **Taille du texte** : slider ou preset (petit/normal/grand) appliqué via CSS custom properties ou classe racine
+  - Piste : `ThemeProvider` ou context dédié, variables CSS redéfinies dynamiquement, synchronisation persistante
+
 - [ ] **Ajout d'instrument par clic dans la sidebar (Studio)** — *P2* — `frontend, ux`
   Sur l'écran Studio, cliquer sur un instrument dans la sidebar l'insère dans la phrase active à la position du curseur.
   - Piste : `SentenceInput` expose une ref + une méthode `insertAtCursor(text)`, la sidebar appelle cette méthode via contexte ou callback
