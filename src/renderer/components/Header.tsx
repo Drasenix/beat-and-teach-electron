@@ -8,6 +8,7 @@ import {
   Mic,
 } from 'lucide-react';
 import useAudio from '../features/audio/hooks/useAudio';
+import ThemeSwitcher from '../features/theme/components/ThemeSwitcher';
 
 const NAV_ICONS = {
   '/workspace': AudioLines,
@@ -67,6 +68,10 @@ export default function Header() {
           </Link>
         );
       })}
+
+      <div className="mt-auto">
+        <ThemeSwitcher />
+      </div>
     </aside>
   );
 }

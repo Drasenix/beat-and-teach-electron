@@ -5,21 +5,22 @@ module.exports = {
     extend: {
       colors: {
         // Couleurs principales de ton app
-        primary: '#679ff9', // accents néon
-        background: '#030712', // fond principal
-        surface: '#1d273c', // cartes/zones
-        border: '#1f2937', // bordures
-        field: '#111827', // fond text area
+        primary: 'rgb(var(--bt-primary) / <alpha-value>)', // accents néon
+        background: 'rgb(var(--bt-background) / <alpha-value>)', // fond principal
+        surface: 'rgb(var(--bt-surface) / <alpha-value>)', // cartes/zones
+        border: 'rgb(var(--bt-border) / <alpha-value>)', // bordures
+        field: 'rgb(var(--bt-field) / <alpha-value>)', // fond text area
         text: {
-          primary: '#f3f4f6', // texte principal
-          secondary: '#6b7280', // texte secondaire
-          accent: '#679ff9', // texte mis en valeur
+          primary: 'rgb(var(--bt-text-primary) / <alpha-value>)', // texte principal
+          secondary: 'rgb(var(--bt-text-secondary) / <alpha-value>)', // texte secondaire
+          accent: 'rgb(var(--bt-text-accent) / <alpha-value>)', // texte mis en valeur
         },
         button: {
-          surface: '#111827', // boutons
-          delete: '#990033', // bouton delete
-          edit: '#679ff9',
-          'confirm-delete': '#770000', // bouton confirm delete
+          surface: 'rgb(var(--bt-button-surface) / <alpha-value>)', // boutons
+          delete: 'rgb(var(--bt-button-delete) / <alpha-value>)', // bouton delete
+          edit: 'rgb(var(--bt-button-edit) / <alpha-value>)',
+          'confirm-delete':
+            'rgb(var(--bt-button-confirm-delete) / <alpha-value>)', // bouton confirm delete
         },
       },
     },

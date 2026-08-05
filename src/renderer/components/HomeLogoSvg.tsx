@@ -67,9 +67,13 @@ export default function HomeLogoSvg() {
           </filter>
         </defs>
 
-        <rect width="1012" height="256" fill="#030712" />
+        <rect width="1012" height="256" fill="rgb(var(--bt-background))" />
 
-        <g filter="url(#gW)" stroke="#679ff9" strokeLinecap="round">
+        <g
+          filter="url(#gW)"
+          stroke="rgb(var(--bt-primary))"
+          strokeLinecap="round"
+        >
           {WAVEFORM_LINES.map(({ x, y1, y2, sw }, i) => {
             const h = y2 - y1;
             const offset = animateOffset(h);
@@ -110,8 +114,8 @@ export default function HomeLogoSvg() {
           width="120"
           height="120"
           rx="20"
-          fill="#1d273c"
-          stroke="#679ff9"
+          fill="rgb(var(--bt-surface))"
+          stroke="rgb(var(--bt-primary))"
           strokeWidth="1.5"
         />
         <text
@@ -119,7 +123,7 @@ export default function HomeLogoSvg() {
           y="148"
           fontSize="80"
           fontWeight="bold"
-          fill="#679ff9"
+          fill="rgb(var(--bt-primary))"
           fontFamily="Arial, sans-serif"
           filter="url(#glow-b)"
           opacity="0.6"
@@ -131,7 +135,7 @@ export default function HomeLogoSvg() {
           y="148"
           fontSize="80"
           fontWeight="bold"
-          fill="#679ff9"
+          fill="rgb(var(--bt-primary))"
           fontFamily="Arial, sans-serif"
         >
           B
@@ -142,7 +146,7 @@ export default function HomeLogoSvg() {
           y="105"
           fontSize="52"
           fontWeight="300"
-          fill="#f3f4f6"
+          fill="rgb(var(--bt-text-primary))"
           fontFamily="Arial, sans-serif"
           letterSpacing="3"
         >
@@ -153,7 +157,7 @@ export default function HomeLogoSvg() {
           x="210"
           y="155"
           fontSize="14"
-          fill="#6b7280"
+          fill="rgb(var(--bt-text-secondary))"
           fontFamily="Arial, sans-serif"
           letterSpacing="1.5"
         >

@@ -14,6 +14,7 @@ import { PatternsProvider } from './features/pattern/contexts/PatternsContext';
 import { AudioProvider } from './features/audio/contexts/AudioContext';
 import GuideModalProvider from './features/guide/components/GuideModalProvider';
 import GuideModal from './features/guide/components/GuideModal';
+import { ThemeProvider } from './features/theme/contexts/ThemeContext';
 
 const router = createMemoryRouter([
   {
@@ -42,23 +43,25 @@ const router = createMemoryRouter([
 
 export default function App() {
   return (
-    <AudioProvider>
-      <PatternsProvider>
-        <InstrumentsProvider>
-          <GuideModalProvider>
-            <RouterProvider router={router} />
-            <GuideModal />
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfTFrfdn3AjHeKy9fYllv9aqS2XRSrkWce0nmpYVU6WKkVQRg/viewform"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="fixed bottom-6 right-6 z-40 btn-primary flex items-center gap-2"
-            >
-              <MessageSquareText size={16} /> Donner mon avis
-            </a>
-          </GuideModalProvider>
-        </InstrumentsProvider>
-      </PatternsProvider>
-    </AudioProvider>
+    <ThemeProvider>
+      <AudioProvider>
+        <PatternsProvider>
+          <InstrumentsProvider>
+            <GuideModalProvider>
+              <RouterProvider router={router} />
+              <GuideModal />
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSfTFrfdn3AjHeKy9fYllv9aqS2XRSrkWce0nmpYVU6WKkVQRg/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="fixed bottom-6 right-6 z-40 btn-primary flex items-center gap-2"
+              >
+                <MessageSquareText size={16} /> Donner mon avis
+              </a>
+            </GuideModalProvider>
+          </InstrumentsProvider>
+        </PatternsProvider>
+      </AudioProvider>
+    </ThemeProvider>
   );
 }
