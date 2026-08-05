@@ -4,6 +4,7 @@
     ".agent/agent.md",
     ".agent/documentation-métier.md",
     ".agent/workflow.md",
-    ".agent/new-feature.md"
+    ".agent/new-feature.md",
+    ".agent/feature-workflow.md"
   ]
 }

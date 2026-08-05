@@ -4,6 +4,11 @@ S'applique au **code métier uniquement** : parser, validator, mute, adapters, e
 
 **Pas de TDD pour le frontend** : composants React, hooks UI, contexts — tests après ou pas de tests.
 
+> **Feature complète ?** Le cycle RGR est institutionnalisé par le pipeline en 7 étapes
+> (`feature-workflow.md`) : étape 1 = Specs, étape 2 = GWT, étape 3 = RED (agent `test`),
+> étape 5 = GREEN (agent `dev`), étape 6 = Refacto/review (agent `review`).
+> Ce document reste la référence du cycle pour les tâches de TDD ad hoc (bug, utilitaire isolé).
+
 ## Cycle
 
 ### 0. Specs
@@ -14,12 +19,6 @@ S'applique au **code métier uniquement** : parser, validator, mute, adapters, e
 ### 1. Given / When / Then
 - Rédiger les cas de test en langage humain structuré
 - Valider le plan de test avec l'utilisateur si nécessaire
-
-```
-Given: un instrument avec symbole "P" existe en base
-When: on appelle getInstrumentNameFromSymbol("P")
-Then: retourne "kickdrum"
-```
 
 ### 2. RED
 - Implémenter les tests unitaires (Jest, ts-jest)
